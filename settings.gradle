@@ -1,0 +1,2 @@
+rootProject.name = "Cita"
+include ':app'
