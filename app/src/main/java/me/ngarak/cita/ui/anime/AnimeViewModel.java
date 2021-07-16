@@ -4,16 +4,22 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class AnimeViewModel extends ViewModel {
+import java.util.List;
 
-    private MutableLiveData<String> mText;
+import me.ngarak.cita.repositories.AnimeRepo;
+
+public class AnimeViewModel extends ViewModel {
+    private MutableLiveData<List<String>> mutableLiveData;
+    private final AnimeRepo animeRepo;
 
     public AnimeViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is notifications fragment");
+        animeRepo = new AnimeRepo();
     }
 
-    public LiveData<String> getText() {
-        return mText;
+    public LiveData<List<String>> getAnime () {
+        if (mutableLiveData == null) {
+            mutableLiveData = animeRepo.requestAnime();
+        }
+        return mutableLiveData;
     }
 }
