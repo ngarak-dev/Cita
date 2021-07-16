@@ -2,18 +2,20 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="me.ngarak.cita">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
+        android:logo="@drawable/ic_logo"
         android:supportsRtl="true"
         android:theme="@style/Theme.Cita">
         <activity
             android:name=".ui.MainActivity" />
         <activity
-            android:name=".ui.SplashActivity"
-            android:theme="@style/Theme.Cita.NoActionBar">
+            android:name=".ui.SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

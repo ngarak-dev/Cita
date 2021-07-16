@@ -4,16 +4,24 @@ import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
+import java.util.List;
+
+import me.ngarak.cita.models.QuoteResponse;
+import me.ngarak.cita.repositories.RandomRepo;
+
 public class RandomViewModel extends ViewModel {
 
-    private MutableLiveData<String> mText;
+    private final RandomRepo randomRepo;
+    private MutableLiveData<List<QuoteResponse>> mutableLiveData;
 
     public RandomViewModel() {
-        mText = new MutableLiveData<>();
-        mText.setValue("This is dashboard fragment");
+        randomRepo = new RandomRepo();
     }
 
-    public LiveData<String> getText() {
-        return mText;
+    public LiveData<List<QuoteResponse>> getQuote () {
+        if (mutableLiveData == null) {
+            mutableLiveData = randomRepo.requestQuote();
+        }
+        return mutableLiveData;
     }
 }

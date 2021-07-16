@@ -5,4 +5,5 @@
     <string name="anime">Anime</string>
     <string name="quotes">Quotes</string>
     <string name="random">Random</string>
+    <string name="random_quotes">Random Quotes</string>
 </resources>
