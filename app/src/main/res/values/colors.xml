@@ -7,4 +7,5 @@
     <color name="teal_700">#D3A720</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="action_bar">#FFFFFFFF</color>
 </resources>

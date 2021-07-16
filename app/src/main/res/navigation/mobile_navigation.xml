@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mobile_navigation"
+    app:startDestination="@+id/navigation_random">
+
+    <fragment
+        android:id="@+id/navigation_random"
+        android:name="me.ngarak.cita.ui.random.RandomFragment"
+        android:label="@string/random"
+        tools:layout="@layout/fragment_random" />
+
+    <fragment
+        android:id="@+id/navigation_quotes"
+        android:name="me.ngarak.cita.ui.quotes.QuotesFragment"
+        android:label="@string/quotes"
+        tools:layout="@layout/fragment_quotes" />
+
+    <fragment
+        android:id="@+id/navigation_anime"
+        android:name="me.ngarak.cita.ui.anime.AnimeFragment"
+        android:label="@string/anime"
+        tools:layout="@layout/fragment_anime" />
+</navigation>

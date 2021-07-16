@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/navigation_random"
+        android:icon="@drawable/ic_random_quotes"
+        android:title="@string/random" />
+
+    <item
+        android:id="@+id/navigation_quotes"
+        android:icon="@drawable/ic_quotes"
+        android:title="@string/quotes" />
+
+    <item
+        android:id="@+id/navigation_anime"
+        android:icon="@drawable/ic_anime"
+        android:title="@string/anime" />
+
+</menu>
