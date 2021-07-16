@@ -42,7 +42,6 @@ public class RandomFragment extends Fragment {
 
         binding.refreshingLayout.setOnRefreshListener(() -> {
             if (quotesRVAdapter.getQuoteList() != null) {
-
                 quotesRVAdapter.getQuoteList().clear();
                 quotesRVAdapter.notifyDataSetChanged();
             }
