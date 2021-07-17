@@ -24,4 +24,11 @@ public class QuotesViewModel extends ViewModel {
         }
         return mutableLiveData;
     }
+
+    public LiveData<List<QuoteResponse>> getQuotesByAnime (String anime, int page) {
+        if (mutableLiveData == null) {
+            mutableLiveData = quotesRepo.getQuotesByAnime(anime, page);
+        }
+        return mutableLiveData;
+    }
 }

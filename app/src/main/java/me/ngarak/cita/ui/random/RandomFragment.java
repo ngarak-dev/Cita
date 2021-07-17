@@ -62,6 +62,9 @@ public class RandomFragment extends Fragment {
             if (quoteResponses!= null && !quoteResponses.isEmpty()) {
                 Log.d(TAG, "randomQuotes() returned: " + quoteResponses.size());
                 quotesRVAdapter.setQuoteList(quoteResponses);
+
+                binding.progressBar.setVisibility(View.GONE);
+                binding.randomRv.setVisibility(View.VISIBLE);
             }
             stopRefreshing();
         });

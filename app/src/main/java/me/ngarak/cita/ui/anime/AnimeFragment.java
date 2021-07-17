@@ -1,5 +1,6 @@
 package me.ngarak.cita.ui.anime;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 
 import me.ngarak.cita.adapters.AnimeRVAdapter;
 import me.ngarak.cita.databinding.FragmentAnimeBinding;
+import me.ngarak.cita.ui.QuoteByAnimeActivity;
 
 public class AnimeFragment extends Fragment {
 
@@ -44,7 +46,11 @@ public class AnimeFragment extends Fragment {
         GridLayoutManager gridLayoutManager = new GridLayoutManager(requireContext(), 2);
         binding.animeRv.setLayoutManager(gridLayoutManager);
 
-        animeRVAdapter = new AnimeRVAdapter();
+        animeRVAdapter = new AnimeRVAdapter(anime -> {
+            Intent intent = new Intent(requireContext(), QuoteByAnimeActivity.class);
+            intent.putExtra("anime", anime);
+            startActivity(intent);
+        });
         binding.animeRv.setAdapter(animeRVAdapter);
     }
 
@@ -53,6 +59,9 @@ public class AnimeFragment extends Fragment {
             if (animeList != null && !animeList.isEmpty()) {
                 Log.d(TAG, "loadAnime() returned: " + animeList.size());
                 animeRVAdapter.setAnimeList(animeList.subList(0, 100));
+
+                binding.progressBar.setVisibility(View.GONE);
+                binding.animeRv.setVisibility(View.VISIBLE);
             }
         });
     }

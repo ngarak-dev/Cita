@@ -1,25 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="@drawable/background"
-    android:orientation="horizontal"
-    android:gravity="center"
-    android:layout_margin="5dp">
-
-    <ImageView
-        android:layout_width="35dp"
-        android:layout_height="35dp"
-        android:padding="5dp"
-        android:id="@+id/image"
-        android:src="@drawable/ic_anime"
-        android:contentDescription="@null"
-        app:tint="@color/purple_500" />
-
-    <TextView
+<layout>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/anime_title" />
+        android:background="@drawable/background"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:id="@+id/linearLayout"
+        android:layout_margin="5dp">
 
-</LinearLayout>
+        <ImageView
+            android:layout_width="35dp"
+            android:layout_height="35dp"
+            android:padding="5dp"
+            android:id="@+id/image"
+            android:src="@drawable/ic_anime"
+            android:contentDescription="@null"
+            app:tint="@color/purple_500" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@{anime.toString()}"
+            android:id="@+id/anime_title" />
+
+    </LinearLayout>
+
+    <data>
+        <variable
+            name="anime"
+            type="java.lang.String" />
+    </data>
+</layout>

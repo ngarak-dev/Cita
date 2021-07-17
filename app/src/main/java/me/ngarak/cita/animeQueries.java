@@ -17,4 +17,7 @@ public interface animeQueries {
 
     @GET("quotes")
     Call<List<QuoteResponse>> getQuotes (@Query("page") int page); /*returning 10 quotes per page*/
+
+    @GET("quotes/anime")
+    Call<List<QuoteResponse>> getQuotesByAnime (@Query("title")String title, @Query("page") int page); /*returning 10 quotes per page*/
 }

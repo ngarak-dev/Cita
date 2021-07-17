@@ -49,6 +49,9 @@ public class QuotesFragment extends Fragment {
             if (quoteResponses != null && !quoteResponses.isEmpty()) {
                 Log.d(TAG, "retrieveQuotes() called" + quoteResponses.size());
                 quotesRVAdapter.setQuoteList(quoteResponses);
+
+                binding.progressBar.setVisibility(View.GONE);
+                binding.quotesRv.setVisibility(View.VISIBLE);
             }
         });
     }

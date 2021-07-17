@@ -4,7 +4,23 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.quotes.QuotesFragment">
+    tools:context=".ui.QuoteByAnimeActivity">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/action_bar"
+        android:id="@+id/appBarLayout">
+
+        <com.google.android.material.appbar.MaterialToolbar
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:navigationIcon="?homeAsUpIndicator"
+            app:titleTextAppearance="@style/TextAppearance.AppCompat.Subhead"
+            android:id="@+id/toolBar" />
+
+    </com.google.android.material.appbar.AppBarLayout>
 
     <ImageButton
         android:layout_width="50dp"
@@ -13,7 +29,7 @@
         android:id="@+id/image_btn"
         android:contentDescription="@string/random"
         android:background="@null"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/appBarLayout"
         app:layout_constraintStart_toStartOf="parent"
         app:tint="@color/teal_700" />
 
@@ -21,7 +37,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:id="@+id/title"
-        android:text="@string/quotes"
+        android:text="@string/quotes_from_anime"
         android:textStyle="bold"
         app:layout_constraintTop_toTopOf="@id/image_btn"
         app:layout_constraintBottom_toBottomOf="@id/image_btn"

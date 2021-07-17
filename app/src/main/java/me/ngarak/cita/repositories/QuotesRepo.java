@@ -36,8 +36,32 @@ public class QuotesRepo {
                         mutableLiveData.postValue(responseList);
                     }
                 }
+            }
 
-                Log.d(TAG, "onResponse() called with: call = [" + call + "], response = [" + response + "]");
+            @Override
+            public void onFailure(@NotNull Call<List<QuoteResponse>> call, @NotNull Throwable t) {
+                Log.d(TAG, "onFailure: " ,  t);
+            }
+        });
+        return mutableLiveData;
+    }
+
+    public MutableLiveData<List<QuoteResponse>> getQuotesByAnime (String anime, int page) {
+        MutableLiveData<List<QuoteResponse>> mutableLiveData = new MutableLiveData<>();
+
+        //initializing retrofit
+        animeQueries queries = retrofitInstance.getAnimeInst().create(animeQueries.class);
+        //network call
+        Call<List<QuoteResponse>> responseCall = queries.getQuotesByAnime(anime, page);
+        responseCall.enqueue(new Callback<List<QuoteResponse>>() {
+            @Override
+            public void onResponse(@NotNull Call<List<QuoteResponse>> call, @NotNull Response<List<QuoteResponse>> response) {
+                if (response.isSuccessful()){
+                    if (response.body() != null) {
+                        responseList.addAll(response.body());
+                        mutableLiveData.postValue(responseList);
+                    }
+                }
             }
 
             @Override
