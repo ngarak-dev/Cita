@@ -6,6 +6,12 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 
+import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.ads.initialization.InitializationStatus;
+import com.google.android.gms.ads.initialization.OnInitializationCompleteListener;
+
+import org.jetbrains.annotations.NotNull;
+
 import me.ngarak.cita.R;
 
 public class SplashActivity extends AppCompatActivity {

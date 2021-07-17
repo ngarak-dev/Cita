@@ -19,8 +19,6 @@ public class RandomFragment extends Fragment {
 
     private final String TAG = getClass().getSimpleName();
     private FragmentRandomBinding binding;
-    private final RandomViewModel randomViewModel = new RandomViewModel();
-
     private QuotesRVAdapter quotesRVAdapter;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -58,7 +56,7 @@ public class RandomFragment extends Fragment {
     }
 
     private void randomQuotes() {
-        randomViewModel.getQuote().observe(getViewLifecycleOwner(), quoteResponses -> {
+        new RandomViewModel().getQuote().observe(getViewLifecycleOwner(), quoteResponses -> {
             if (quoteResponses!= null && !quoteResponses.isEmpty()) {
                 Log.d(TAG, "randomQuotes() returned: " + quoteResponses.size());
                 quotesRVAdapter.setQuoteList(quoteResponses);

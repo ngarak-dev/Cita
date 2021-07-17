@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "458109009171",
+    "project_id": "ngarak-ads-apps",
+    "storage_bucket": "ngarak-ads-apps.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:458109009171:android:11c0e1ac0704813046aee6",
+        "android_client_info": {
+          "package_name": "me.ngarak.cita"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "458109009171-cmba6haj7644fu2cia1gn844gtha16t8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBXToVbMtptCESSWWhyAF0nM7tpE6iovLo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "458109009171-cmba6haj7644fu2cia1gn844gtha16t8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

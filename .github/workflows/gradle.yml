@@ -35,4 +35,4 @@ jobs:
       uses: actions/upload-artifact@v1
       with:
         name: build-output
-        path: app/build/outputs/apk/debug/cita-app-debug.apk
+        path: app/build/outputs/apk/debug/app-debug.apk
