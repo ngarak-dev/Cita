@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import me.ngarak.cita.databinding.LayoutSimpleQuoteBinding;
@@ -16,7 +17,7 @@ import me.ngarak.cita.models.QuoteResponse;
 public class QuotesRVAdapter extends RecyclerView.Adapter<QuotesRVAdapter.QuotesHolder>{
 
     private  final String TAG = getClass().getSimpleName();
-    private List<QuoteResponse> quoteList;
+    private List<QuoteResponse> quoteList = new ArrayList<>();
 
     @NonNull
     @NotNull
@@ -43,8 +44,14 @@ public class QuotesRVAdapter extends RecyclerView.Adapter<QuotesRVAdapter.Quotes
     }
 
     public void setQuoteList(List<QuoteResponse> quoteList) {
-        this.quoteList = quoteList;
-        notifyDataSetChanged();
+        if (this.quoteList.isEmpty()) {
+            this.quoteList = quoteList;
+            notifyDataSetChanged();
+        }
+        else {
+            this.quoteList.addAll(quoteList);
+            notifyItemInserted(this.quoteList.size() - 1);
+        }
     }
 
     protected static class QuotesHolder extends RecyclerView.ViewHolder {

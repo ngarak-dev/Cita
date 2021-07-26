@@ -27,6 +27,7 @@ public class QuotesRepo {
         animeQueries queries = retrofitInstance.getAnimeInst().create(animeQueries.class);
         //network call
         Call<List<QuoteResponse>> responseCall = queries.getQuotes(page);
+        Log.d(TAG, "getQuotes() called with: page = [" + page + "]");
         responseCall.enqueue(new Callback<List<QuoteResponse>>() {
             @Override
             public void onResponse(@NotNull Call<List<QuoteResponse>> call, @NotNull Response<List<QuoteResponse>> response) {

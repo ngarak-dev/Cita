@@ -12,6 +12,10 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.LoadAdError;
+
 import org.jetbrains.annotations.NotNull;
 
 import me.ngarak.cita.adapters.AnimeRVAdapter;
@@ -22,7 +26,6 @@ public class AnimeFragment extends Fragment {
 
     private final String TAG = getClass().getSimpleName();
     private FragmentAnimeBinding binding;
-
     private AnimeRVAdapter animeRVAdapter;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
@@ -37,7 +40,7 @@ public class AnimeFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         prepareRVAdapter();
-
+        loadSmartAd();
         loadAnime();
     }
 
@@ -54,11 +57,25 @@ public class AnimeFragment extends Fragment {
         binding.animeRv.setAdapter(animeRVAdapter);
     }
 
+    private void loadSmartAd() {
+        AdRequest adRequest = new AdRequest.Builder().build();
+        binding.adView.loadAd(adRequest);
+        binding.adView.setAdListener(new AdListener() {
+            @Override
+            public void onAdFailedToLoad(@NonNull @NotNull LoadAdError loadAdError) {
+                super.onAdFailedToLoad(loadAdError);
+                /*dismiss view on AdLoadError*/
+                binding.adView.setVisibility(View.GONE);
+            }
+        });
+    }
+
     private void loadAnime() {
         new AnimeViewModel().getAnime().observe(getViewLifecycleOwner(), animeList -> {
             if (animeList != null && !animeList.isEmpty()) {
                 Log.d(TAG, "loadAnime() returned: " + animeList.size());
-                animeRVAdapter.setAnimeList(animeList.subList(0, 100));
+//                animeRVAdapter.setAnimeList(animeList.subList(0, 100));
+                animeRVAdapter.setAnimeList(animeList);
 
                 binding.progressBar.setVisibility(View.GONE);
                 binding.animeRv.setVisibility(View.VISIBLE);

@@ -16,7 +16,8 @@
 
     <string name="title_activity_interstitial_ad_mob">MainActivity</string>
     <string name="info_1">An android application for free quotes from over 600 anime movies and series</string>
-    <string name="info_2">Support this development by clicking below cita button to view an Ad</string>
+    <string name="info_2">This application was made possible by consuming REST API from Rocktim.</string>
+    <string name="info_3">Buy us a cup of coffee from project repo and do not forget to Support this development by clicking below cita button to view an Ad</string>
     <string name="gmail_ngarak">ngarakiringo@gmail.com</string>
     <string name="phone_ngarak">+255 768 491 010</string>
 </resources>

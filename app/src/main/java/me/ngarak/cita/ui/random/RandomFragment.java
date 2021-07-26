@@ -10,6 +10,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.LoadAdError;
+import com.google.android.gms.ads.ResponseInfo;
+
 import org.jetbrains.annotations.NotNull;
 
 import me.ngarak.cita.adapters.QuotesRVAdapter;
@@ -36,6 +41,8 @@ public class RandomFragment extends Fragment {
 
         settingUpAdapter();
 
+        loadSmartAd();
+
         randomQuotes();
 
         binding.refreshingLayout.setOnRefreshListener(() -> {
@@ -45,6 +52,7 @@ public class RandomFragment extends Fragment {
             }
             settingUpAdapter();
             randomQuotes();
+            loadSmartAd();
         });
     }
 
@@ -53,6 +61,20 @@ public class RandomFragment extends Fragment {
         quotesRVAdapter = new QuotesRVAdapter();
 
         binding.randomRv.setAdapter(quotesRVAdapter);
+    }
+
+    private void loadSmartAd() {
+        AdRequest adRequest = new AdRequest.Builder().build();
+        binding.adView.loadAd(adRequest);
+        binding.adView.setAdListener(new AdListener() {
+            @Override
+            public void onAdFailedToLoad(@NonNull @NotNull LoadAdError loadAdError) {
+                super.onAdFailedToLoad(loadAdError);
+                /*dismiss view on AdLoadError*/
+                loadAdError.getResponseInfo();
+                binding.adView.setVisibility(View.GONE);
+            }
+        });
     }
 
     private void randomQuotes() {

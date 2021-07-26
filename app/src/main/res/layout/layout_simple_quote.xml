@@ -1,78 +1,81 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
-    <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:background="@drawable/background"
-        xmlns:app="http://schemas.android.com/apk/res-auto">
+        android:background="?colorButtonNormal">
 
-        <TextView
+        <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/quote"
-            android:padding="5dp"
-            android:textStyle="bold"
-            android:text="@{quote.quote}"
-            app:layout_constraintTop_toTopOf="parent" />
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="2dp"
+            android:paddingEnd="5dp"
+            android:paddingStart="5dp"
+            android:background="?android:colorBackground">
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            style="@style/horizontal_divider"
-            app:layout_constraintTop_toBottomOf="@id/quote"
-            android:id="@+id/divider_1" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/quote"
+                android:padding="5dp"
+                android:textStyle="bold"
+                android:text="@{quote.quote}"
+                app:layout_constraintTop_toTopOf="parent" />
 
-        <ImageView
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:id="@+id/character_dp"
-            android:src="@drawable/dp"
-            android:padding="2dp"
-            app:layout_constraintTop_toBottomOf="@+id/divider_1"
-            app:layout_constraintStart_toStartOf="parent"
-            android:contentDescription="@null" />
+            <ImageView
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:id="@+id/character_dp"
+                android:padding="5dp"
+                app:srcCompat="@drawable/ic_avatar_gradient"
+                app:layout_constraintTop_toBottomOf="@+id/quote"
+                app:layout_constraintStart_toStartOf="parent"
+                android:contentDescription="@null" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/character"
-            android:layout_margin="5dp"
-            android:text="@{quote.character}"
-            app:layout_constraintStart_toEndOf="@id/character_dp"
-            app:layout_constraintTop_toTopOf="@id/character_dp"
-            app:layout_constraintBottom_toBottomOf="@id/character_dp"
-            app:layout_constraintEnd_toEndOf="parent" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/character"
+                android:layout_margin="5dp"
+                android:text="@{quote.character}"
+                app:layout_constraintStart_toEndOf="@id/character_dp"
+                app:layout_constraintTop_toTopOf="@id/character_dp"
+                app:layout_constraintBottom_toBottomOf="@id/character_dp"
+                app:layout_constraintEnd_toEndOf="parent" />
 
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="1dp"
-            style="@style/horizontal_divider"
-            app:layout_constraintTop_toBottomOf="@id/character_dp"
-            android:id="@+id/divider_2" />
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="2dp"
+                style="@style/horizontal_divider"
+                app:layout_constraintTop_toBottomOf="@id/character_dp"
+                android:id="@+id/divider_2" />
 
-        <ImageView
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:id="@+id/anime_dp"
-            android:src="@drawable/ic_anime"
-            android:padding="5dp"
-            app:layout_constraintTop_toBottomOf="@+id/divider_2"
-            app:layout_constraintStart_toStartOf="parent"
-            android:contentDescription="@null" />
+            <ImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:id="@+id/anime_dp"
+                android:src="@drawable/ic_photo_camera"
+                android:padding="5dp"
+                app:layout_constraintTop_toBottomOf="@+id/divider_2"
+                app:layout_constraintStart_toStartOf="parent"
+                android:contentDescription="@null" />
 
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/anime"
-            android:layout_margin="5dp"
-            android:text="@{quote.anime}"
-            app:layout_constraintTop_toTopOf="@id/anime_dp"
-            app:layout_constraintStart_toEndOf="@id/anime_dp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintBottom_toBottomOf="@id/anime_dp"/>
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/anime"
+                android:layout_margin="5dp"
+                android:text="@{quote.anime}"
+                app:layout_constraintTop_toTopOf="@id/anime_dp"
+                app:layout_constraintStart_toEndOf="@id/anime_dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="@id/anime_dp"/>
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+    </LinearLayout>
 
     <data>
         <variable

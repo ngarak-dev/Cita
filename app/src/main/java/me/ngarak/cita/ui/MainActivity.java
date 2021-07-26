@@ -1,5 +1,7 @@
 package me.ngarak.cita.ui;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -7,6 +9,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -83,7 +86,13 @@ public class MainActivity extends AppCompatActivity {
         dialogBuilder.setView(dialogView);
 
         MaterialButton showAdd = dialogView.findViewById(R.id.showAd);
+        TextView animechan = dialogView.findViewById(R.id.animechan);
+        TextView cita = dialogView.findViewById(R.id.cita);
         showAdd.setOnClickListener(v -> showInterstitial());
+
+        animechan.setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse("https://github.com/rocktimsaikia/anime-chan"))));
+        cita.setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse("https://github.com/Ngara-K/Cita"))));
+
         AlertDialog alertDialog = dialogBuilder.create();
         alertDialog.show();
     }

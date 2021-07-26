@@ -28,12 +28,21 @@
         app:layout_constraintStart_toEndOf="@id/image_btn"
         app:layout_constraintEnd_toEndOf="parent" />
 
+    <com.google.android.gms.ads.AdView
+        xmlns:ads="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/adView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        ads:layout_constraintTop_toBottomOf="@id/image_btn"
+        ads:adSize="SMART_BANNER"
+        ads:adUnitId="@string/SMART_BANNER_AD_UNIT">
+    </com.google.android.gms.ads.AdView>
+
     <ProgressBar
-        android:layout_width="35dp"
-        android:layout_height="35dp"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
         android:id="@+id/progressBar"
         android:indeterminate="true"
-        style="@style/Widget.AppCompat.ProgressBar"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -43,11 +52,24 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:visibility="invisible"
-        app:layout_constraintTop_toBottomOf="@+id/title"
-        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/adView"
+        app:layout_constraintBottom_toTopOf="@id/progressLoadMore"
         android:layout_marginTop="5dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:orientation="vertical"
         android:id="@+id/quotes_rv" />
+
+    <ProgressBar
+        android:layout_width="15dp"
+        android:layout_height="15dp"
+        android:layout_margin="5dp"
+        style="@style/Widget.AppCompat.ProgressBar"
+        android:id="@+id/progressLoadMore"
+        android:indeterminate="true"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/quotes_rv"
+        app:layout_constraintBottom_toBottomOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

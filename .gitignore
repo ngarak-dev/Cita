@@ -13,3 +13,7 @@
 .externalNativeBuild
 .cxx
 local.properties
+!/private_key.pepk
+!/cita.jks
+/cita.jks
+/private_key.pepk

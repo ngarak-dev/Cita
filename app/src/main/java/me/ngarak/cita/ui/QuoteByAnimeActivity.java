@@ -1,16 +1,21 @@
 package me.ngarak.cita.ui;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdListener;
@@ -19,10 +24,12 @@ import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
+import com.google.android.material.button.MaterialButton;
 
 import org.jetbrains.annotations.NotNull;
 
 import me.ngarak.cita.R;
+import me.ngarak.cita.adapters.AutoScroll;
 import me.ngarak.cita.adapters.QuotesRVAdapter;
 import me.ngarak.cita.databinding.ActivityQuoteByAnimeBinding;
 import me.ngarak.cita.ui.quotes.QuotesViewModel;
@@ -33,6 +40,10 @@ public class QuoteByAnimeActivity extends AppCompatActivity {
     private ActivityQuoteByAnimeBinding binding;
     private static String anime;
     private QuotesRVAdapter quotesRVAdapter;
+    RecyclerView quotesRecyclerView;
+
+    private final int currentPage = 1;
+    private int maxPages = 200;
 
     private InterstitialAd interstitialAd;
     AdRequest adRequest = new AdRequest.Builder().build();
@@ -42,6 +53,8 @@ public class QuoteByAnimeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         binding = ActivityQuoteByAnimeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        quotesRecyclerView = findViewById(R.id.random_rv);
 
         loadAd();
         loadSmartAd();
@@ -55,7 +68,24 @@ public class QuoteByAnimeActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(anime);
 
         settingUpAdapter();
-        retrieveQuotesByAnime();
+
+        binding.quotesRv.addOnScrollListener(new AutoScroll(binding.quotesRv.getLayoutManager()) {
+            @Override
+            public void onLoadMore(int page, int totalItemsCount, RecyclerView recyclerView) {
+                quotesRecyclerView = recyclerView;
+
+                if ((page + 1) < maxPages) {
+                    retrieveQuotesByAnime(page + 1);
+                }
+                else {
+                    Log.d(TAG, "onLoadMore() called with: page = [" + page + "], totalItemsCount = [" + totalItemsCount + "]");
+                    /*End of Pages*/
+//                    Toast.makeText(QuoteByAnimeActivity.this, "End of Quotes", Toast.LENGTH_LONG).show();
+                }
+            }
+        });
+
+        retrieveQuotesByAnime(currentPage);
 
         binding.toolBar.setNavigationOnClickListener(v -> onBackPressed());
     }
@@ -79,16 +109,39 @@ public class QuoteByAnimeActivity extends AppCompatActivity {
         binding.quotesRv.setAdapter(quotesRVAdapter);
     }
 
-    private void retrieveQuotesByAnime() {
-        new QuotesViewModel().getQuotesByAnime(anime, 1).observe(this, quoteResponses -> {
-            if (quoteResponses != null && !quoteResponses.isEmpty()) {
-                Log.d(TAG, "retrieveQuotesByAnime() called" + quoteResponses.size());
-                quotesRVAdapter.setQuoteList(quoteResponses);
+    private void retrieveQuotesByAnime(int page) {
+        if (page == 1) {
+            new QuotesViewModel().getQuotesByAnime(anime, page).observe(this, quoteResponses -> {
+                if (quoteResponses != null && !quoteResponses.isEmpty()) {
+                    quotesRVAdapter.setQuoteList(quoteResponses);
 
-                binding.progressBar.setVisibility(View.GONE);
-                binding.quotesRv.setVisibility(View.VISIBLE);
-            }
-        });
+                    /*checking list size then set last page*/
+                    if (quoteResponses.size() < 10) {
+                        maxPages = page;
+                    }
+
+                    binding.progressBar.setVisibility(View.GONE);
+                    binding.quotesRv.setVisibility(View.VISIBLE);
+                }
+            });
+        }
+        else {
+            binding.progressLoadMore.setVisibility(View.VISIBLE);
+
+            new QuotesViewModel().getQuotesByAnime(anime, page).observe(this, quoteResponses -> {
+                if (quoteResponses != null && !quoteResponses.isEmpty()) {
+                    quotesRVAdapter.setQuoteList(quoteResponses);
+
+                    /*checking list size then set last page*/
+                    if (quoteResponses.size() < 10) {
+                        maxPages = page;
+                    }
+
+                    binding.progressLoadMore.setVisibility(View.GONE);
+                }
+            });
+        }
+
     }
 
     @Override
@@ -108,19 +161,22 @@ public class QuoteByAnimeActivity extends AppCompatActivity {
     }
 
     private void onAboutDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("An android application for free quotes from anime movies and series\n" +
-                "Support this development by clicking Open Ad")
-                .setTitle("About Cita")
-                .setPositiveButton("Open Ad", (dialog, id) -> {
-                    showInterstitial();
-                })
-                .setNegativeButton("Dismiss", (dialog, id) -> {
-                    // User cancelled the dialog
-                    dialog.dismiss();
-                });
-        builder.create();
-        builder.show();
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.layout_about, null);
+        dialogBuilder.setView(dialogView);
+
+        MaterialButton showAdd = dialogView.findViewById(R.id.showAd);
+        TextView animechan = dialogView.findViewById(R.id.animechan);
+        TextView cita = dialogView.findViewById(R.id.cita);
+        showAdd.setOnClickListener(v -> showInterstitial());
+
+        animechan.setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse("https://github.com/rocktimsaikia/anime-chan"))));
+        cita.setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse("https://github.com/Ngara-K/Cita"))));
+
+        AlertDialog alertDialog = dialogBuilder.create();
+        alertDialog.show();
     }
 
     private void loadAd() {
