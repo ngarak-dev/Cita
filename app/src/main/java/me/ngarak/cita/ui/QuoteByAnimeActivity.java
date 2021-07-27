@@ -1,6 +1,11 @@
 package me.ngarak.cita.ui;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
@@ -24,6 +29,7 @@ import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.gms.ads.interstitial.InterstitialAd;
 import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 
 import org.jetbrains.annotations.NotNull;
@@ -32,21 +38,21 @@ import me.ngarak.cita.R;
 import me.ngarak.cita.adapters.AutoScroll;
 import me.ngarak.cita.adapters.QuotesRVAdapter;
 import me.ngarak.cita.databinding.ActivityQuoteByAnimeBinding;
+import me.ngarak.cita.databinding.LayoutBottomSheetBinding;
+import me.ngarak.cita.models.QuoteResponse;
 import me.ngarak.cita.ui.quotes.QuotesViewModel;
 
 public class QuoteByAnimeActivity extends AppCompatActivity {
 
-    private final String TAG = getClass().getSimpleName();
-    private ActivityQuoteByAnimeBinding binding;
     private static String anime;
-    private QuotesRVAdapter quotesRVAdapter;
-    RecyclerView quotesRecyclerView;
-
+    private final String TAG = getClass().getSimpleName();
     private final int currentPage = 1;
-    private int maxPages = 200;
-
-    private InterstitialAd interstitialAd;
+    RecyclerView quotesRecyclerView;
     AdRequest adRequest = new AdRequest.Builder().build();
+    private ActivityQuoteByAnimeBinding binding;
+    private QuotesRVAdapter quotesRVAdapter;
+    private int maxPages = 200;
+    private InterstitialAd interstitialAd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +62,6 @@ public class QuoteByAnimeActivity extends AppCompatActivity {
 
         quotesRecyclerView = findViewById(R.id.random_rv);
 
-        loadAd();
         loadSmartAd();
 
         /*get extras from fragment*/
@@ -76,8 +81,7 @@ public class QuoteByAnimeActivity extends AppCompatActivity {
 
                 if ((page + 1) < maxPages) {
                     retrieveQuotesByAnime(page + 1);
-                }
-                else {
+                } else {
                     Log.d(TAG, "onLoadMore() called with: page = [" + page + "], totalItemsCount = [" + totalItemsCount + "]");
                     /*End of Pages*/
 //                    Toast.makeText(QuoteByAnimeActivity.this, "End of Quotes", Toast.LENGTH_LONG).show();
@@ -104,9 +108,40 @@ public class QuoteByAnimeActivity extends AppCompatActivity {
 
     private void settingUpAdapter() {
         binding.quotesRv.setHasFixedSize(true);
-        quotesRVAdapter = new QuotesRVAdapter();
+        quotesRVAdapter = new QuotesRVAdapter(this::openBottomSheet);
 
         binding.quotesRv.setAdapter(quotesRVAdapter);
+    }
+
+    private void openBottomSheet(QuoteResponse quoteResponse) {
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
+        LayoutBottomSheetBinding binding = LayoutBottomSheetBinding.inflate(LayoutInflater.from(this));
+        bottomSheetDialog.setContentView(binding.getRoot());
+
+        binding.setQuote(quoteResponse);
+        bottomSheetDialog.show();
+
+        /*show ad*/
+        AdRequest adRequest = new AdRequest.Builder().build();
+        binding.adView.loadAd(adRequest);
+        binding.adView.setAdListener(new AdListener() {
+            @Override
+            public void onAdFailedToLoad(@NonNull @NotNull LoadAdError loadAdError) {
+                super.onAdFailedToLoad(loadAdError);
+                /*dismiss view on AdLoadError*/
+                loadAdError.getResponseInfo();
+                binding.adView.setVisibility(View.GONE);
+            }
+        });
+
+        binding.copyBtn.setOnClickListener(v -> {
+            ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText(getString(R.string.app_name), quoteResponse.getQuote());
+            clipboard.setPrimaryClip(clip);
+
+            binding.copyBtn.setIconTint(ColorStateList.valueOf(Color.GREEN));
+            Toast.makeText(this, "Quote Copied", Toast.LENGTH_SHORT).show();
+        });
     }
 
     private void retrieveQuotesByAnime(int page) {
@@ -124,8 +159,7 @@ public class QuoteByAnimeActivity extends AppCompatActivity {
                     binding.quotesRv.setVisibility(View.VISIBLE);
                 }
             });
-        }
-        else {
+        } else {
             binding.progressLoadMore.setVisibility(View.VISIBLE);
 
             new QuotesViewModel().getQuotesByAnime(anime, page).observe(this, quoteResponses -> {
@@ -161,6 +195,8 @@ public class QuoteByAnimeActivity extends AppCompatActivity {
     }
 
     private void onAboutDialog() {
+        loadAd();
+
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
 
         LayoutInflater inflater = this.getLayoutInflater();
@@ -179,7 +215,7 @@ public class QuoteByAnimeActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    private void loadAd() {
+    public void loadAd() {
         InterstitialAd.load(this, getString(R.string.SUPPORT_AD_UNIT), adRequest, new InterstitialAdLoadCallback() {
             @Override
             public void onAdLoaded(@NonNull InterstitialAd mInterstitialAd) {
@@ -220,7 +256,6 @@ public class QuoteByAnimeActivity extends AppCompatActivity {
                 interstitialAd = null;
             }
         });
-
     }
 
 

@@ -6,23 +6,23 @@
     android:layout_height="match_parent">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        app:layout_constraintTop_toTopOf="parent"
         android:background="@color/action_bar"
         app:elevation="5dp"
-        android:id="@+id/appBarLayout">
+        app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolBar"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:id="@+id/toolBar">
+            android:layout_height="match_parent">
 
             <ImageView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_logo"
-                android:contentDescription="@string/logo"/>
+                android:contentDescription="@string/logo"
+                android:src="@drawable/ic_logo" />
 
         </com.google.android.material.appbar.MaterialToolbar>
     </com.google.android.material.appbar.AppBarLayout>

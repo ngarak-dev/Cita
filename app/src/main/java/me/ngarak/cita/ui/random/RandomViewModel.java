@@ -18,7 +18,7 @@ public class RandomViewModel extends ViewModel {
         randomRepo = new RandomRepo();
     }
 
-    public LiveData<List<QuoteResponse>> getQuote () {
+    public LiveData<List<QuoteResponse>> getQuote() {
         if (mutableLiveData == null) {
             mutableLiveData = randomRepo.requestQuote();
         }

@@ -1,7 +1,6 @@
 package me.ngarak.cita.repositories;
 
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.lifecycle.MutableLiveData;
 
@@ -21,7 +20,7 @@ public class RandomRepo {
     private final String TAG = getClass().getSimpleName();
     private final List<QuoteResponse> responseList = new ArrayList<>();
 
-    public MutableLiveData<List<QuoteResponse>> requestQuote () {
+    public MutableLiveData<List<QuoteResponse>> requestQuote() {
         MutableLiveData<List<QuoteResponse>> mutableLiveData = new MutableLiveData<>();
 
         //initializing retrofit
@@ -31,7 +30,7 @@ public class RandomRepo {
         responseCall.enqueue(new Callback<List<QuoteResponse>>() {
             @Override
             public void onResponse(@NotNull Call<List<QuoteResponse>> call, @NotNull Response<List<QuoteResponse>> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     if (response.body() != null) {
                         responseList.addAll(response.body());
                         mutableLiveData.postValue(responseList);
@@ -41,7 +40,7 @@ public class RandomRepo {
 
             @Override
             public void onFailure(@NotNull Call<List<QuoteResponse>> call, @NotNull Throwable t) {
-                Log.d(TAG, "onFailure: " ,  t);
+                Log.d(TAG, "onFailure: ", t);
             }
         });
 

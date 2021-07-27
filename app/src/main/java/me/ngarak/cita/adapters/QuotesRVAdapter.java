@@ -14,10 +14,15 @@ import java.util.List;
 import me.ngarak.cita.databinding.LayoutSimpleQuoteBinding;
 import me.ngarak.cita.models.QuoteResponse;
 
-public class QuotesRVAdapter extends RecyclerView.Adapter<QuotesRVAdapter.QuotesHolder>{
+public class QuotesRVAdapter extends RecyclerView.Adapter<QuotesRVAdapter.QuotesHolder> {
 
-    private  final String TAG = getClass().getSimpleName();
+    private final String TAG = getClass().getSimpleName();
+    private final QuoteClickListener clickListener;
     private List<QuoteResponse> quoteList = new ArrayList<>();
+
+    public QuotesRVAdapter(QuoteClickListener clickListener) {
+        this.clickListener = clickListener;
+    }
 
     @NonNull
     @NotNull
@@ -31,12 +36,12 @@ public class QuotesRVAdapter extends RecyclerView.Adapter<QuotesRVAdapter.Quotes
     @Override
     public void onBindViewHolder(@NonNull @NotNull QuotesRVAdapter.QuotesHolder holder, int position) {
         QuoteResponse quoteResponse = quoteList.get(position);
-        holder.bind(quoteResponse);
+        holder.bind(quoteResponse, clickListener);
     }
 
     @Override
     public int getItemCount() {
-        return quoteList != null ? quoteList.size(): 0;
+        return quoteList != null ? quoteList.size() : 0;
     }
 
     public List<QuoteResponse> getQuoteList() {
@@ -47,23 +52,29 @@ public class QuotesRVAdapter extends RecyclerView.Adapter<QuotesRVAdapter.Quotes
         if (this.quoteList.isEmpty()) {
             this.quoteList = quoteList;
             notifyDataSetChanged();
-        }
-        else {
+        } else {
             this.quoteList.addAll(quoteList);
             notifyItemInserted(this.quoteList.size() - 1);
         }
     }
 
+    public interface QuoteClickListener {
+        void onClick(QuoteResponse quoteResponse);
+    }
+
     protected static class QuotesHolder extends RecyclerView.ViewHolder {
         LayoutSimpleQuoteBinding binding;
+
         public QuotesHolder(@NonNull @NotNull LayoutSimpleQuoteBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
         }
 
-        public void bind(QuoteResponse quoteResponse) {
+        public void bind(QuoteResponse quoteResponse, QuoteClickListener clickListener) {
             binding.setQuote(quoteResponse);
             binding.executePendingBindings();
+
+            binding.quoteLayout.setOnClickListener(v -> clickListener.onClick(quoteResponse));
         }
     }
 }

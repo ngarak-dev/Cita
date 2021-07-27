@@ -18,14 +18,14 @@ public class QuotesViewModel extends ViewModel {
         quotesRepo = new QuotesRepo();
     }
 
-    public LiveData<List<QuoteResponse>> getQuotes (int page) {
+    public LiveData<List<QuoteResponse>> getQuotes(int page) {
         if (mutableLiveData == null) {
             mutableLiveData = quotesRepo.getQuotes(page);
         }
         return mutableLiveData;
     }
 
-    public LiveData<List<QuoteResponse>> getQuotesByAnime (String anime, int page) {
+    public LiveData<List<QuoteResponse>> getQuotesByAnime(String anime, int page) {
         if (mutableLiveData == null) {
             mutableLiveData = quotesRepo.getQuotesByAnime(anime, page);
         }

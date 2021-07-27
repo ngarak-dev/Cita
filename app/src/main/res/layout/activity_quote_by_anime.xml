@@ -7,86 +7,84 @@
     tools:context=".ui.QuoteByAnimeActivity">
 
     <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        app:layout_constraintTop_toTopOf="parent"
         android:background="@color/action_bar"
-        android:id="@+id/appBarLayout">
+        app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.appbar.MaterialToolbar
+            android:id="@+id/toolBar"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:navigationIcon="?homeAsUpIndicator"
-            app:titleTextAppearance="@style/TextAppearance.AppCompat.Subhead"
-            android:id="@+id/toolBar" />
+            app:titleTextAppearance="@style/TextAppearance.AppCompat.Subhead" />
 
     </com.google.android.material.appbar.AppBarLayout>
 
     <ImageButton
+        android:id="@+id/image_btn"
         android:layout_width="50dp"
         android:layout_height="50dp"
-        android:src="@drawable/ic_quotes"
-        android:id="@+id/image_btn"
-        android:contentDescription="@string/random"
         android:background="@null"
-        app:layout_constraintTop_toBottomOf="@id/appBarLayout"
+        android:contentDescription="@string/random"
+        android:src="@drawable/ic_quotes"
         app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/appBarLayout"
         app:tint="@color/teal_700" />
 
     <TextView
+        android:id="@+id/title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:id="@+id/title"
         android:text="@string/quotes_from_anime"
         android:textStyle="bold"
-        app:layout_constraintTop_toTopOf="@id/image_btn"
         app:layout_constraintBottom_toBottomOf="@id/image_btn"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@id/image_btn"
-        app:layout_constraintEnd_toEndOf="parent" />
+        app:layout_constraintTop_toTopOf="@id/image_btn" />
 
     <ProgressBar
+        android:id="@+id/progressBar"
+        style="@style/Widget.AppCompat.ProgressBar"
         android:layout_width="35dp"
         android:layout_height="35dp"
-        android:id="@+id/progressBar"
         android:indeterminate="true"
-        style="@style/Widget.AppCompat.ProgressBar"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent" />
+        app:layout_constraintTop_toTopOf="parent" />
 
     <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/quotes_rv"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:visibility="invisible"
-        app:layout_constraintTop_toBottomOf="@+id/title"
-        app:layout_constraintBottom_toTopOf="@id/progressLoadMore"
         android:layout_marginTop="5dp"
-        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         android:orientation="vertical"
-        android:id="@+id/quotes_rv" />
+        android:visibility="invisible"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+        app:layout_constraintBottom_toTopOf="@id/progressLoadMore"
+        app:layout_constraintTop_toBottomOf="@+id/title" />
 
     <ProgressBar
+        android:id="@+id/progressLoadMore"
+        style="@style/Widget.AppCompat.ProgressBar"
         android:layout_width="15dp"
         android:layout_height="15dp"
         android:layout_margin="5dp"
-        style="@style/Widget.AppCompat.ProgressBar"
-        android:id="@+id/progressLoadMore"
         android:indeterminate="true"
         android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@id/adView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/quotes_rv"
-        app:layout_constraintBottom_toTopOf="@id/adView" />
+        app:layout_constraintTop_toBottomOf="@id/quotes_rv" />
 
-    <com.google.android.gms.ads.AdView
-        xmlns:ads="http://schemas.android.com/apk/res-auto"
+    <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
         android:id="@+id/adView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        ads:layout_constraintBottom_toBottomOf="parent"
         ads:adSize="SMART_BANNER"
-        ads:adUnitId="@string/SMART_BANNER_AD_UNIT">
-    </com.google.android.gms.ads.AdView>
+        ads:adUnitId="@string/SMART_BANNER_AD_UNIT"
+        ads:layout_constraintBottom_toBottomOf="parent"></com.google.android.gms.ads.AdView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

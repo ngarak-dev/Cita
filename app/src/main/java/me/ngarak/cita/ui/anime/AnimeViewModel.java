@@ -9,14 +9,14 @@ import java.util.List;
 import me.ngarak.cita.repositories.AnimeRepo;
 
 public class AnimeViewModel extends ViewModel {
-    private MutableLiveData<List<String>> mutableLiveData;
     private final AnimeRepo animeRepo;
+    private MutableLiveData<List<String>> mutableLiveData;
 
     public AnimeViewModel() {
         animeRepo = new AnimeRepo();
     }
 
-    public LiveData<List<String>> getAnime () {
+    public LiveData<List<String>> getAnime() {
         if (mutableLiveData == null) {
             mutableLiveData = animeRepo.requestAnime();
         }

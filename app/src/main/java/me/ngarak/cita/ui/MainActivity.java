@@ -53,9 +53,6 @@ public class MainActivity extends AppCompatActivity {
         FirebaseAnalytics mFirebaseAnalytics = FirebaseAnalytics.getInstance(this);
         mFirebaseAnalytics.setAnalyticsCollectionEnabled(true);
 
-        /*loadAd*/
-        loadAd();
-
         /*setup navigation using nav controller UI*/
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupWithNavController(binding.navView, navController);
@@ -78,6 +75,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void onAboutDialog() {
+        /*loadAd*/
+        loadAd();
 
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
 
@@ -99,7 +98,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void loadAd() {
         AdRequest adRequest = new AdRequest.Builder().build();
-
         InterstitialAd.load(this, getString(R.string.SUPPORT_AD_UNIT), adRequest, new InterstitialAdLoadCallback() {
             @Override
             public void onAdLoaded(@NonNull InterstitialAd mInterstitialAd) {
@@ -140,7 +138,6 @@ public class MainActivity extends AppCompatActivity {
                 interstitialAd = null;
             }
         });
-
     }
 
     private void showInterstitial() {

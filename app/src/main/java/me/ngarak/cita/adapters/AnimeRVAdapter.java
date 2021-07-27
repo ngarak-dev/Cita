@@ -1,7 +1,6 @@
 package me.ngarak.cita.adapters;
 
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -15,8 +14,8 @@ import me.ngarak.cita.databinding.LayoutAnimeSimpleBinding;
 
 public class AnimeRVAdapter extends RecyclerView.Adapter<AnimeRVAdapter.AnimeHolder> {
 
-    private List<String> animeList;
     private final AnimeClickListener animeClickListener;
+    private List<String> animeList;
 
     public AnimeRVAdapter(AnimeClickListener animeClickListener) {
         this.animeClickListener = animeClickListener;
@@ -39,7 +38,7 @@ public class AnimeRVAdapter extends RecyclerView.Adapter<AnimeRVAdapter.AnimeHol
 
     @Override
     public int getItemCount() {
-        return animeList!= null ? animeList.size() : 0;
+        return animeList != null ? animeList.size() : 0;
     }
 
     public List<String> getAnimeList() {
@@ -51,8 +50,14 @@ public class AnimeRVAdapter extends RecyclerView.Adapter<AnimeRVAdapter.AnimeHol
         notifyDataSetChanged();
     }
 
+    /*onClick interface*/
+    public interface AnimeClickListener {
+        void OnClick(String anime);
+    }
+
     protected static class AnimeHolder extends RecyclerView.ViewHolder {
         LayoutAnimeSimpleBinding binding;
+
         public AnimeHolder(@NonNull @NotNull LayoutAnimeSimpleBinding binding) {
             super(binding.getRoot());
             this.binding = binding;
@@ -66,10 +71,5 @@ public class AnimeRVAdapter extends RecyclerView.Adapter<AnimeRVAdapter.AnimeHol
                 animeClickListener.OnClick(anime);
             });
         }
-    }
-
-    /*onClick interface*/
-    public interface AnimeClickListener {
-        void OnClick(String anime);
     }
 }

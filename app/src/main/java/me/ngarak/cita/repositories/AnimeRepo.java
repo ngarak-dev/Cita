@@ -34,8 +34,7 @@ public class AnimeRepo {
                         animeList.addAll(response.body());
                         mutableLiveData.postValue(animeList);
                     }
-                }
-                else {
+                } else {
                     Log.d(TAG, "onResponse: " + response.errorBody());
                 }
             }

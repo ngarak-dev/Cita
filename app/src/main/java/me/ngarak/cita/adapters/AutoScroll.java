@@ -1,23 +1,20 @@
 package me.ngarak.cita.adapters;
 
-import android.util.Log;
-
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-public abstract class AutoScroll extends RecyclerView.OnScrollListener{
+public abstract class AutoScroll extends RecyclerView.OnScrollListener {
     //starting page index
     private final int startingPageIndex = 0;
+    private final RecyclerView.LayoutManager layoutManager;
     //Minimum items before scrolling
-    private int visibleThreshold = 5;
+    private final int visibleThreshold = 5;
     //current index of data loaded
     private int currentPage = 0;
     //total number of items in the dataset after the last load
     private int previousTotalItemCount = 0;
-
     private boolean loading = true;
-    private final RecyclerView.LayoutManager layoutManager;
 
     public AutoScroll(RecyclerView.LayoutManager layoutManager) {
         this.layoutManager = layoutManager;

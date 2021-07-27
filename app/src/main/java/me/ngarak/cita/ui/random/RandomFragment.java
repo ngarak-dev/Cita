@@ -1,10 +1,16 @@
 package me.ngarak.cita.ui.random;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
+import android.content.Context;
+import android.content.res.ColorStateList;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -13,18 +19,24 @@ import androidx.fragment.app.Fragment;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.LoadAdError;
-import com.google.android.gms.ads.ResponseInfo;
+import com.google.android.gms.ads.rewardedinterstitial.RewardedInterstitialAd;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 
 import org.jetbrains.annotations.NotNull;
 
+import me.ngarak.cita.R;
 import me.ngarak.cita.adapters.QuotesRVAdapter;
 import me.ngarak.cita.databinding.FragmentRandomBinding;
+import me.ngarak.cita.databinding.LayoutBottomSheetBinding;
+import me.ngarak.cita.models.QuoteResponse;
 
 public class RandomFragment extends Fragment {
 
     private final String TAG = getClass().getSimpleName();
+    AdRequest adRequest = new AdRequest.Builder().build();
     private FragmentRandomBinding binding;
     private QuotesRVAdapter quotesRVAdapter;
+    private RewardedInterstitialAd interstitialAd;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -40,7 +52,7 @@ public class RandomFragment extends Fragment {
         setRefreshing();
 
         settingUpAdapter();
-
+//        new SupportAd(adRequest).showAd(requireContext());
         loadSmartAd();
 
         randomQuotes();
@@ -58,9 +70,45 @@ public class RandomFragment extends Fragment {
 
     private void settingUpAdapter() {
         binding.randomRv.setHasFixedSize(true);
-        quotesRVAdapter = new QuotesRVAdapter();
+        quotesRVAdapter = new QuotesRVAdapter(this::openBottomSheet);
 
         binding.randomRv.setAdapter(quotesRVAdapter);
+    }
+
+    private void openBottomSheet(QuoteResponse quoteResponse) {
+        BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(requireContext());
+        LayoutBottomSheetBinding binding = LayoutBottomSheetBinding.inflate(LayoutInflater.from(requireContext()));
+        bottomSheetDialog.setContentView(binding.getRoot());
+
+        binding.setQuote(quoteResponse);
+        bottomSheetDialog.show();
+
+        /*show ad*/
+        AdRequest adRequest = new AdRequest.Builder().build();
+        binding.adView.loadAd(adRequest);
+        binding.adView.setAdListener(new AdListener() {
+            @Override
+            public void onAdFailedToLoad(@NonNull @NotNull LoadAdError loadAdError) {
+                super.onAdFailedToLoad(loadAdError);
+                /*dismiss view on AdLoadError*/
+                loadAdError.getResponseInfo();
+                binding.adView.setVisibility(View.GONE);
+            }
+        });
+
+        binding.copyBtn.setOnClickListener(v -> {
+            ClipboardManager clipboard = (ClipboardManager) requireContext().getSystemService(Context.CLIPBOARD_SERVICE);
+            ClipData clip = ClipData.newPlainText(requireContext().getString(R.string.app_name), quoteResponse.getQuote());
+            clipboard.setPrimaryClip(clip);
+
+            binding.copyBtn.setIconTint(ColorStateList.valueOf(Color.GREEN));
+            Toast.makeText(requireContext(), "Quote Copied", Toast.LENGTH_SHORT).show();
+        });
+
+//        /*show ad*/
+//        bottomSheetDialog.setOnDismissListener(dialog -> {
+//            new SupportAd(adRequest).showInterstitial(requireActivity(), requireContext());
+//        });
     }
 
     private void loadSmartAd() {
@@ -79,7 +127,7 @@ public class RandomFragment extends Fragment {
 
     private void randomQuotes() {
         new RandomViewModel().getQuote().observe(getViewLifecycleOwner(), quoteResponses -> {
-            if (quoteResponses!= null && !quoteResponses.isEmpty()) {
+            if (quoteResponses != null && !quoteResponses.isEmpty()) {
                 Log.d(TAG, "randomQuotes() returned: " + quoteResponses.size());
                 quotesRVAdapter.setQuoteList(quoteResponses);
 
@@ -90,13 +138,13 @@ public class RandomFragment extends Fragment {
         });
     }
 
-    private void setRefreshing () {
+    private void setRefreshing() {
         if (!binding.refreshingLayout.isRefreshing()) {
             binding.refreshingLayout.setRefreshing(true);
         }
     }
 
-    private void stopRefreshing () {
+    private void stopRefreshing() {
         if (binding.refreshingLayout.isRefreshing()) {
             binding.refreshingLayout.setRefreshing(false);
         }

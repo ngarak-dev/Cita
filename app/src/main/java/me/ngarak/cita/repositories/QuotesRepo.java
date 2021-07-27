@@ -20,7 +20,7 @@ public class QuotesRepo {
     private final String TAG = getClass().getSimpleName();
     private final List<QuoteResponse> responseList = new ArrayList<>();
 
-    public MutableLiveData<List<QuoteResponse>> getQuotes (int page) {
+    public MutableLiveData<List<QuoteResponse>> getQuotes(int page) {
         MutableLiveData<List<QuoteResponse>> mutableLiveData = new MutableLiveData<>();
 
         //initializing retrofit
@@ -31,7 +31,7 @@ public class QuotesRepo {
         responseCall.enqueue(new Callback<List<QuoteResponse>>() {
             @Override
             public void onResponse(@NotNull Call<List<QuoteResponse>> call, @NotNull Response<List<QuoteResponse>> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     if (response.body() != null) {
                         responseList.addAll(response.body());
                         mutableLiveData.postValue(responseList);
@@ -41,13 +41,13 @@ public class QuotesRepo {
 
             @Override
             public void onFailure(@NotNull Call<List<QuoteResponse>> call, @NotNull Throwable t) {
-                Log.d(TAG, "onFailure: " ,  t);
+                Log.d(TAG, "onFailure: ", t);
             }
         });
         return mutableLiveData;
     }
 
-    public MutableLiveData<List<QuoteResponse>> getQuotesByAnime (String anime, int page) {
+    public MutableLiveData<List<QuoteResponse>> getQuotesByAnime(String anime, int page) {
         MutableLiveData<List<QuoteResponse>> mutableLiveData = new MutableLiveData<>();
 
         //initializing retrofit
@@ -57,7 +57,7 @@ public class QuotesRepo {
         responseCall.enqueue(new Callback<List<QuoteResponse>>() {
             @Override
             public void onResponse(@NotNull Call<List<QuoteResponse>> call, @NotNull Response<List<QuoteResponse>> response) {
-                if (response.isSuccessful()){
+                if (response.isSuccessful()) {
                     if (response.body() != null) {
                         responseList.addAll(response.body());
                         mutableLiveData.postValue(responseList);
@@ -67,7 +67,7 @@ public class QuotesRepo {
 
             @Override
             public void onFailure(@NotNull Call<List<QuoteResponse>> call, @NotNull Throwable t) {
-                Log.d(TAG, "onFailure: " ,  t);
+                Log.d(TAG, "onFailure: ", t);
             }
         });
         return mutableLiveData;

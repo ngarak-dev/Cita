@@ -6,6 +6,6 @@
         android:icon="@drawable/ic_round_info"
         android:title="@string/info"
         android:visible="true"
-        app:showAsAction="always"/>
+        app:showAsAction="always" />
 
 </menu>

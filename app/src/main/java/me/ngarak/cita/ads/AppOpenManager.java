@@ -23,10 +23,10 @@ import java.util.Date;
 
 import static androidx.lifecycle.Lifecycle.Event.ON_START;
 
-public class AppOpenManager implements LifecycleObserver, Application.ActivityLifecycleCallbacks{
-    private final String TAG = getClass().getSimpleName();
+public class AppOpenManager implements LifecycleObserver, Application.ActivityLifecycleCallbacks {
     private static final String AD_UNIT_ID = "ca-app-pub-5358676928061541/7549391494";
     private static boolean isShowingAd = false;
+    private final String TAG = getClass().getSimpleName();
     private final MyApplication myApplication;
     private AppOpenAd appOpenAd = null;
     private AppOpenAd.AppOpenAdLoadCallback loadCallback;
