@@ -1,14 +1,16 @@
 package me.ngarak.cita.ui;
 
+import android.Manifest;
 import android.app.ProgressDialog;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -34,11 +36,15 @@ import org.jetbrains.annotations.NotNull;
 import me.ngarak.cita.R;
 import me.ngarak.cita.adapters.AutoScroll;
 import me.ngarak.cita.adapters.QuotesRVAdapter;
+import me.ngarak.cita.ads.QuoteRewardAd;
 import me.ngarak.cita.ads.SupportAd;
 import me.ngarak.cita.databinding.ActivityQuoteByAnimeBinding;
-import me.ngarak.cita.databinding.LayoutBottomSheetBinding;
+import me.ngarak.cita.databinding.LayoutBgBottomSheetBinding;
 import me.ngarak.cita.models.QuoteResponse;
+import me.ngarak.cita.perm;
 import me.ngarak.cita.ui.quotes.QuotesViewModel;
+import me.ngarak.layout_image.ActionListeners;
+import me.ngarak.layout_image.ViewToImage;
 
 public class QuoteByAnimeActivity extends AppCompatActivity {
 
@@ -52,11 +58,16 @@ public class QuoteByAnimeActivity extends AppCompatActivity {
     private int maxPages = 200;
     private int onErrorPage;
 
+    private SharedPreferences preferences;
+    private BottomSheetDialog bottomSheetDialog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityQuoteByAnimeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        preferences = getSharedPreferences("quote_views", Context.MODE_PRIVATE);
 
         quotesRecyclerView = findViewById(R.id.random_rv);
 
@@ -127,34 +138,110 @@ public class QuoteByAnimeActivity extends AppCompatActivity {
 
     private void openBottomSheet(QuoteResponse quoteResponse) {
         BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(this);
-        LayoutBottomSheetBinding binding = LayoutBottomSheetBinding.inflate(LayoutInflater.from(this));
-        bottomSheetDialog.setContentView(binding.getRoot());
+//        LayoutBottomSheetBinding binding = LayoutBottomSheetBinding.inflate(LayoutInflater.from(this));
+        LayoutBgBottomSheetBinding bg_binding = LayoutBgBottomSheetBinding.inflate(LayoutInflater.from(this));
+        bottomSheetDialog.setContentView(bg_binding.getRoot());
 
-        binding.setQuote(quoteResponse);
+        bg_binding.setQuote(quoteResponse);
         bottomSheetDialog.show();
 
         /*show ad*/
         AdRequest adRequest = new AdRequest.Builder().build();
-        binding.adView.loadAd(adRequest);
-        binding.adView.setAdListener(new AdListener() {
+        bg_binding.adView.loadAd(adRequest);
+        bg_binding.adView.setAdListener(new AdListener() {
             @Override
             public void onAdFailedToLoad(@NonNull @NotNull LoadAdError loadAdError) {
                 super.onAdFailedToLoad(loadAdError);
                 /*dismiss view on AdLoadError*/
                 loadAdError.getResponseInfo();
-                binding.adView.setVisibility(View.GONE);
             }
         });
 
-        binding.copyBtn.setOnClickListener(v -> {
-            ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-            ClipData clip = ClipData.newPlainText(getString(R.string.app_name), quoteResponse.getQuote());
-            clipboard.setPrimaryClip(clip);
-
-            binding.copyBtn.setIconTint(ColorStateList.valueOf(Color.GREEN));
-            Toast.makeText(this, "Quote Copied", Toast.LENGTH_SHORT).show();
+        bg_binding.saveQuoteBtn.setOnClickListener(v -> {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+                    Log.e(TAG, "REWARD: " + preferences.getInt("quote_views", 0) );
+                    if (preferences.getInt("quote_views", 0) > 0) {
+                        saveLayout(bg_binding);
+                    }
+                    else {
+                        showDialog(bg_binding);
+                    }
+                }
+                else {
+                    new perm().reQuestStorage(QuoteByAnimeActivity.this);
+                }
+            }
         });
     }
+
+    private void showDialog(LayoutBgBottomSheetBinding bg_binding) {
+        AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
+
+        LayoutInflater inflater = this.getLayoutInflater();
+        View dialogView = inflater.inflate(R.layout.layout_ad_consent, null);
+        dialogBuilder.setView(dialogView);
+
+        MaterialButton showAd = dialogView.findViewById(R.id.showAd);
+        MaterialButton getReward = dialogView.findViewById(R.id.getReward);
+
+        AlertDialog alertDialog = dialogBuilder.create();
+        alertDialog.show();
+
+        showAd.setOnClickListener(v -> {
+            showAdFirst(false, bg_binding);
+        });
+
+        getReward.setOnClickListener(v -> {
+            showAdFirst(true, bg_binding);
+        });
+    }
+
+    private void showAdFirst(boolean reward, LayoutBgBottomSheetBinding bg_binding) {
+        ProgressDialog progressDialog = new ProgressDialog(this);
+        progressDialog.setCancelable(false);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setMessage("Loading");
+        progressDialog.show();
+
+        Log.d(TAG, "Show Ad");
+        new QuoteRewardAd().loadAd(this, progressDialog, QuoteByAnimeActivity.this, reward);
+
+        if (reward) {
+            new Handler().postDelayed(() -> {
+                if (new QuoteRewardAd().isRewarded()) {
+                    /*after reward save layout*/
+                    saveLayout(bg_binding);
+                }
+            }, 3000);
+        }
+        else {
+            saveLayout(bg_binding);
+        }
+    }
+
+    private void saveLayout (LayoutBgBottomSheetBinding bg_binding) {
+        new ViewToImage(this, bg_binding.toBeConverted, new ActionListeners() {
+            @Override
+            public void convertedWithSuccess(Bitmap bitmap, String filePath, String absolutePath) {
+                Toast.makeText(QuoteByAnimeActivity.this, "Quote saved " + filePath, Toast.LENGTH_SHORT).show();
+
+                preferences.edit().putInt("quote_views", preferences.getInt("quote_views", 0) - 1).apply();
+                bottomSheetDialog.dismiss();
+
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.setType("image/jpeg");
+                intent.putExtra(Intent.EXTRA_STREAM, Uri.parse(absolutePath));
+                startActivity(Intent.createChooser(intent, "Share Quote"));
+            }
+
+            @Override
+            public void convertedWithError(String error) {
+                Toast.makeText(QuoteByAnimeActivity.this, "Error :" + error, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
 
     private void retrieveQuotesByAnime(int page) {
         Log.d(TAG, "retrieveQuotesByAnime() called with: page = [" + page + "]");

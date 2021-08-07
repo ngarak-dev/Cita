@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="10dp">
+
+    <TextView
+        android:id="@+id/text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="5dp"
+        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        android:text="@string/text_4" />
+
+    <TextView
+        android:id="@+id/animechan"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawablePadding="10dp"
+        android:gravity="center_vertical"
+        android:padding="5dp"
+        android:text="Anime Chan"
+        android:textStyle="bold"
+        app:drawableStartCompat="@drawable/ic_github" />
+
+    <TextView
+        android:id="@+id/cita"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:drawablePadding="10dp"
+        android:gravity="center_vertical"
+        android:padding="5dp"
+        android:text="Cita"
+        android:textStyle="bold"
+        app:drawableStartCompat="@drawable/ic_github" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/showAd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        app:icon="@drawable/ic_cita_small" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/getReward"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Reward to quotes without ads"
+        android:textAllCaps="false"/>
+
+</LinearLayout>

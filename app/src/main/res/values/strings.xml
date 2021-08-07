@@ -19,4 +19,5 @@
     <string name="info_1">An android application for free quotes from over 600 anime movies and series</string>
     <string name="info_2">This application was made possible by consuming REST API from Rocktim.</string>
     <string name="info_3">Buy us a cup of coffee from project repo and do not forget to Support this development by clicking below cita button to view an Ad</string>
+    <string name="text_4">View an Advert and save up to more than 5 quotes without viewing an Advert again \nOr click Cita button and view an Advert every time you save a quote</string>
 </resources>

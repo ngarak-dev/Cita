@@ -64,8 +64,6 @@ public class AnimeFragment extends Fragment {
             @Override
             public void onAdFailedToLoad(@NonNull @NotNull LoadAdError loadAdError) {
                 super.onAdFailedToLoad(loadAdError);
-                /*dismiss view on AdLoadError*/
-                binding.adView.setVisibility(View.GONE);
             }
         });
     }

@@ -24,6 +24,7 @@ import com.google.firebase.analytics.FirebaseAnalytics;
 import me.ngarak.cita.R;
 import me.ngarak.cita.ads.SupportAd;
 import me.ngarak.cita.databinding.ActivityMainBinding;
+import me.ngarak.cita.perm;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -47,6 +48,8 @@ public class MainActivity extends AppCompatActivity {
         /*setup navigation using nav controller UI*/
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment_activity_main);
         NavigationUI.setupWithNavController(binding.navView, navController);
+
+        new perm().reQuestStorage(MainActivity.this);
     }
 
     @Override
