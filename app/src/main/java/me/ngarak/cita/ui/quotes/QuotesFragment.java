@@ -39,6 +39,7 @@ public class QuotesFragment extends Fragment {
     private FragmentQuotesBinding binding;
     private QuotesRVAdapter quotesRVAdapter;
     private int maxPages = 200;
+    private int onErrorPage;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -61,17 +62,32 @@ public class QuotesFragment extends Fragment {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView recyclerView) {
                 quotesRecyclerView = recyclerView;
-
-                if ((page + 1) < maxPages) {
-                    retrieveQuotes(page + 1);
-                } else {
-                    /*End of Pages*/
-                    Toast.makeText(requireContext(), "End of Quotes", Toast.LENGTH_LONG).show();
-                }
+                loadPage(page + 1);
             }
         });
 
         retrieveQuotes(currentPage);
+
+        binding.layoutError.reloadPage.setOnClickListener(v -> {
+            if (quotesRVAdapter.getQuoteList() != null) {
+                quotesRVAdapter.getQuoteList().clear();
+                quotesRVAdapter.notifyDataSetChanged();
+            }
+            settingUpAdapter();
+            retrieveQuotes(currentPage);
+            loadSmartAd();
+        });
+
+        binding.loadMoreBtn.setOnClickListener(v -> loadPage(onErrorPage));
+    }
+
+    private void loadPage(int page) {
+        if (page < maxPages) {
+            retrieveQuotes(page);
+        } else {
+            /*End of Pages*/
+            Toast.makeText(requireContext(), "End of Quotes", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void settingUpAdapter() {
@@ -129,25 +145,92 @@ public class QuotesFragment extends Fragment {
         Log.d(TAG, "retrieveQuotes() called with: page = [" + page + "]");
         if (page == 1) {
             new QuotesViewModel().getQuotes(page).observe(getViewLifecycleOwner(), quoteResponses -> {
-                if (quoteResponses != null && !quoteResponses.isEmpty()) {
-                    quotesRVAdapter.setQuoteList(quoteResponses);
 
+                boolean isErrorCode = false, isThrowable = false;
+
+                for (QuoteResponse quoteResponse : quoteResponses) {
+                    if (quoteResponse.getError_code() >= 300) {
+                        Log.e(TAG, "randomQuotes: Error" );
+                        isErrorCode = true;
+                    }
+
+                    if (quoteResponse.getThrowable() != null) {
+                        Log.e(TAG, "randomQuotes: Throwable" );
+                        isThrowable = true;
+                    }
+                }
+
+                if (isErrorCode) {
+                    //return Error
+                    binding.layoutError.getRoot().setVisibility(View.VISIBLE);
+                    binding.quotesRv.setVisibility(View.INVISIBLE);
+                    binding.progressBar.setVisibility(View.INVISIBLE);
+                }
+                else if (isThrowable) {
+                    //return throwable
+                    binding.layoutError.getRoot().setVisibility(View.VISIBLE);
+                    binding.quotesRv.setVisibility(View.INVISIBLE);
+                    binding.progressBar.setVisibility(View.INVISIBLE);
+                }
+                else if (quoteResponses == null) {
+                    binding.layoutError.getRoot().setVisibility(View.VISIBLE);
+                    binding.quotesRv.setVisibility(View.INVISIBLE);
+                    binding.progressBar.setVisibility(View.INVISIBLE);
+                }
+                else {
+                    //return quotes
+                    Log.d(TAG, "randomQuotes() returned: " + quoteResponses.size());
+                    quotesRVAdapter.setQuoteList(quoteResponses);
                     binding.progressBar.setVisibility(View.GONE);
                     binding.quotesRv.setVisibility(View.VISIBLE);
+
+                    binding.layoutError.getRoot().setVisibility(View.GONE);
                 }
             });
         } else {
             binding.progressLoadMore.setVisibility(View.VISIBLE);
 
             new QuotesViewModel().getQuotes(page).observe(getViewLifecycleOwner(), quoteResponses -> {
-                if (quoteResponses != null && !quoteResponses.isEmpty()) {
+
+                boolean isErrorCode = false, isThrowable = false;
+
+                for (QuoteResponse quoteResponse : quoteResponses) {
+                    if (quoteResponse.getError_code() >= 300) {
+                        Log.e(TAG, "randomQuotes: Error" );
+                        isErrorCode = true;
+                        onErrorPage = page;
+                    }
+
+                    if (quoteResponse.getThrowable() != null) {
+                        Log.e(TAG, "randomQuotes: Throwable" );
+                        isThrowable = true;
+                        onErrorPage = page;
+                    }
+                }
+
+                if (isErrorCode) {
+                    //return Error
+                    binding.loadMoreBtn.setVisibility(View.VISIBLE);
+                    binding.progressLoadMore.setVisibility(View.GONE);
+                }
+                else if (isThrowable) {
+                    //return throwable
+                    binding.loadMoreBtn.setVisibility(View.VISIBLE);
+                    binding.progressLoadMore.setVisibility(View.GONE);
+                }
+                else if (quoteResponses == null) {
+                    binding.loadMoreBtn.setVisibility(View.VISIBLE);
+                    binding.progressLoadMore.setVisibility(View.GONE);
+                }
+                else {
+                    //return quotes
                     quotesRVAdapter.setQuoteList(quoteResponses);
 
                     /*checking list size then set last page*/
                     if (quoteResponses.size() < 10) {
                         maxPages = page;
                     }
-
+                    binding.loadMoreBtn.setVisibility(View.GONE);
                     binding.progressLoadMore.setVisibility(View.GONE);
                 }
             });

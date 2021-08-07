@@ -1,5 +1,6 @@
 package me.ngarak.cita.ui;
 
+import android.app.ProgressDialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
@@ -22,13 +23,9 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.FullScreenContentCallback;
 import com.google.android.gms.ads.LoadAdError;
-import com.google.android.gms.ads.interstitial.InterstitialAd;
-import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 
@@ -37,6 +34,7 @@ import org.jetbrains.annotations.NotNull;
 import me.ngarak.cita.R;
 import me.ngarak.cita.adapters.AutoScroll;
 import me.ngarak.cita.adapters.QuotesRVAdapter;
+import me.ngarak.cita.ads.SupportAd;
 import me.ngarak.cita.databinding.ActivityQuoteByAnimeBinding;
 import me.ngarak.cita.databinding.LayoutBottomSheetBinding;
 import me.ngarak.cita.models.QuoteResponse;
@@ -52,7 +50,7 @@ public class QuoteByAnimeActivity extends AppCompatActivity {
     private ActivityQuoteByAnimeBinding binding;
     private QuotesRVAdapter quotesRVAdapter;
     private int maxPages = 200;
-    private InterstitialAd interstitialAd;
+    private int onErrorPage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -78,20 +76,34 @@ public class QuoteByAnimeActivity extends AppCompatActivity {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView recyclerView) {
                 quotesRecyclerView = recyclerView;
-
-                if ((page + 1) < maxPages) {
-                    retrieveQuotesByAnime(page + 1);
-                } else {
-                    Log.d(TAG, "onLoadMore() called with: page = [" + page + "], totalItemsCount = [" + totalItemsCount + "]");
-                    /*End of Pages*/
-//                    Toast.makeText(QuoteByAnimeActivity.this, "End of Quotes", Toast.LENGTH_LONG).show();
-                }
+                loadPage(page + 1);
             }
         });
 
         retrieveQuotesByAnime(currentPage);
 
+        binding.layoutError.reloadPage.setOnClickListener(v -> {
+            if (quotesRVAdapter.getQuoteList() != null) {
+                quotesRVAdapter.getQuoteList().clear();
+                quotesRVAdapter.notifyDataSetChanged();
+            }
+            settingUpAdapter();
+            retrieveQuotesByAnime(currentPage);
+            loadSmartAd();
+        });
+
+        binding.loadMoreBtn.setOnClickListener(v -> loadPage(onErrorPage));
+
         binding.toolBar.setNavigationOnClickListener(v -> onBackPressed());
+    }
+
+    private void loadPage(int page) {
+        if (page < maxPages) {
+            retrieveQuotesByAnime(page);
+        } else {
+            /*End of Pages*/
+            Toast.makeText(QuoteByAnimeActivity.this, "End of Quotes", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void loadSmartAd() {
@@ -145,9 +157,45 @@ public class QuoteByAnimeActivity extends AppCompatActivity {
     }
 
     private void retrieveQuotesByAnime(int page) {
+        Log.d(TAG, "retrieveQuotesByAnime() called with: page = [" + page + "]");
+
         if (page == 1) {
             new QuotesViewModel().getQuotesByAnime(anime, page).observe(this, quoteResponses -> {
-                if (quoteResponses != null && !quoteResponses.isEmpty()) {
+
+                boolean isErrorCode = false, isThrowable = false;
+
+                for (QuoteResponse quoteResponse : quoteResponses) {
+                    if (quoteResponse.getError_code() >= 300) {
+                        Log.e(TAG, "randomQuotes: Error" );
+                        isErrorCode = true;
+                    }
+
+                    if (quoteResponse.getThrowable() != null) {
+                        Log.e(TAG, "randomQuotes: Throwable" );
+                        isThrowable = true;
+                    }
+                }
+
+                if (isErrorCode) {
+                    //return Error
+                    binding.layoutError.getRoot().setVisibility(View.VISIBLE);
+                    binding.quotesRv.setVisibility(View.INVISIBLE);
+                    binding.progressBar.setVisibility(View.INVISIBLE);
+                }
+                else if (isThrowable) {
+                    //return throwable
+                    binding.layoutError.getRoot().setVisibility(View.VISIBLE);
+                    binding.quotesRv.setVisibility(View.INVISIBLE);
+                    binding.progressBar.setVisibility(View.INVISIBLE);
+                }
+                else if (quoteResponses == null) {
+                    binding.layoutNoQuotes.getRoot().setVisibility(View.VISIBLE);
+                    binding.quotesRv.setVisibility(View.INVISIBLE);
+                    binding.progressBar.setVisibility(View.INVISIBLE);
+                }
+                else {
+                    //return quotes
+                    Log.d(TAG, "randomQuotes() returned: " + quoteResponses.size());
                     quotesRVAdapter.setQuoteList(quoteResponses);
 
                     /*checking list size then set last page*/
@@ -157,20 +205,57 @@ public class QuoteByAnimeActivity extends AppCompatActivity {
 
                     binding.progressBar.setVisibility(View.GONE);
                     binding.quotesRv.setVisibility(View.VISIBLE);
+
+                    binding.layoutError.getRoot().setVisibility(View.GONE);
+                    binding.layoutNoQuotes.getRoot().setVisibility(View.GONE);
                 }
             });
-        } else {
+        }
+        else {
             binding.progressLoadMore.setVisibility(View.VISIBLE);
 
             new QuotesViewModel().getQuotesByAnime(anime, page).observe(this, quoteResponses -> {
-                if (quoteResponses != null && !quoteResponses.isEmpty()) {
+
+                boolean isErrorCode = false, isThrowable = false;
+
+                for (QuoteResponse quoteResponse : quoteResponses) {
+                    if (quoteResponse.getError_code() >= 300) {
+                        Log.e(TAG, "randomQuotes: Error" );
+                        isErrorCode = true;
+                        onErrorPage = page;
+                    }
+
+                    if (quoteResponse.getThrowable() != null) {
+                        Log.e(TAG, "randomQuotes: Throwable" );
+                        isThrowable = true;
+                        onErrorPage = page;
+                    }
+                }
+
+                if (isErrorCode) {
+                    //return Error
+                    binding.loadMoreBtn.setVisibility(View.VISIBLE);
+                    binding.progressLoadMore.setVisibility(View.GONE);
+                }
+                else if (isThrowable) {
+                    //return throwable
+                    binding.loadMoreBtn.setVisibility(View.VISIBLE);
+                    binding.progressLoadMore.setVisibility(View.GONE);
+                }
+                else if (quoteResponses == null) {
+                    //null list
+                    binding.loadMoreBtn.setVisibility(View.VISIBLE);
+                    binding.progressLoadMore.setVisibility(View.GONE);
+                }
+                else {
+                    //return quotes
                     quotesRVAdapter.setQuoteList(quoteResponses);
 
                     /*checking list size then set last page*/
                     if (quoteResponses.size() < 10) {
                         maxPages = page;
                     }
-
+                    binding.loadMoreBtn.setVisibility(View.GONE);
                     binding.progressLoadMore.setVisibility(View.GONE);
                 }
             });
@@ -195,8 +280,6 @@ public class QuoteByAnimeActivity extends AppCompatActivity {
     }
 
     private void onAboutDialog() {
-        loadAd();
-
         AlertDialog.Builder dialogBuilder = new AlertDialog.Builder(this);
 
         LayoutInflater inflater = this.getLayoutInflater();
@@ -206,7 +289,7 @@ public class QuoteByAnimeActivity extends AppCompatActivity {
         MaterialButton showAdd = dialogView.findViewById(R.id.showAd);
         TextView animechan = dialogView.findViewById(R.id.animechan);
         TextView cita = dialogView.findViewById(R.id.cita);
-        showAdd.setOnClickListener(v -> showInterstitial());
+        showAdd.setOnClickListener(v -> attemptToShowAd ());
 
         animechan.setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse("https://github.com/rocktimsaikia/anime-chan"))));
         cita.setOnClickListener(v -> startActivity(new Intent(Intent.ACTION_VIEW).setData(Uri.parse("https://github.com/Ngara-K/Cita"))));
@@ -215,55 +298,14 @@ public class QuoteByAnimeActivity extends AppCompatActivity {
         alertDialog.show();
     }
 
-    public void loadAd() {
-        InterstitialAd.load(this, getString(R.string.SUPPORT_AD_UNIT), adRequest, new InterstitialAdLoadCallback() {
-            @Override
-            public void onAdLoaded(@NonNull InterstitialAd mInterstitialAd) {
-                // The mInterstitialAd reference will be null until
-                // an ad is loaded.
-                interstitialAd = mInterstitialAd;
+    private void attemptToShowAd() {
+        ProgressDialog progressDialog = new ProgressDialog(QuoteByAnimeActivity.this);
+        progressDialog.setCancelable(false);
+        progressDialog.setCanceledOnTouchOutside(false);
+        progressDialog.setMessage("Loading");
+        progressDialog.show();
 
-                interstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
-                    @Override
-                    public void onAdDismissedFullScreenContent() {
-                        // Called when fullscreen content is dismissed.
-                        Log.d("TAG", "The ad was dismissed.");
-//                        loadAd();
-                        Toast.makeText(QuoteByAnimeActivity.this, "Thank you for support", Toast.LENGTH_SHORT).show();
-                    }
-
-                    @Override
-                    public void onAdFailedToShowFullScreenContent(@NotNull AdError adError) {
-                        // Called when fullscreen content failed to show.
-                        Log.d("TAG", "The ad failed to show.");
-                    }
-
-                    @Override
-                    public void onAdShowedFullScreenContent() {
-                        // Called when fullscreen content is shown.
-                        // Make sure to set your reference to null so you don't
-                        // show it a second time.
-                        interstitialAd = null;
-                        Log.d("TAG", "The ad was shown.");
-                    }
-                });
-            }
-
-            @Override
-            public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                // Handle the error
-                Log.i(TAG, loadAdError.getMessage());
-                interstitialAd = null;
-            }
-        });
-    }
-
-
-    private void showInterstitial() {
-        if (interstitialAd != null) {
-            interstitialAd.show(QuoteByAnimeActivity.this);
-        } else {
-            Toast.makeText(this, "Failed to load Ad", Toast.LENGTH_SHORT).show();
-        }
+        /*loadAd*/
+        new SupportAd().loadAd(this, progressDialog, QuoteByAnimeActivity.this);
     }
 }

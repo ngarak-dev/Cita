@@ -17,3 +17,7 @@ local.properties
 !/cita.jks
 /cita.jks
 /private_key.pepk
+libs/
+release/app-release.apk
+release/output-metadata.json
+src/main/res/drawable-v24/

@@ -49,7 +49,7 @@ public class RandomFragment extends Fragment {
     public void onViewCreated(@NonNull @NotNull View view, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        setRefreshing();
+        showRefreshing();
 
         settingUpAdapter();
 //        new SupportAd(adRequest).showAd(requireContext());
@@ -58,6 +58,19 @@ public class RandomFragment extends Fragment {
         randomQuotes();
 
         binding.refreshingLayout.setOnRefreshListener(() -> {
+            if (quotesRVAdapter.getQuoteList() != null) {
+                quotesRVAdapter.getQuoteList().clear();
+                quotesRVAdapter.notifyDataSetChanged();
+            }
+            settingUpAdapter();
+            randomQuotes();
+            loadSmartAd();
+        });
+
+        binding.layoutError.reloadPage.setOnClickListener(v -> {
+
+            showRefreshing();
+
             if (quotesRVAdapter.getQuoteList() != null) {
                 quotesRVAdapter.getQuoteList().clear();
                 quotesRVAdapter.notifyDataSetChanged();
@@ -126,25 +139,62 @@ public class RandomFragment extends Fragment {
     }
 
     private void randomQuotes() {
+        binding.layoutError.getRoot().setVisibility(View.GONE);
+
         new RandomViewModel().getQuote().observe(getViewLifecycleOwner(), quoteResponses -> {
-            if (quoteResponses != null && !quoteResponses.isEmpty()) {
+
+            boolean isErrorCode = false, isThrowable = false;
+
+            for (QuoteResponse quoteResponse : quoteResponses) {
+                if (quoteResponse.getError_code() >= 300) {
+                    Log.e(TAG, "randomQuotes: Error" );
+                    isErrorCode = true;
+                }
+
+                if (quoteResponse.getThrowable() != null) {
+                    Log.e(TAG, "randomQuotes: Throwable" );
+                    isThrowable = true;
+                }
+            }
+
+            if (isErrorCode) {
+                //return Error
+                binding.layoutError.getRoot().setVisibility(View.VISIBLE);
+                binding.randomRv.setVisibility(View.INVISIBLE);
+                binding.progressBar.setVisibility(View.INVISIBLE);
+            }
+            else if (isThrowable) {
+                //return throwable
+                binding.layoutError.getRoot().setVisibility(View.VISIBLE);
+                binding.randomRv.setVisibility(View.INVISIBLE);
+                binding.progressBar.setVisibility(View.INVISIBLE);
+            }
+            else if (quoteResponses == null) {
+                binding.layoutNoQuotes.getRoot().setVisibility(View.VISIBLE);
+                binding.randomRv.setVisibility(View.INVISIBLE);
+                binding.progressBar.setVisibility(View.INVISIBLE);
+            }
+            else {
+                //return quotes
                 Log.d(TAG, "randomQuotes() returned: " + quoteResponses.size());
                 quotesRVAdapter.setQuoteList(quoteResponses);
-
                 binding.progressBar.setVisibility(View.GONE);
                 binding.randomRv.setVisibility(View.VISIBLE);
+
+                binding.layoutError.getRoot().setVisibility(View.GONE);
             }
-            stopRefreshing();
+
+            dismissRefreshing();
         });
     }
 
-    private void setRefreshing() {
+    private void showRefreshing() {
         if (!binding.refreshingLayout.isRefreshing()) {
             binding.refreshingLayout.setRefreshing(true);
         }
     }
 
-    private void stopRefreshing() {
+    private void dismissRefreshing() {
         if (binding.refreshingLayout.isRefreshing()) {
             binding.refreshingLayout.setRefreshing(false);
         }

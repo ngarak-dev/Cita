@@ -1,30 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/linearLayout"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:background="@drawable/background"
-        android:gravity="center"
-        android:orientation="horizontal">
+        android:background="?colorButtonNormal">
 
-        <ImageView
-            android:id="@+id/image"
-            android:layout_width="35dp"
-            android:layout_height="35dp"
-            android:contentDescription="@null"
-            android:padding="5dp"
-            android:src="@drawable/ic_anime"
-            app:tint="@color/purple_500" />
-
-        <TextView
-            android:id="@+id/anime_title"
+        <LinearLayout xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/linearLayout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{anime.toString()}" />
+            android:layout_margin="3dp"
+            android:padding="3dp"
+            android:background="@drawable/background"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:id="@+id/image"
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:contentDescription="@null"
+                android:padding="5dp"
+                android:src="@drawable/ic_anime"
+                app:tint="@color/purple_500" />
+
+            <TextView
+                android:id="@+id/anime_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@{anime.toString()}" />
+
+        </LinearLayout>
 
     </LinearLayout>
 

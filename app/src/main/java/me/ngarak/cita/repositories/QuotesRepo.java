@@ -31,17 +31,28 @@ public class QuotesRepo {
         responseCall.enqueue(new Callback<List<QuoteResponse>>() {
             @Override
             public void onResponse(@NotNull Call<List<QuoteResponse>> call, @NotNull Response<List<QuoteResponse>> response) {
-                if (response.isSuccessful()) {
+                if (response.code() == 200) {
                     if (response.body() != null) {
                         responseList.addAll(response.body());
                         mutableLiveData.postValue(responseList);
                     }
+                    else {
+                        //return null / empty body
+                        mutableLiveData.postValue(null);
+                    }
+                }
+                else {
+                    Log.e(TAG, "onResponseCode: " + response.code() );
+                    responseList.add(new QuoteResponse(response.code()));
+                    mutableLiveData.postValue(responseList);
                 }
             }
 
             @Override
-            public void onFailure(@NotNull Call<List<QuoteResponse>> call, @NotNull Throwable t) {
-                Log.d(TAG, "onFailure: ", t);
+            public void onFailure(@NotNull Call<List<QuoteResponse>> call, @NotNull Throwable throwable) {
+                Log.e(TAG, "onFailure: ", throwable.getCause());
+                responseList.add(new QuoteResponse(throwable));
+                mutableLiveData.postValue(responseList);
             }
         });
         return mutableLiveData;
@@ -57,17 +68,28 @@ public class QuotesRepo {
         responseCall.enqueue(new Callback<List<QuoteResponse>>() {
             @Override
             public void onResponse(@NotNull Call<List<QuoteResponse>> call, @NotNull Response<List<QuoteResponse>> response) {
-                if (response.isSuccessful()) {
+                if (response.code() == 200) {
                     if (response.body() != null) {
                         responseList.addAll(response.body());
                         mutableLiveData.postValue(responseList);
                     }
+                    else {
+                        //return null / empty body
+                        mutableLiveData.postValue(null);
+                    }
+                }
+                else {
+                    Log.e(TAG, "onResponseCode: " + response.code() );
+                    responseList.add(new QuoteResponse(response.code()));
+                    mutableLiveData.postValue(responseList);
                 }
             }
 
             @Override
-            public void onFailure(@NotNull Call<List<QuoteResponse>> call, @NotNull Throwable t) {
-                Log.d(TAG, "onFailure: ", t);
+            public void onFailure(@NotNull Call<List<QuoteResponse>> call, @NotNull Throwable throwable) {
+                Log.e(TAG, "onFailure: ", throwable.getCause());
+                responseList.add(new QuoteResponse(throwable));
+                mutableLiveData.postValue(responseList);
             }
         });
         return mutableLiveData;

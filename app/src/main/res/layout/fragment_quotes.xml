@@ -54,8 +54,22 @@
         android:orientation="vertical"
         android:visibility="invisible"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-        app:layout_constraintBottom_toTopOf="@id/progressLoadMore"
+        app:layout_constraintBottom_toTopOf="@id/loadMoreBtn"
         app:layout_constraintTop_toBottomOf="@+id/adView" />
+
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/quotes_rv"
+        android:id="@+id/loadMoreBtn"
+        app:icon="@drawable/ic_restore_page"
+        android:text="Load More"
+        android:textAllCaps="false"
+        android:visibility="gone"
+        style="@style/Widget.MaterialComponents.Button.TextButton"
+        app:layout_constraintBottom_toTopOf="@id/progressLoadMore" />
 
     <ProgressBar
         android:id="@+id/progressLoadMore"
@@ -69,5 +83,16 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/quotes_rv" />
+
+    <include
+        layout="@layout/layout_error"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:id="@+id/layout_error"
+        android:visibility="gone"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
