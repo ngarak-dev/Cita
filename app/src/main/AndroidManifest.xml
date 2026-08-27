@@ -1,12 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="me.ngarak.cita">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <!-- Include required permissions for Google Mobile Ads to run. -->
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
 
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <!-- Only needed on Android 9 (API 28) and below; newer saves use app-scoped storage. -->
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        android:maxSdkVersion="28" />
 
     <application
         android:name=".ads.MyApplication"
@@ -19,6 +22,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Cita">
 
+        <!-- Resolve Analytics vs Ads AD_SERVICES_CONFIG conflict -->
+        <property
+            android:name="android.adservices.AD_SERVICES_CONFIG"
+            android:resource="@xml/gma_ad_services_config"
+            tools:replace="android:resource" />
+
         <!--
             Adding this meta data is required as of Google Mobile Ads SDK version 17.0.0 as explained in
             https://developers.google.com/ad-manager/mobile-ads-sdk/android/quick-start#update_your_androidmanifestxml
@@ -27,11 +36,6 @@
             android:name="com.google.android.gms.ads.AD_MANAGER_APP"
             android:value="true" />
 
-        <!-- Include the AdActivity configChanges and theme. -->
-        <activity
-            android:name="com.google.android.gms.ads.AdActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
-            android:theme="@android:style/Theme.Translucent" />
         <!--
         This is the sample AdMob App ID. Insert your own AdMob App ID in quotes
         https://googlemobileadssdk.page.link/admob-android-update-manifest
@@ -42,14 +46,17 @@
 
         <activity
             android:name=".ui.QuoteByAnimeActivity"
+            android:exported="false"
             android:hardwareAccelerated="true"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.MainActivity"
+            android:exported="false"
             android:hardwareAccelerated="true"
             android:screenOrientation="portrait" />
         <activity
             android:name=".ui.SplashActivity"
+            android:exported="true"
             android:hardwareAccelerated="false"
             android:screenOrientation="portrait">
             <intent-filter>

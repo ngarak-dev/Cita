@@ -121,19 +121,18 @@ public class RandomFragment extends Fragment {
         });
 
         bg_binding.saveQuoteBtn.setOnClickListener(v -> {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (requireContext().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                    Log.e(TAG, "REWARD: " + preferences.getInt("quote_views", 0) );
-                    if (preferences.getInt("quote_views", 0) > 0) {
-                        saveLayout(bg_binding);
-                    }
-                    else {
-                        showDialog(bg_binding);
-                    }
+            perm storagePerm = new perm();
+            boolean canWrite = !storagePerm.needsStoragePermission()
+                    || requireContext().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+            if (canWrite) {
+                Log.e(TAG, "REWARD: " + preferences.getInt("quote_views", 0));
+                if (preferences.getInt("quote_views", 0) > 0) {
+                    saveLayout(bg_binding);
+                } else {
+                    showDialog(bg_binding);
                 }
-                else {
-                    new perm().reQuestStorage(requireActivity());
-                }
+            } else {
+                storagePerm.reQuestStorage(requireActivity());
             }
         });
     }

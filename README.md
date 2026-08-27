@@ -26,6 +26,9 @@ Cita in Spanish, Quote in English.
 
 <br/>
 
+### Privacy &amp; Usage
+Read the [Privacy Policy &amp; Usage](docs/privacy-and-usage.html) page for how Cita handles data, ads, permissions, and app use.
+
 ### About
 This application was made possible by consuming REST API from <a href="https://github.com/RocktimSaikia/anime-chan">Rocktim</a>. Such a great API, do not forget to give this repositories a shining star.
 <br/>

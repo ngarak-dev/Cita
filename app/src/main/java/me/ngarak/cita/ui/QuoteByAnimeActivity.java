@@ -158,19 +158,18 @@ public class QuoteByAnimeActivity extends AppCompatActivity {
         });
 
         bg_binding.saveQuoteBtn.setOnClickListener(v -> {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
-                    Log.e(TAG, "REWARD: " + preferences.getInt("quote_views", 0) );
-                    if (preferences.getInt("quote_views", 0) > 0) {
-                        saveLayout(bg_binding);
-                    }
-                    else {
-                        showDialog(bg_binding);
-                    }
+            perm storagePerm = new perm();
+            boolean canWrite = !storagePerm.needsStoragePermission()
+                    || checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED;
+            if (canWrite) {
+                Log.e(TAG, "REWARD: " + preferences.getInt("quote_views", 0));
+                if (preferences.getInt("quote_views", 0) > 0) {
+                    saveLayout(bg_binding);
+                } else {
+                    showDialog(bg_binding);
                 }
-                else {
-                    new perm().reQuestStorage(QuoteByAnimeActivity.this);
-                }
+            } else {
+                storagePerm.reQuestStorage(QuoteByAnimeActivity.this);
             }
         });
     }

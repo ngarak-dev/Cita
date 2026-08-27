@@ -17,6 +17,9 @@ local.properties
 !/cita.jks
 /cita.jks
 /private_key.pepk
+/upload-keystore.jks
+/upload_certificate.pem
+/keystore.properties
 libs/
 release/app-release.apk
 release/output-metadata.json

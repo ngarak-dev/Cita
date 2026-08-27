@@ -3,8 +3,8 @@ package me.ngarak.layout_image;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.os.Build;
 import android.os.Environment;
-import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -76,9 +76,15 @@ public class ViewToImage {
 
 
     private void saveTheImage(Bitmap finalBitmap, String fileName) {
+        File myDir;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            File pictures = context.getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+            myDir = pictures != null ? new File(pictures, folderName) : new File(context.getFilesDir(), folderName);
+        } else {
+            String root = Environment.getExternalStorageDirectory().toString();
+            myDir = new File(root + "/" + folderName);
+        }
 
-        String root = Environment.getExternalStorageDirectory().toString();
-        File myDir = new File(root + "/" + folderName);
         if (!myDir.exists()) {
             myDir.mkdirs();
         }
