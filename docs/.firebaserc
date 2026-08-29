@@ -1,5 +1,15 @@
 {
   "projects": {
     "default": "privacy-policies-7d2d5"
-  }
+  },
+  "targets": {
+    "privacy-policies-7d2d5": {
+      "hosting": {
+        "privacy": [
+          "privacy-policies-7d2d5"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }
