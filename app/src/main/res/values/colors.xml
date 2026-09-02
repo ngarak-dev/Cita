@@ -1,11 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="purple_200">#B2B1B9</color>
-    <color name="purple_500">#2C2E43</color>
-    <color name="purple_700">#03031C</color>
-    <color name="teal_200">#FFD523</color>
-    <color name="teal_700">#D3A720</color>
+    <!-- Brand tokens: charcoal + yellow -->
+    <color name="brand_charcoal">#2C2E43</color>
+    <color name="brand_charcoal_deep">#03031C</color>
+    <color name="brand_charcoal_muted">#B2B1B9</color>
+    <color name="brand_yellow">#FFD523</color>
+    <color name="brand_yellow_dark">#D3A720</color>
+
+    <!-- Surfaces -->
+    <color name="surface_light">#FFFFFFFF</color>
+    <color name="surface_dark">#1C1D2A</color>
+    <color name="background_light">#FFFFFFFF</color>
+    <color name="background_dark">#0A0A12</color>
+
+    <!-- On-surface / content -->
+    <color name="on_surface_light">#2C2E43</color>
+    <color name="on_surface_dark">#F5F5F7</color>
+
+    <!-- Error -->
+    <color name="brand_error">#B00020</color>
+    <color name="brand_error_dark">#CF6679</color>
+
+    <!-- Legacy aliases (keep other modules working) -->
+    <color name="purple_200">@color/brand_charcoal_muted</color>
+    <color name="purple_500">@color/brand_charcoal</color>
+    <color name="purple_700">@color/brand_charcoal_deep</color>
+    <color name="teal_200">@color/brand_yellow</color>
+    <color name="teal_700">@color/brand_yellow_dark</color>
+
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="action_bar">#FFFFFFFF</color>
+    <color name="action_bar">@color/surface_light</color>
 </resources>

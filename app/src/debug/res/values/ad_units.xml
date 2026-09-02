@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--
+      Debug-only Google sample ad units so ads can be verified while the
+      AdMob account / live inventory is not ready. Release builds keep
+      the live IDs from src/main/res/values/strings.xml.
+      Docs: https://developers.google.com/admob/android/test-ads
+    -->
+    <string name="admob_app_id" translatable="false">ca-app-pub-3940256099942544~3347511713</string>
+    <string name="SUPPORT_AD_UNIT" translatable="false">ca-app-pub-3940256099942544/1033173712</string>
+    <string name="AFTER_QUOTE_VIEW" translatable="false">ca-app-pub-3940256099942544/5354046379</string>
+    <string name="ON_APP_OPEN" translatable="false">ca-app-pub-3940256099942544/9257395921</string>
+    <string name="SMART_BANNER_AD_UNIT" translatable="false">ca-app-pub-3940256099942544/6300978111</string>
+</resources>

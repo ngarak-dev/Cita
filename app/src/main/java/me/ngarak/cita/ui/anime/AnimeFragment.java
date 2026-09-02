@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 
 import com.google.android.gms.ads.AdListener;
@@ -27,6 +28,7 @@ public class AnimeFragment extends Fragment {
     private final String TAG = getClass().getSimpleName();
     private FragmentAnimeBinding binding;
     private AnimeRVAdapter animeRVAdapter;
+    private AnimeViewModel animeViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -39,9 +41,18 @@ public class AnimeFragment extends Fragment {
     public void onViewCreated(@NonNull @NotNull View view, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        animeViewModel = new ViewModelProvider(this).get(AnimeViewModel.class);
         prepareRVAdapter();
         loadSmartAd();
         loadAnime();
+
+        binding.layoutError.reloadPage.setOnClickListener(v -> {
+            binding.layoutError.getRoot().setVisibility(View.GONE);
+            binding.progressBar.setVisibility(View.VISIBLE);
+            binding.animeRv.setVisibility(View.INVISIBLE);
+            loadAnime();
+            loadSmartAd();
+        });
     }
 
     private void prepareRVAdapter() {
@@ -58,25 +69,43 @@ public class AnimeFragment extends Fragment {
     }
 
     private void loadSmartAd() {
+        binding.adView.setVisibility(View.VISIBLE);
         AdRequest adRequest = new AdRequest.Builder().build();
         binding.adView.loadAd(adRequest);
         binding.adView.setAdListener(new AdListener() {
             @Override
+            public void onAdLoaded() {
+                super.onAdLoaded();
+                Log.i(TAG, "banner loaded");
+                binding.adView.setVisibility(View.VISIBLE);
+            }
+
+            @Override
             public void onAdFailedToLoad(@NonNull @NotNull LoadAdError loadAdError) {
                 super.onAdFailedToLoad(loadAdError);
+                Log.w(TAG, "banner failed code=" + loadAdError.getCode()
+                        + " msg=" + loadAdError.getMessage());
+                binding.adView.setVisibility(View.GONE);
             }
         });
     }
 
     private void loadAnime() {
-        new AnimeViewModel().getAnime().observe(getViewLifecycleOwner(), animeList -> {
+        binding.progressBar.setVisibility(View.VISIBLE);
+        binding.layoutError.getRoot().setVisibility(View.GONE);
+
+        animeViewModel.getAnime().observe(getViewLifecycleOwner(), animeList -> {
+            binding.progressBar.setVisibility(View.GONE);
+
             if (animeList != null && !animeList.isEmpty()) {
                 Log.d(TAG, "loadAnime() returned: " + animeList.size());
-//                animeRVAdapter.setAnimeList(animeList.subList(0, 100));
                 animeRVAdapter.setAnimeList(animeList);
 
-                binding.progressBar.setVisibility(View.GONE);
                 binding.animeRv.setVisibility(View.VISIBLE);
+                binding.layoutError.getRoot().setVisibility(View.GONE);
+            } else {
+                binding.animeRv.setVisibility(View.INVISIBLE);
+                binding.layoutError.getRoot().setVisibility(View.VISIBLE);
             }
         });
     }

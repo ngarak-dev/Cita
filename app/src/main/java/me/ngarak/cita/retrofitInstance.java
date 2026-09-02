@@ -5,12 +5,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class retrofitInstance {
 
-    //BASE URLS
-    /*
-    GITHUB REST API FROM
-    https://github.com/rocktimsaikia/anime-chan
-    */
-    private static final String ANIME_BASE_URL = "https://animechan.vercel.app/api/";
+    // Optional remote API (quotes-api/). The app currently serves quotes from assets/quotes.json.
+    // After deploying quotes-api to Vercel, set this to https://YOUR_PROJECT.vercel.app/api/
+    private static final String ANIME_BASE_URL = "https://cita-quotes-api.vercel.app/api/";
     private static Retrofit retrofit;
 
     public static Retrofit getAnimeInst() {

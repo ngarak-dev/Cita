@@ -24,10 +24,10 @@ import java.util.Date;
 import static androidx.lifecycle.Lifecycle.Event.ON_START;
 
 public class AppOpenManager implements LifecycleObserver, Application.ActivityLifecycleCallbacks {
-    private static final String AD_UNIT_ID = "ca-app-pub-5358676928061541/7549391494";
     private static boolean isShowingAd = false;
     private final String TAG = getClass().getSimpleName();
     private final MyApplication myApplication;
+    private final String adUnitId;
     private AppOpenAd appOpenAd = null;
     private AppOpenAd.AppOpenAdLoadCallback loadCallback;
     private Activity currentActivity;
@@ -39,6 +39,7 @@ public class AppOpenManager implements LifecycleObserver, Application.ActivityLi
      */
     public AppOpenManager(MyApplication myApplication) {
         this.myApplication = myApplication;
+        this.adUnitId = myApplication.getString(me.ngarak.cita.R.string.ON_APP_OPEN);
         this.myApplication.registerActivityLifecycleCallbacks(this);
         ProcessLifecycleOwner.get().getLifecycle().addObserver(this);
     }
@@ -105,18 +106,22 @@ public class AppOpenManager implements LifecycleObserver, Application.ActivityLi
                         super.onAdLoaded(appOpenAd);
                         AppOpenManager.this.appOpenAd = appOpenAd;
                         AppOpenManager.this.loadTime = (new Date()).getTime();
+                        Log.i(TAG, "app open loaded unit=" + adUnitId);
                     }
 
                     @Override
                     public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
                         super.onAdFailedToLoad(loadAdError);
-                        Log.d(TAG, "failed to load");
+                        // 0=internal, 1=invalid request, 2=network, 3=no fill
+                        Log.w(TAG, "app open failed code=" + loadAdError.getCode()
+                                + " msg=" + loadAdError.getMessage()
+                                + " domain=" + loadAdError.getDomain());
                     }
 
                 };
         AdRequest request = getAdRequest();
         AppOpenAd.load(
-                myApplication, AD_UNIT_ID, request,
+                myApplication, adUnitId, request,
                 AppOpenAd.APP_OPEN_AD_ORIENTATION_PORTRAIT, loadCallback);
     }
 

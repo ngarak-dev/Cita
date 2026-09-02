@@ -1,14 +1,13 @@
 package me.ngarak.cita.ads;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentActivity;
+import androidx.annotation.Nullable;
 
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
@@ -23,113 +22,119 @@ import me.ngarak.cita.R;
 
 public class QuoteRewardAd {
 
+    public interface Listener {
+        /** Called when the user earns a reward (reward path). */
+        void onRewardEarned(int amount);
+
+        /**
+         * Called after the ad is dismissed.
+         * @param earnedReward true if a reward was granted during this ad session
+         */
+        void onAdDismissed(boolean earnedReward);
+
+        /** Called when the ad failed to load or show. */
+        void onAdFailed();
+    }
+
     private final String TAG = getClass().getSimpleName();
     private final AdRequest adRequest = new AdRequest.Builder().build();
     private RewardedInterstitialAd rewardAd;
-    int quote_views;
     private boolean rewarded;
     private SharedPreferences pref;
+    @Nullable
+    private Listener listener;
 
-    public void loadAd(Context context, ProgressDialog progressDialog, Activity activity, boolean reward) {
+    public void loadAd(Context context, Activity activity, boolean reward, @NonNull Listener listener) {
+        this.listener = listener;
+        this.rewarded = false;
         pref = context.getSharedPreferences("quote_views", Context.MODE_PRIVATE);
 
-        RewardedInterstitialAd.load(context, context.getString(R.string.AFTER_QUOTE_VIEW), adRequest, new RewardedInterstitialAdLoadCallback() {
-            @Override
-            public void onAdLoaded(@NonNull RewardedInterstitialAd mInterstitialAd) {
-                rewardAd = mInterstitialAd;
-
-                if (reward) {
-                    showRewardedAd(activity);
-                }
-                else {
-                    showAd(activity);
-                }
-                rewardAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+        RewardedInterstitialAd.load(context, context.getString(R.string.AFTER_QUOTE_VIEW), adRequest,
+                new RewardedInterstitialAdLoadCallback() {
                     @Override
-                    public void onAdDismissedFullScreenContent() {
-                        Log.d(TAG, "The ad was dismissed.");
-                        Toast.makeText(context, "Thank you for support", Toast.LENGTH_SHORT).show();
-                        progressDialog.dismiss();
+                    public void onAdLoaded(@NonNull RewardedInterstitialAd mInterstitialAd) {
+                        rewardAd = mInterstitialAd;
+                        rewardAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+                            @Override
+                            public void onAdDismissedFullScreenContent() {
+                                Log.d(TAG, "The ad was dismissed.");
+                                Toast.makeText(context, R.string.thank_you_support, Toast.LENGTH_SHORT).show();
+                                if (QuoteRewardAd.this.listener != null) {
+                                    QuoteRewardAd.this.listener.onAdDismissed(rewarded);
+                                }
+                            }
+
+                            @Override
+                            public void onAdFailedToShowFullScreenContent(@NotNull AdError adError) {
+                                Log.d(TAG, "The ad failed to show.");
+                                rewardAd = null;
+                                notifyFailed(context);
+                            }
+
+                            @Override
+                            public void onAdShowedFullScreenContent() {
+                                rewardAd = null;
+                                Log.d(TAG, "The ad was shown.");
+                            }
+                        });
+
+                        if (reward) {
+                            showRewardedAd(activity);
+                        } else {
+                            showAd(activity);
+                        }
                     }
 
                     @Override
-                    public void onAdFailedToShowFullScreenContent(@NotNull AdError adError) {
-                        // Called when fullscreen content failed to show.
-                        Log.d("TAG", "The ad failed to show.");
-                    }
-
-                    @Override
-                    public void onAdShowedFullScreenContent() {
-                        // Called when fullscreen content is shown.
-                        // Make sure to set your reference to null so you don't show it a second time.
+                    public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                        Log.w(TAG, "rewarded failed code=" + loadAdError.getCode()
+                                + " msg=" + loadAdError.getMessage());
                         rewardAd = null;
-                        Log.d("TAG", "The ad was shown.");
+                        notifyFailed(context);
                     }
                 });
-            }
-
-            @Override
-            public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                Log.i(TAG, loadAdError.getMessage());
-                rewardAd = null;
-                progressDialog.dismiss();
-                Toast.makeText(context, "Ad Failed try again later", Toast.LENGTH_SHORT).show();
-            }
-        });
     }
 
-    public int getQuote_views() {
-        return quote_views;
-    }
-
-    public void setQuote_views(int quote_views) {
-        this.quote_views = quote_views;
-    }
-
-    public boolean isRewarded() {
-        return rewarded;
-    }
-
-    public void setRewarded(boolean rewarded) {
-        this.rewarded = rewarded;
-    }
-
-    public void showAd (FragmentActivity fragmentActivity) {
-        if (rewardAd != null) {
-            rewardAd.show(fragmentActivity, rewardItem -> {
-                quote_views = rewardItem.getAmount();
-                rewarded = true;
-            });
-        }
-        else {
-            Toast.makeText(fragmentActivity, "Failed to load Ad", Toast.LENGTH_SHORT).show();
+    private void notifyFailed(Context context) {
+        Toast.makeText(context, R.string.ad_failed_try_later, Toast.LENGTH_SHORT).show();
+        if (listener != null) {
+            listener.onAdFailed();
         }
     }
 
-    public void showRewardedAd (Activity activity) {
+    public void showAd(Activity activity) {
         if (rewardAd != null) {
             rewardAd.show(activity, rewardItem -> {
-                quote_views = rewardItem.getAmount();
-                pref.edit().putInt("quote_views", pref.getInt("quote_views", 0) + rewardItem.getAmount()).apply();
-                rewarded = true;
-
-                Toast.makeText(activity, "Added more " + rewardItem + " quotes views" , Toast.LENGTH_SHORT).show();
+                // Non-reward path: acknowledge completion via dismiss callback only
             });
-        }
-        else {
-            Toast.makeText(activity, "Failed to load Ad", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(activity, R.string.ad_failed_to_load, Toast.LENGTH_SHORT).show();
+            if (listener != null) {
+                listener.onAdFailed();
+            }
         }
     }
 
-    public void showAd (Activity activity) {
+    public void showRewardedAd(Activity activity) {
         if (rewardAd != null) {
             rewardAd.show(activity, rewardItem -> {
-                quote_views = rewardItem.getAmount();
                 rewarded = true;
+                pref.edit().putInt("quote_views",
+                        pref.getInt("quote_views", 0) + rewardItem.getAmount()).apply();
+
+                Toast.makeText(activity,
+                        activity.getString(R.string.reward_added, rewardItem.getAmount()),
+                        Toast.LENGTH_SHORT).show();
+
+                if (listener != null) {
+                    listener.onRewardEarned(rewardItem.getAmount());
+                }
             });
-        }
-        else {
-            Toast.makeText(activity, "Failed to load Ad", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(activity, R.string.ad_failed_to_load, Toast.LENGTH_SHORT).show();
+            if (listener != null) {
+                listener.onAdFailed();
+            }
         }
     }
 }

@@ -16,9 +16,8 @@ import me.ngarak.cita.models.QuoteResponse;
 
 public class QuotesRVAdapter extends RecyclerView.Adapter<QuotesRVAdapter.QuotesHolder> {
 
-    private final String TAG = getClass().getSimpleName();
     private final QuoteClickListener clickListener;
-    private List<QuoteResponse> quoteList = new ArrayList<>();
+    private final List<QuoteResponse> quoteList = new ArrayList<>();
 
     public QuotesRVAdapter(QuoteClickListener clickListener) {
         this.clickListener = clickListener;
@@ -41,20 +40,32 @@ public class QuotesRVAdapter extends RecyclerView.Adapter<QuotesRVAdapter.Quotes
 
     @Override
     public int getItemCount() {
-        return quoteList != null ? quoteList.size() : 0;
+        return quoteList.size();
     }
 
     public List<QuoteResponse> getQuoteList() {
         return quoteList;
     }
 
-    public void setQuoteList(List<QuoteResponse> quoteList) {
-        if (this.quoteList.isEmpty()) {
-            this.quoteList = quoteList;
+    public void clear() {
+        int size = quoteList.size();
+        if (size == 0) return;
+        quoteList.clear();
+        notifyItemRangeRemoved(0, size);
+    }
+
+    /** Replace list (page 1 / refresh) or append a new page slice. */
+    public void setQuoteList(List<QuoteResponse> pageItems) {
+        if (pageItems == null || pageItems.isEmpty()) {
+            return;
+        }
+        if (quoteList.isEmpty()) {
+            quoteList.addAll(pageItems);
             notifyDataSetChanged();
         } else {
-            this.quoteList.addAll(quoteList);
-            notifyItemInserted(this.quoteList.size() - 1);
+            int oldSize = quoteList.size();
+            quoteList.addAll(pageItems);
+            notifyItemRangeInserted(oldSize, pageItems.size());
         }
     }
 

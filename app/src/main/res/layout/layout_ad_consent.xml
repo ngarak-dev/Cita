@@ -4,51 +4,35 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="10dp">
+    android:padding="@dimen/dialog_padding">
 
     <TextView
         android:id="@+id/text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="5dp"
-        android:textAppearance="@style/TextAppearance.AppCompat.Subhead"
+        android:padding="@dimen/spacing_sm"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Body1"
         android:text="@string/text_4" />
-
-    <TextView
-        android:id="@+id/animechan"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:drawablePadding="10dp"
-        android:gravity="center_vertical"
-        android:padding="5dp"
-        android:text="Anime Chan"
-        android:textStyle="bold"
-        app:drawableStartCompat="@drawable/ic_github" />
-
-    <TextView
-        android:id="@+id/cita"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:drawablePadding="10dp"
-        android:gravity="center_vertical"
-        android:padding="5dp"
-        android:text="Cita"
-        android:textStyle="bold"
-        app:drawableStartCompat="@drawable/ic_github" />
-
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/showAd"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        app:icon="@drawable/ic_cita_small" />
 
     <com.google.android.material.button.MaterialButton
         android:id="@+id/getReward"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Reward to quotes without ads"
-        android:textAllCaps="false"/>
+        android:minHeight="@dimen/touch_target_min"
+        android:layout_marginTop="@dimen/spacing_md"
+        android:text="@string/reward_quotes_without_ads"
+        android:textAllCaps="false" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/showAd"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:minHeight="@dimen/touch_target_min"
+        android:layout_marginTop="@dimen/spacing_sm"
+        android:text="@string/watch_short_ad"
+        android:textAllCaps="false"
+        android:contentDescription="@string/cd_show_support_ad"
+        app:icon="@drawable/ic_cita_small" />
 
 </LinearLayout>

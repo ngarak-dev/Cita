@@ -12,16 +12,16 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <ImageButton
+            <ImageView
                 android:id="@+id/image_btn"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:background="@null"
-                android:contentDescription="@string/random"
+                android:layout_width="@dimen/header_icon_size"
+                android:layout_height="@dimen/header_icon_size"
+                android:importantForAccessibility="no"
+                android:focusable="false"
                 android:src="@drawable/ic_random_quotes"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:tint="@color/teal_700" />
+                app:tint="?attr/colorSecondary" />
 
             <TextView
                 android:id="@+id/title"
@@ -38,15 +38,15 @@
                 android:id="@+id/adView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                ads:adSize="SMART_BANNER"
+                ads:adSize="BANNER"
                 ads:adUnitId="@string/SMART_BANNER_AD_UNIT"
                 ads:layout_constraintTop_toBottomOf="@id/image_btn" />
 
             <ProgressBar
                 android:id="@+id/progressBar"
                 style="@style/Widget.AppCompat.ProgressBar"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
+                android:layout_width="@dimen/progress_size"
+                android:layout_height="@dimen/progress_size"
                 android:indeterminate="true"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -57,7 +57,7 @@
                 android:id="@+id/random_rv"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="@dimen/spacing_xs"
                 android:orientation="vertical"
                 android:visibility="invisible"
                 app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"

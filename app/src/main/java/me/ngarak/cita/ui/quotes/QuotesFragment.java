@@ -1,16 +1,13 @@
 package me.ngarak.cita.ui.quotes;
 
 import android.Manifest;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.Handler;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +18,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.gms.ads.AdListener;
@@ -46,7 +44,6 @@ public class QuotesFragment extends Fragment {
 
     private final String TAG = getClass().getSimpleName();
     private final int currentPage = 1;
-    RecyclerView quotesRecyclerView;
     private FragmentQuotesBinding binding;
     private QuotesRVAdapter quotesRVAdapter;
     private int maxPages = 200;
@@ -54,6 +51,9 @@ public class QuotesFragment extends Fragment {
 
     private SharedPreferences preferences;
     private BottomSheetDialog bottomSheetDialog;
+    private QuoteRewardAd quoteRewardAd;
+    private AlertDialog consentDialog;
+    private QuotesViewModel quotesViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
@@ -67,8 +67,8 @@ public class QuotesFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         preferences = requireContext().getSharedPreferences("quote_views", Context.MODE_PRIVATE);
-
-        quotesRecyclerView = view.findViewById(R.id.random_rv);
+        quoteRewardAd = new QuoteRewardAd();
+        quotesViewModel = new ViewModelProvider(this).get(QuotesViewModel.class);
 
         settingUpAdapter();
 
@@ -77,7 +77,6 @@ public class QuotesFragment extends Fragment {
         binding.quotesRv.addOnScrollListener(new AutoScroll(binding.quotesRv.getLayoutManager()) {
             @Override
             public void onLoadMore(int page, int totalItemsCount, RecyclerView recyclerView) {
-                quotesRecyclerView = recyclerView;
                 loadPage(page + 1);
             }
         });
@@ -86,8 +85,7 @@ public class QuotesFragment extends Fragment {
 
         binding.layoutError.reloadPage.setOnClickListener(v -> {
             if (quotesRVAdapter.getQuoteList() != null) {
-                quotesRVAdapter.getQuoteList().clear();
-                quotesRVAdapter.notifyDataSetChanged();
+                quotesRVAdapter.clear();
             }
             settingUpAdapter();
             retrieveQuotes(currentPage);
@@ -101,8 +99,7 @@ public class QuotesFragment extends Fragment {
         if (page < maxPages) {
             retrieveQuotes(page);
         } else {
-            /*End of Pages*/
-            Toast.makeText(requireContext(), "End of Quotes", Toast.LENGTH_LONG).show();
+            Toast.makeText(requireContext(), R.string.end_of_quotes, Toast.LENGTH_LONG).show();
         }
     }
 
@@ -115,14 +112,12 @@ public class QuotesFragment extends Fragment {
 
     private void openBottomSheet(QuoteResponse quoteResponse) {
         bottomSheetDialog = new BottomSheetDialog(requireContext());
-//        LayoutBottomSheetBinding binding = LayoutBottomSheetBinding.inflate(LayoutInflater.from(requireContext()));
         LayoutBgBottomSheetBinding bg_binding = LayoutBgBottomSheetBinding.inflate(LayoutInflater.from(requireContext()));
         bottomSheetDialog.setContentView(bg_binding.getRoot());
 
         bg_binding.setQuote(quoteResponse);
         bottomSheetDialog.show();
 
-        /*show ad*/
         AdRequest adRequest = new AdRequest.Builder().build();
         bg_binding.adView.loadAd(adRequest);
         bg_binding.adView.setAdListener(new AdListener() {
@@ -155,54 +150,64 @@ public class QuotesFragment extends Fragment {
 
         LayoutInflater inflater = this.getLayoutInflater();
         View dialogView = inflater.inflate(R.layout.layout_ad_consent, null);
+        dialogBuilder.setTitle(R.string.save_options_title);
         dialogBuilder.setView(dialogView);
 
         MaterialButton showAd = dialogView.findViewById(R.id.showAd);
         MaterialButton getReward = dialogView.findViewById(R.id.getReward);
 
-        AlertDialog alertDialog = dialogBuilder.create();
-        alertDialog.show();
+        consentDialog = dialogBuilder.create();
+        consentDialog.show();
 
-        showAd.setOnClickListener(v -> {
-            showAdFirst(false, bg_binding);
-        });
-
-        getReward.setOnClickListener(v -> {
-            showAdFirst(true, bg_binding);
-        });
+        showAd.setOnClickListener(v -> showAdFirst(false, bg_binding));
+        getReward.setOnClickListener(v -> showAdFirst(true, bg_binding));
     }
 
     private void showAdFirst(boolean reward, LayoutBgBottomSheetBinding bg_binding) {
-        ProgressDialog progressDialog = new ProgressDialog(requireContext());
-        progressDialog.setCancelable(false);
-        progressDialog.setCanceledOnTouchOutside(false);
-        progressDialog.setMessage("Loading");
-        progressDialog.show();
+        if (consentDialog != null && consentDialog.isShowing()) {
+            consentDialog.dismiss();
+        }
 
+        Toast.makeText(requireContext(), R.string.loading_ad, Toast.LENGTH_SHORT).show();
         Log.d(TAG, "Show Ad");
-        new QuoteRewardAd().loadAd(requireContext(), progressDialog, requireActivity(), reward);
 
-        if (reward) {
-            new Handler().postDelayed(() -> {
-                if (new QuoteRewardAd().isRewarded()) {
-                    /*after reward save layout*/
+        quoteRewardAd.loadAd(requireContext(), requireActivity(), reward, new QuoteRewardAd.Listener() {
+            @Override
+            public void onRewardEarned(int amount) {
+                // Prefs updated in QuoteRewardAd; save after dismiss
+            }
+
+            @Override
+            public void onAdDismissed(boolean earnedReward) {
+                if (!isAdded()) {
+                    return;
+                }
+                if (reward) {
+                    if (earnedReward) {
+                        saveLayout(bg_binding);
+                    }
+                } else {
                     saveLayout(bg_binding);
                 }
-            }, 3000);
-        }
-        else {
-            saveLayout(bg_binding);
-        }
+            }
+
+            @Override
+            public void onAdFailed() {
+                // Toast already shown by QuoteRewardAd
+            }
+        });
     }
 
-    private void saveLayout (LayoutBgBottomSheetBinding bg_binding) {
+    private void saveLayout(LayoutBgBottomSheetBinding bg_binding) {
         new ViewToImage(requireContext(), bg_binding.toBeConverted, new ActionListeners() {
             @Override
             public void convertedWithSuccess(Bitmap bitmap, String filePath, String absolutePath) {
-                Toast.makeText(requireContext(), "Quote saved " + filePath, Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), getString(R.string.quote_saved, filePath), Toast.LENGTH_SHORT).show();
 
                 preferences.edit().putInt("quote_views", preferences.getInt("quote_views", 0) - 1).apply();
-                bottomSheetDialog.dismiss();
+                if (bottomSheetDialog != null && bottomSheetDialog.isShowing()) {
+                    bottomSheetDialog.dismiss();
+                }
 
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 intent.setType("image/jpeg");
@@ -212,19 +217,30 @@ public class QuotesFragment extends Fragment {
 
             @Override
             public void convertedWithError(String error) {
-                Toast.makeText(requireContext(), "Error :" + error, Toast.LENGTH_SHORT).show();
+                Toast.makeText(requireContext(), getString(R.string.error_prefix, error), Toast.LENGTH_SHORT).show();
             }
         });
     }
 
     private void loadSmartAd() {
+        binding.adView.setVisibility(View.VISIBLE);
         AdRequest adRequest = new AdRequest.Builder().build();
         binding.adView.loadAd(adRequest);
         binding.adView.setAdListener(new AdListener() {
             @Override
+            public void onAdLoaded() {
+                super.onAdLoaded();
+                Log.i(TAG, "banner loaded");
+                binding.adView.setVisibility(View.VISIBLE);
+            }
+
+            @Override
             public void onAdFailedToLoad(@NonNull @NotNull LoadAdError loadAdError) {
                 super.onAdFailedToLoad(loadAdError);
-                loadAdError.getResponseInfo();
+                // 3 = ERROR_CODE_NO_FILL (no inventory) — not a crash / bad App ID
+                Log.w(TAG, "banner failed code=" + loadAdError.getCode()
+                        + " msg=" + loadAdError.getMessage());
+                binding.adView.setVisibility(View.GONE);
             }
         });
     }
@@ -232,89 +248,81 @@ public class QuotesFragment extends Fragment {
     private void retrieveQuotes(int page) {
         Log.d(TAG, "retrieveQuotes() called with: page = [" + page + "]");
         if (page == 1) {
-            new QuotesViewModel().getQuotes(page).observe(getViewLifecycleOwner(), quoteResponses -> {
+            binding.progressBar.setVisibility(View.VISIBLE);
+            binding.layoutError.getRoot().setVisibility(View.GONE);
+            binding.layoutNoQuotes.getRoot().setVisibility(View.GONE);
+
+            quotesViewModel.getQuotes(page).observe(getViewLifecycleOwner(), quoteResponses -> {
 
                 boolean isErrorCode = false, isThrowable = false;
 
-                for (QuoteResponse quoteResponse : quoteResponses) {
-                    if (quoteResponse.getError_code() >= 300) {
-                        Log.e(TAG, "randomQuotes: Error" );
-                        isErrorCode = true;
-                    }
+                if (quoteResponses != null) {
+                    for (QuoteResponse quoteResponse : quoteResponses) {
+                        if (quoteResponse.getError_code() >= 300) {
+                            Log.e(TAG, "randomQuotes: Error");
+                            isErrorCode = true;
+                        }
 
-                    if (quoteResponse.getThrowable() != null) {
-                        Log.e(TAG, "randomQuotes: Throwable" );
-                        isThrowable = true;
+                        if (quoteResponse.getThrowable() != null) {
+                            Log.e(TAG, "randomQuotes: Throwable");
+                            isThrowable = true;
+                        }
                     }
                 }
 
-                if (isErrorCode) {
-                    //return Error
+                if (isErrorCode || isThrowable) {
                     binding.layoutError.getRoot().setVisibility(View.VISIBLE);
+                    binding.layoutNoQuotes.getRoot().setVisibility(View.GONE);
                     binding.quotesRv.setVisibility(View.INVISIBLE);
-                    binding.progressBar.setVisibility(View.INVISIBLE);
-                }
-                else if (isThrowable) {
-                    //return throwable
-                    binding.layoutError.getRoot().setVisibility(View.VISIBLE);
+                    binding.progressBar.setVisibility(View.GONE);
+                } else if (quoteResponses == null || quoteResponses.isEmpty()) {
+                    binding.layoutNoQuotes.getRoot().setVisibility(View.VISIBLE);
+                    binding.layoutError.getRoot().setVisibility(View.GONE);
                     binding.quotesRv.setVisibility(View.INVISIBLE);
-                    binding.progressBar.setVisibility(View.INVISIBLE);
-                }
-                else if (quoteResponses == null) {
-                    binding.layoutError.getRoot().setVisibility(View.VISIBLE);
-                    binding.quotesRv.setVisibility(View.INVISIBLE);
-                    binding.progressBar.setVisibility(View.INVISIBLE);
-                }
-                else {
-                    //return quotes
+                    binding.progressBar.setVisibility(View.GONE);
+                } else {
                     Log.d(TAG, "randomQuotes() returned: " + quoteResponses.size());
                     quotesRVAdapter.setQuoteList(quoteResponses);
+
+                    if (quoteResponses.size() < 10) {
+                        maxPages = page;
+                    }
+
                     binding.progressBar.setVisibility(View.GONE);
                     binding.quotesRv.setVisibility(View.VISIBLE);
-
                     binding.layoutError.getRoot().setVisibility(View.GONE);
+                    binding.layoutNoQuotes.getRoot().setVisibility(View.GONE);
                 }
             });
         } else {
             binding.progressLoadMore.setVisibility(View.VISIBLE);
 
-            new QuotesViewModel().getQuotes(page).observe(getViewLifecycleOwner(), quoteResponses -> {
+            quotesViewModel.getQuotes(page).observe(getViewLifecycleOwner(), quoteResponses -> {
 
                 boolean isErrorCode = false, isThrowable = false;
 
-                for (QuoteResponse quoteResponse : quoteResponses) {
-                    if (quoteResponse.getError_code() >= 300) {
-                        Log.e(TAG, "randomQuotes: Error" );
-                        isErrorCode = true;
-                        onErrorPage = page;
-                    }
+                if (quoteResponses != null) {
+                    for (QuoteResponse quoteResponse : quoteResponses) {
+                        if (quoteResponse.getError_code() >= 300) {
+                            Log.e(TAG, "randomQuotes: Error");
+                            isErrorCode = true;
+                            onErrorPage = page;
+                        }
 
-                    if (quoteResponse.getThrowable() != null) {
-                        Log.e(TAG, "randomQuotes: Throwable" );
-                        isThrowable = true;
-                        onErrorPage = page;
+                        if (quoteResponse.getThrowable() != null) {
+                            Log.e(TAG, "randomQuotes: Throwable");
+                            isThrowable = true;
+                            onErrorPage = page;
+                        }
                     }
                 }
 
-                if (isErrorCode) {
-                    //return Error
+                if (isErrorCode || isThrowable || quoteResponses == null) {
                     binding.loadMoreBtn.setVisibility(View.VISIBLE);
                     binding.progressLoadMore.setVisibility(View.GONE);
-                }
-                else if (isThrowable) {
-                    //return throwable
-                    binding.loadMoreBtn.setVisibility(View.VISIBLE);
-                    binding.progressLoadMore.setVisibility(View.GONE);
-                }
-                else if (quoteResponses == null) {
-                    binding.loadMoreBtn.setVisibility(View.VISIBLE);
-                    binding.progressLoadMore.setVisibility(View.GONE);
-                }
-                else {
-                    //return quotes
+                } else {
                     quotesRVAdapter.setQuoteList(quoteResponses);
 
-                    /*checking list size then set last page*/
                     if (quoteResponses.size() < 10) {
                         maxPages = page;
                     }

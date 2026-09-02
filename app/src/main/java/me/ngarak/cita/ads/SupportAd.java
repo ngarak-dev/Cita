@@ -1,13 +1,12 @@
 package me.ngarak.cita.ads;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.fragment.app.FragmentActivity;
+import androidx.annotation.Nullable;
 
 import com.google.android.gms.ads.AdError;
 import com.google.android.gms.ads.AdRequest;
@@ -25,63 +24,55 @@ public class SupportAd {
     private final AdRequest adRequest = new AdRequest.Builder().build();
     private InterstitialAd interstitialAd;
 
-    public void loadAd(Context context, ProgressDialog progressDialog, Activity activity) {
+    public interface Listener {
+        void onFinished();
+    }
+
+    public void loadAd(Context context, Activity activity, @Nullable Listener listener) {
         InterstitialAd.load(context, context.getString(R.string.SUPPORT_AD_UNIT), adRequest, new InterstitialAdLoadCallback() {
             @Override
             public void onAdLoaded(@NonNull InterstitialAd mInterstitialAd) {
                 interstitialAd = mInterstitialAd;
-                showInterstitial(activity);
-
                 interstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
                     @Override
                     public void onAdDismissedFullScreenContent() {
                         Log.d(TAG, "The ad was dismissed.");
-                        Toast.makeText(context, "Thank you for support", Toast.LENGTH_SHORT).show();
-                        progressDialog.dismiss();
+                        Toast.makeText(context, R.string.thank_you_support, Toast.LENGTH_SHORT).show();
+                        if (listener != null) listener.onFinished();
                     }
 
                     @Override
                     public void onAdFailedToShowFullScreenContent(@NotNull AdError adError) {
-                        // Called when fullscreen content failed to show.
-                        Log.d("TAG", "The ad failed to show.");
+                        Log.d(TAG, "The ad failed to show.");
+                        if (listener != null) listener.onFinished();
                     }
 
                     @Override
                     public void onAdShowedFullScreenContent() {
-                        // Called when fullscreen content is shown.
-                        // Make sure to set your reference to null so you don't show it a second time.
                         interstitialAd = null;
-                        Log.d("TAG", "The ad was shown.");
+                        Log.d(TAG, "The ad was shown.");
                     }
                 });
+                showInterstitial(activity, listener);
             }
 
             @Override
             public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                Log.i(TAG, loadAdError.getMessage());
+                Log.w(TAG, "interstitial failed code=" + loadAdError.getCode()
+                        + " msg=" + loadAdError.getMessage());
                 interstitialAd = null;
-                progressDialog.dismiss();
-
-                Toast.makeText(context, "Ad Failed try again later", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context, R.string.ad_failed_try_later, Toast.LENGTH_SHORT).show();
+                if (listener != null) listener.onFinished();
             }
         });
     }
 
-    public void showInterstitial (FragmentActivity fragmentActivity) {
-        if (interstitialAd != null) {
-            interstitialAd.show(fragmentActivity);
-        }
-        else {
-            Toast.makeText(fragmentActivity, "Failed to load Ad", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    public void showInterstitial (Activity activity) {
+    public void showInterstitial(Activity activity, @Nullable Listener listener) {
         if (interstitialAd != null) {
             interstitialAd.show(activity);
-        }
-        else {
-            Toast.makeText(activity, "Failed to load Ad", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(activity, R.string.ad_failed_to_load, Toast.LENGTH_SHORT).show();
+            if (listener != null) listener.onFinished();
         }
     }
 }

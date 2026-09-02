@@ -6,32 +6,38 @@
         android:id="@+id/quoteLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?colorButtonNormal">
+        android:background="?attr/selectableItemBackground"
+        android:clickable="true"
+        android:focusable="true"
+        android:minHeight="@dimen/touch_target_min"
+        android:orientation="vertical"
+        android:paddingStart="@dimen/list_item_padding"
+        android:paddingEnd="@dimen/list_item_padding"
+        android:paddingTop="@dimen/list_item_spacing"
+        android:paddingBottom="@dimen/list_item_spacing">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="2dp"
-            android:layout_marginBottom="2dp"
-            android:background="?android:colorBackground"
-            android:paddingStart="5dp"
-            android:paddingEnd="5dp">
+            android:layout_height="wrap_content">
 
             <TextView
                 android:id="@+id/quote"
-                android:layout_width="match_parent"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:padding="5dp"
+                android:padding="@dimen/spacing_xs"
                 android:text="@{quote.quote}"
                 android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <ImageView
                 android:id="@+id/character_dp"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="@dimen/avatar_size"
+                android:layout_height="@dimen/avatar_size"
                 android:contentDescription="@null"
-                android:padding="5dp"
+                android:importantForAccessibility="no"
+                android:padding="@dimen/spacing_xs"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/quote"
                 app:srcCompat="@drawable/ic_avatar_gradient" />
@@ -40,7 +46,7 @@
                 android:id="@+id/character"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
+                android:layout_margin="@dimen/spacing_xs"
                 android:text="@{quote.character}"
                 app:layout_constraintBottom_toBottomOf="@id/character_dp"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -50,16 +56,20 @@
             <View
                 android:id="@+id/divider_2"
                 style="@style/horizontal_divider"
-                android:layout_width="match_parent"
-                android:layout_height="2dp"
+                android:layout_width="0dp"
+                android:layout_height="@dimen/divider_height"
+                android:layout_marginTop="@dimen/spacing_xs"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/character_dp" />
 
             <ImageView
                 android:id="@+id/anime_dp"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
+                android:layout_width="@dimen/icon_size_sm"
+                android:layout_height="@dimen/icon_size_sm"
                 android:contentDescription="@null"
-                android:padding="5dp"
+                android:importantForAccessibility="no"
+                android:padding="@dimen/spacing_xs"
                 android:src="@drawable/ic_photo_camera"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/divider_2" />
@@ -68,7 +78,7 @@
                 android:id="@+id/anime"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_margin="5dp"
+                android:layout_margin="@dimen/spacing_xs"
                 android:text="@{quote.anime}"
                 app:layout_constraintBottom_toBottomOf="@id/anime_dp"
                 app:layout_constraintEnd_toEndOf="parent"

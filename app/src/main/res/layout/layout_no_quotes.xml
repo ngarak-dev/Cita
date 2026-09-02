@@ -1,31 +1,36 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
-    android:gravity="center">
+    android:gravity="center"
+    android:padding="@dimen/spacing_lg">
 
     <com.google.android.material.button.MaterialButton
         style="@style/Widget.MaterialComponents.Button.OutlinedButton"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="@dimen/touch_target_min"
+        android:layout_height="@dimen/touch_target_min"
         android:insetLeft="0dp"
         android:insetTop="0dp"
         android:insetRight="0dp"
         android:insetBottom="0dp"
         android:padding="0dp"
+        android:clickable="false"
+        android:focusable="false"
+        android:importantForAccessibility="no"
+        android:contentDescription="@string/cd_no_quotes_icon"
         app:icon="@drawable/ic_notes_off"
         app:iconGravity="textStart"
         app:iconPadding="0dp"
-        app:iconSize="30dp"
-        android:layout_margin="20dp"
+        app:iconSize="28dp"
+        android:layout_margin="@dimen/spacing_xl"
         app:shapeAppearanceOverlay="@style/OverlayButtonCircle" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="No quotes available"
+        android:text="@string/no_quotes_available"
         android:textAppearance="@style/TextAppearance.AppCompat.Subhead" />
 
 </LinearLayout>

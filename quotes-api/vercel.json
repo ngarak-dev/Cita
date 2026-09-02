@@ -1,0 +1,12 @@
+{
+  "version": 2,
+  "builds": [
+    { "src": "api/**/*.js", "use": "@vercel/node" }
+  ],
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/api/$1" },
+    { "src": "/quotes", "dest": "/api/quotes.js" },
+    { "src": "/quotes/anime", "dest": "/api/quotes/anime.js" },
+    { "src": "/available/anime", "dest": "/api/available/anime.js" }
+  ]
+}
