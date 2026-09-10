@@ -66,8 +66,7 @@ public final class ReferralStore {
 
     public Intent shareInviteIntent() {
         String code = myCode();
-        String play = "https://play.google.com/store/apps/details?id=me.ngarak.cita&referrer=utm_source%3Dcita_invite%26utm_content%3D"
-                + code;
+        String play = ShareLinks.invitePlayUrl(code);
         String body = app.getString(R.string.referral_share_body, code, play);
         Intent intent = new Intent(Intent.ACTION_SEND);
         intent.setType("text/plain");

@@ -1,5 +1,7 @@
 package me.ngarak.cita.adapters;
 
+import android.app.Activity;
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.ngarak.cita.CollectionPicker;
 import me.ngarak.cita.Mood;
 import me.ngarak.cita.MoodMatcher;
 import me.ngarak.cita.databinding.LayoutSimpleQuoteBinding;
@@ -98,6 +101,12 @@ public class QuotesRVAdapter extends RecyclerView.Adapter<QuotesRVAdapter.Quotes
             }
             binding.executePendingBindings();
             binding.quoteLayout.setOnClickListener(v -> clickListener.onClick(quoteResponse));
+            binding.btnCollection.setOnClickListener(v -> {
+                Context ctx = v.getContext();
+                if (ctx instanceof Activity) {
+                    CollectionPicker.show((Activity) ctx, quoteResponse);
+                }
+            });
         }
     }
 }

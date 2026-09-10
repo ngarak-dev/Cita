@@ -95,6 +95,16 @@
                         android:textSize="12sp" />
                 </LinearLayout>
 
+                <ImageButton
+                    android:id="@+id/btnCollection"
+                    android:layout_width="40dp"
+                    android:layout_height="40dp"
+                    android:background="?attr/selectableItemBackgroundBorderless"
+                    android:contentDescription="@string/cd_add_to_collection"
+                    android:padding="8dp"
+                    android:src="@drawable/ic_collection"
+                    app:tint="@color/brand_yellow" />
+
                 <ImageView
                     android:id="@+id/anime_dp"
                     android:layout_width="20dp"

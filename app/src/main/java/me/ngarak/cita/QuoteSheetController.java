@@ -51,7 +51,6 @@ public final class QuoteSheetController {
     private final Host host;
     private final QuoteCredits credits;
     private final FavoritesStore favorites;
-    private final CollectionsStore collections;
     private final QuoteAnalytics analytics;
     private final CitaPlus plus;
     private final TasteModel taste;
@@ -69,7 +68,6 @@ public final class QuoteSheetController {
         Context app = host.activity().getApplicationContext();
         this.credits = new QuoteCredits(app);
         this.favorites = new FavoritesStore(app);
-        this.collections = new CollectionsStore(app);
         this.analytics = new QuoteAnalytics(app);
         this.plus = new CitaPlus(app);
         this.taste = new TasteModel(app);
@@ -114,31 +112,10 @@ public final class QuoteSheetController {
                     on ? R.string.added_to_favorites : R.string.removed_from_favorites,
                     Toast.LENGTH_SHORT).show();
             if (on) {
-                promptAddToCollection(quote);
+                CollectionPicker.show(activity, quote);
             }
         });
         binding.saveQuoteBtn.setOnClickListener(v -> onSaveClicked(binding));
-    }
-
-    private void promptAddToCollection(QuoteResponse quote) {
-        List<CollectionsStore.Collection> cols = collections.getAll();
-        if (cols.isEmpty()) return;
-        String[] names = new String[cols.size()];
-        for (int i = 0; i < cols.size(); i++) {
-            names[i] = cols.get(i).name;
-        }
-        new AlertDialog.Builder(host.activity())
-                .setTitle(R.string.add_to_collection)
-                .setItems(names, (d, which) -> {
-                    CollectionsStore.Collection c = cols.get(which);
-                    boolean added = collections.addQuote(c.id, quote);
-                    Toast.makeText(host.activity(),
-                            added ? host.activity().getString(R.string.added_to_collection, c.name)
-                                    : host.activity().getString(R.string.already_in_collection, c.name),
-                            Toast.LENGTH_SHORT).show();
-                })
-                .setNegativeButton(android.R.string.cancel, null)
-                .show();
     }
 
     private void setupFormats(LayoutBgBottomSheetBinding binding) {

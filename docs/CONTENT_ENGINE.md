@@ -64,13 +64,20 @@ Link in bio / comments.
 - Use **abstract covers / lettermarks** only — never unlicensed character key art.  
 - One idea per post; don’t stack stats or schedule clutter.
 
-## Links & UTM (when you have a smart link)
+## Links & UTM (in-app helper: `ShareLinks`)
 
-Example Play referral with campaign tags:
+Use tagged Play URLs so installs from posts are attributable:
+
+```
+ShareLinks.contentPlayUrl("wsc_mon_resolve")
+→ …/details?id=me.ngarak.cita&utm_source=tiktok&utm_medium=organic&utm_campaign=wsc_mon_resolve
+```
+
+Invite shares use `ShareLinks.invitePlayUrl(code)` (referrer + UTM). Swap `utm_campaign` per series (e.g. `wsc_mon_resolve`, `invite_sunday`).
+
+Example raw URL:
 
 `https://play.google.com/store/apps/details?id=me.ngarak.cita&utm_source=tiktok&utm_medium=organic&utm_campaign=content_engine`
-
-Swap `utm_campaign` per series (e.g. `wsc_mon_resolve`, `invite_sunday`).
 
 ## Weekly review (with WSC)
 

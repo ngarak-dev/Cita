@@ -219,7 +219,7 @@ public enum CardTemplate {
 
         ImageView sticker = binding.cardSticker;
         if (sticker != null) {
-            sticker.setImageResource(CoverArt.accentMarkRes(ordinal()));
+            sticker.setImageResource(CoverArt.stickerRes(ordinal()));
             ImageViewCompat.setImageTintList(sticker, ColorStateList.valueOf(accentColor));
             sticker.setVisibility(View.VISIBLE);
         }

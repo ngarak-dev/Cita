@@ -18,7 +18,7 @@ import me.ngarak.cita.R;
 
 /**
  * Deterministic abstract covers & lettermarks keyed by anime/name hash.
- * No licensed character art — mood textures + typography only.
+ * No licensed character art — procedural layers + typography only.
  */
 public final class CoverArt {
 
@@ -41,7 +41,6 @@ public final class CoverArt {
             R.drawable.bg_cover_tide
     };
 
-    /** Soft abstract backgrounds for Card Studio (mapped by template / mood). */
     private static final int[] STUDIO_BACKGROUNDS = {
             R.drawable.bg_studio_paper,
             R.drawable.bg_studio_void,
@@ -51,6 +50,19 @@ public final class CoverArt {
             R.drawable.bg_studio_neon,
             R.drawable.bg_studio_aurora,
             R.drawable.bg_studio_rose
+    };
+
+    private static final int[] STICKERS = {
+            R.drawable.ic_sticker_spark,
+            R.drawable.ic_sticker_star,
+            R.drawable.ic_sticker_moon,
+            R.drawable.ic_sticker_quote,
+            R.drawable.ic_sticker_ring,
+            R.drawable.ic_sticker_bolt,
+            R.drawable.ic_sticker_heart,
+            R.drawable.ic_sticker_petal,
+            R.drawable.ic_sticker_orbit,
+            R.drawable.ic_mark_slash
     };
 
     private CoverArt() {
@@ -78,8 +90,10 @@ public final class CoverArt {
         return STUDIO_BACKGROUNDS[idx];
     }
 
+    /** Prefer procedural layered cover (unique geometry per key). */
     public static void applyCover(@NonNull View view, @Nullable String key) {
-        view.setBackgroundResource(coverRes(key));
+        int h = hash(key);
+        view.setBackground(new LayeredCoverDrawable(h, palette(h)));
     }
 
     /** Circular lettermark avatar — first letter of character or anime. */
@@ -100,10 +114,10 @@ public final class CoverArt {
         target.setIncludeFontPadding(false);
     }
 
-    /** For ImageView slots that still expect a drawable (hash cover, no letter). */
     public static void applyCoverImage(@NonNull ImageView image, @Nullable String key) {
         image.setImageDrawable(null);
-        image.setBackgroundResource(coverRes(key));
+        int h = hash(key);
+        image.setBackground(new LayeredCoverDrawable(h, palette(h)));
         image.setScaleType(ImageView.ScaleType.CENTER_CROP);
     }
 
@@ -134,7 +148,7 @@ public final class CoverArt {
 
     /** Returns [start, end, accent]. */
     @NonNull
-    static int[] palette(int h) {
+    public static int[] palette(int h) {
         float hue = Math.floorMod(h, 360);
         float hue2 = (hue + 28f + (Math.floorMod(h >> 8, 40))) % 360f;
         int start = Color.HSVToColor(new float[]{hue, 0.55f + (Math.floorMod(h, 20) / 100f), 0.28f});
@@ -153,13 +167,12 @@ public final class CoverArt {
 
     @DrawableRes
     public static int accentMarkRes(int templateOrdinal) {
-        int[] marks = {
-                R.drawable.ic_mark_dot,
-                R.drawable.ic_mark_slash,
-                R.drawable.ic_mark_spark,
-                R.drawable.ic_mark_bar
-        };
-        return marks[Math.floorMod(templateOrdinal, marks.length)];
+        return stickerRes(templateOrdinal);
+    }
+
+    @DrawableRes
+    public static int stickerRes(int templateOrdinal) {
+        return STICKERS[Math.floorMod(templateOrdinal, STICKERS.length)];
     }
 
     public static int colorCompat(@NonNull Context context, @DrawableRes int res) {

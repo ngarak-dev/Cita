@@ -36,12 +36,14 @@ public final class CollectionsStore {
         }
     }
 
+    private final Context app;
     private final SharedPreferences prefs;
     private final Gson gson = new Gson();
     private final Type listType = new TypeToken<List<Collection>>() {}.getType();
 
     public CollectionsStore(Context context) {
-        prefs = context.getApplicationContext().getSharedPreferences(PREFS, Context.MODE_PRIVATE);
+        app = context.getApplicationContext();
+        prefs = app.getSharedPreferences(PREFS, Context.MODE_PRIVATE);
         ensureDefaults();
     }
 
@@ -49,8 +51,10 @@ public final class CollectionsStore {
         if (prefs.getBoolean(KEY_SEEDED, false)) return;
         List<Collection> list = getAll();
         if (list.isEmpty()) {
-            list.add(new Collection(UUID.randomUUID().toString(), "My resolve"));
-            list.add(new Collection(UUID.randomUUID().toString(), "Cry lines"));
+            list.add(new Collection(UUID.randomUUID().toString(),
+                    app.getString(R.string.collection_default_resolve)));
+            list.add(new Collection(UUID.randomUUID().toString(),
+                    app.getString(R.string.collection_default_cry)));
             persist(list);
         }
         prefs.edit().putBoolean(KEY_SEEDED, true).apply();

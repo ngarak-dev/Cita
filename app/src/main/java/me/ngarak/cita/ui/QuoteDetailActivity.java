@@ -14,7 +14,7 @@ import androidx.core.view.WindowCompat;
 
 import com.google.android.material.button.MaterialButton;
 
-import me.ngarak.cita.CollectionsStore;
+import me.ngarak.cita.CollectionPicker;
 import me.ngarak.cita.FavoritesStore;
 import me.ngarak.cita.Mood;
 import me.ngarak.cita.MoodMatcher;
@@ -45,7 +45,6 @@ public class QuoteDetailActivity extends AppCompatActivity {
     private ActivityQuoteDetailBinding binding;
     private QuoteResponse quote;
     private FavoritesStore favorites;
-    private CollectionsStore collections;
     private QuoteAnalytics analytics;
     private TasteModel taste;
     private QuoteSheetController sheetController;
@@ -67,7 +66,6 @@ public class QuoteDetailActivity extends AppCompatActivity {
         quote = new QuoteResponse(anime, character, text);
 
         favorites = new FavoritesStore(this);
-        collections = new CollectionsStore(this);
         analytics = new QuoteAnalytics(this);
         taste = new TasteModel(this);
         analytics.quoteView(quote);
@@ -117,42 +115,16 @@ public class QuoteDetailActivity extends AppCompatActivity {
                     on ? R.string.added_to_favorites : R.string.removed_from_favorites,
                     Toast.LENGTH_SHORT).show();
             if (on) {
-                showAddToCollection();
+                CollectionPicker.show(this, quote,
+                        () -> updateFavoriteUi(favorites.contains(quote)));
             }
         });
         binding.btnFavorite.setOnLongClickListener(v -> {
-            showAddToCollection();
+            CollectionPicker.show(this, quote,
+                    () -> updateFavoriteUi(favorites.contains(quote)));
             return true;
         });
         binding.btnShare.setOnClickListener(v -> sheetController.open(quote));
-    }
-
-    private void showAddToCollection() {
-        java.util.List<CollectionsStore.Collection> cols = collections.getAll();
-        if (cols.isEmpty()) {
-            Toast.makeText(this, R.string.create_collection_first, Toast.LENGTH_SHORT).show();
-            return;
-        }
-        String[] names = new String[cols.size()];
-        for (int i = 0; i < cols.size(); i++) {
-            names[i] = cols.get(i).name;
-        }
-        new androidx.appcompat.app.AlertDialog.Builder(this)
-                .setTitle(R.string.add_to_collection)
-                .setItems(names, (d, which) -> {
-                    CollectionsStore.Collection c = cols.get(which);
-                    boolean added = collections.addQuote(c.id, quote);
-                    if (added && !favorites.contains(quote)) {
-                        favorites.toggle(quote);
-                        updateFavoriteUi(true);
-                    }
-                    Toast.makeText(this,
-                            added ? getString(R.string.added_to_collection, c.name)
-                                    : getString(R.string.already_in_collection, c.name),
-                            Toast.LENGTH_SHORT).show();
-                })
-                .setNegativeButton(android.R.string.cancel, null)
-                .show();
     }
 
     private void updateFavoriteUi(boolean on) {

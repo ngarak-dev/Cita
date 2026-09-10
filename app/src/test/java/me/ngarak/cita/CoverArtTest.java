@@ -34,4 +34,10 @@ public class CoverArtTest {
         assertTrue(res != 0);
         assertTrue(CoverArt.coverCount() >= 8);
     }
+
+    @Test
+    public void stickerRes_cycles() {
+        assertTrue(CoverArt.stickerRes(0) != 0);
+        assertTrue(CoverArt.stickerRes(9) != 0);
+    }
 }

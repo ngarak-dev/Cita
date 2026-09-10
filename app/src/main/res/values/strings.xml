@@ -130,6 +130,9 @@
     <string name="delete_collection">Delete collection</string>
     <string name="delete_collection_msg">Delete “%1$s”? Favorites stay saved.</string>
     <string name="add_to_collection">Add to collection</string>
+    <string name="cd_add_to_collection">Add quote to a collection</string>
+    <string name="collection_default_resolve">My resolve</string>
+    <string name="collection_default_cry">Cry lines</string>
     <string name="added_to_collection">Added to %1$s</string>
     <string name="already_in_collection">Already in %1$s</string>
     <string name="create_collection_first">Create a collection on Favorites first</string>
