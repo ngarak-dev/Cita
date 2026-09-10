@@ -25,7 +25,9 @@ import androidx.navigation.ui.NavigationUI;
 import com.google.android.material.button.MaterialButton;
 import com.google.firebase.analytics.FirebaseAnalytics;
 
+import me.ngarak.cita.QuoteAnalytics;
 import me.ngarak.cita.R;
+import me.ngarak.cita.ReferralStore;
 import me.ngarak.cita.ads.SupportAd;
 import me.ngarak.cita.databinding.ActivityMainBinding;
 import me.ngarak.cita.perm;
@@ -80,11 +82,53 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        if (item.getItemId() == R.id.about) {
+        int id = item.getItemId();
+        if (id == R.id.about) {
             onAboutDialog();
             return true;
         }
+        if (id == R.id.invite) {
+            ReferralStore referral = new ReferralStore(this);
+            new QuoteAnalytics(this).referralShared();
+            Toast.makeText(this, getString(R.string.referral_my_code, referral.myCode()),
+                    Toast.LENGTH_LONG).show();
+            startActivity(referral.shareInviteIntent());
+            return true;
+        }
+        if (id == R.id.redeem) {
+            showRedeemDialog();
+            return true;
+        }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showRedeemDialog() {
+        ReferralStore referral = new ReferralStore(this);
+        final android.widget.EditText input = new android.widget.EditText(this);
+        input.setHint(R.string.referral_redeem_hint);
+        input.setSingleLine(true);
+        int pad = (int) (16 * getResources().getDisplayMetrics().density);
+        input.setPadding(pad, pad, pad, pad);
+
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.referral_redeem_title)
+                .setView(input)
+                .setPositiveButton(android.R.string.ok, (d, w) -> {
+                    ReferralStore.RedeemResult result = referral.redeem(input.getText().toString());
+                    QuoteAnalytics analytics = new QuoteAnalytics(this);
+                    if (result == ReferralStore.RedeemResult.OK) {
+                        analytics.referralRedeemed(true);
+                        Toast.makeText(this, R.string.referral_redeem_ok, Toast.LENGTH_LONG).show();
+                    } else if (result == ReferralStore.RedeemResult.ALREADY) {
+                        analytics.referralRedeemed(false);
+                        Toast.makeText(this, R.string.referral_redeem_already, Toast.LENGTH_SHORT).show();
+                    } else {
+                        analytics.referralRedeemed(false);
+                        Toast.makeText(this, R.string.referral_redeem_invalid, Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
     }
 
     private void onAboutDialog() {

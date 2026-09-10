@@ -81,6 +81,23 @@
         </androidx.constraintlayout.widget.ConstraintLayout>
 
         <HorizontalScrollView
+            android:id="@+id/formatScroll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"
+            android:paddingStart="@dimen/spacing_sm"
+            android:paddingEnd="@dimen/spacing_sm">
+
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/formatChips"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:singleSelection="true"
+                app:selectionRequired="true"
+                app:chipSpacingHorizontal="8dp" />
+        </HorizontalScrollView>
+
+        <HorizontalScrollView
             android:id="@+id/templateScroll"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -102,7 +119,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="?android:colorBackground"
+            android:orientation="vertical"
             android:id="@+id/toBeConverted">
+
+            <View
+                android:id="@+id/storiesTopSpacer"
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                android:visibility="gone" />
 
             <com.google.android.material.card.MaterialCardView
                 android:id="@+id/quoteCard"
@@ -199,6 +223,12 @@
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </com.google.android.material.card.MaterialCardView>
+
+            <View
+                android:id="@+id/storiesBottomSpacer"
+                android:layout_width="match_parent"
+                android:layout_height="72dp"
+                android:visibility="gone" />
 
         </LinearLayout>
 

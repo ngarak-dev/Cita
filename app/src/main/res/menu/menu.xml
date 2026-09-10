@@ -2,6 +2,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/invite"
+        android:title="@string/invite_friends"
+        android:visible="true"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/redeem"
+        android:title="@string/redeem_invite"
+        android:visible="true"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/about"
         android:icon="@drawable/ic_round_info"
         android:title="@string/info"

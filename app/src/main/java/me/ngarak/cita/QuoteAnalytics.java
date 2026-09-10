@@ -76,6 +76,22 @@ public final class QuoteAnalytics {
         analytics.logEvent("onboarding_complete", b);
     }
 
+    public void exportFormat(String format) {
+        Bundle b = new Bundle();
+        b.putString("format", format);
+        analytics.logEvent("export_format", b);
+    }
+
+    public void referralShared() {
+        analytics.logEvent("referral_shared", new Bundle());
+    }
+
+    public void referralRedeemed(boolean ok) {
+        Bundle b = new Bundle();
+        b.putString("result", ok ? "ok" : "fail");
+        analytics.logEvent("referral_redeemed", b);
+    }
+
     private void logQuoteEvent(String name, QuoteResponse quote, Bundle extra) {
         Bundle b = extra != null ? new Bundle(extra) : new Bundle();
         if (quote != null) {

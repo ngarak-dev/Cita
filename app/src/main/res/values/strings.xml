@@ -85,4 +85,21 @@
     <string name="onboarding_continue">Continue</string>
     <string name="onboarding_skip">Skip for now</string>
     <string name="onboarding_pick_limit">Pick up to 3</string>
+
+    <string name="template_aurora">Aurora</string>
+    <string name="export_feed">Feed</string>
+    <string name="export_stories">Stories</string>
+
+    <string name="invite_friends">Invite friends</string>
+    <string name="redeem_invite">Enter invite code</string>
+    <string name="referral_share_subject">Make anime quote cards with Cita</string>
+    <string name="referral_share_chooser">Share Cita invite</string>
+    <string name="referral_share_body">Make anime quote cards with Cita.\nUse my invite code %1$s to unlock the Aurora template.\n%2$s</string>
+    <string name="referral_redeem_title">Enter invite code</string>
+    <string name="referral_redeem_hint">6-character code</string>
+    <string name="referral_redeem_ok">Aurora template unlocked (+2 saves)</string>
+    <string name="referral_redeem_invalid">That code isn’t valid</string>
+    <string name="referral_redeem_already">You’ve already redeemed an invite</string>
+    <string name="referral_my_code">Your invite code: %1$s</string>
+    <string name="plus_watermark_off">Cita Plus removes the watermark on shared cards</string>
 </resources>

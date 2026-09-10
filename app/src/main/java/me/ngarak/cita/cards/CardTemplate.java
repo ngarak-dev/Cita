@@ -14,10 +14,14 @@ import androidx.core.widget.ImageViewCompat;
 
 import com.google.android.material.card.MaterialCardView;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import me.ngarak.cita.CitaPlus;
 import me.ngarak.cita.R;
 import me.ngarak.cita.databinding.LayoutBgBottomSheetBinding;
 
-/** Phase 2 Card Studio templates — visual skins for the shareable quote card. */
+/** Card Studio templates — visual skins for the shareable quote card. */
 public enum CardTemplate {
     CLASSIC(
             R.string.template_classic,
@@ -25,6 +29,7 @@ public enum CardTemplate {
             Color.parseColor("#2C2E43"),
             Color.parseColor("#5C5E70"),
             Color.parseColor("#FFD523"),
+            false,
             false
     ),
     MIDNIGHT(
@@ -33,7 +38,8 @@ public enum CardTemplate {
             Color.parseColor("#F5F5F7"),
             Color.parseColor("#B2B1B9"),
             Color.parseColor("#FFD523"),
-            true
+            true,
+            false
     ),
     RESOLVE(
             R.string.template_resolve,
@@ -41,7 +47,8 @@ public enum CardTemplate {
             Color.parseColor("#F7F7F2"),
             Color.parseColor("#C5D0D8"),
             Color.parseColor("#3DDC97"),
-            true
+            true,
+            false
     ),
     HEARTBREAK(
             R.string.template_heartbreak,
@@ -49,7 +56,8 @@ public enum CardTemplate {
             Color.parseColor("#FFE8EE"),
             Color.parseColor("#D9A5B3"),
             Color.parseColor("#FF6B8A"),
-            true
+            true,
+            false
     ),
     CHAOS(
             R.string.template_chaos,
@@ -57,6 +65,17 @@ public enum CardTemplate {
             Color.parseColor("#FFF3E8"),
             Color.parseColor("#E0B89A"),
             Color.parseColor("#FF7A18"),
+            true,
+            false
+    ),
+    /** Unlocked via referral invite (Phase 3 growth loop). */
+    AURORA(
+            R.string.template_aurora,
+            Color.parseColor("#0B1220"),
+            Color.parseColor("#E8F1FF"),
+            Color.parseColor("#9BB4D4"),
+            Color.parseColor("#7C5CFF"),
+            true,
             true
     );
 
@@ -71,24 +90,36 @@ public enum CardTemplate {
     @ColorInt
     public final int accentColor;
     public final boolean dark;
+    public final boolean requiresUnlock;
 
     CardTemplate(@StringRes int titleRes, int cardBackground, int quoteColor,
-                 int metaColor, int accentColor, boolean dark) {
+                 int metaColor, int accentColor, boolean dark, boolean requiresUnlock) {
         this.titleRes = titleRes;
         this.cardBackground = cardBackground;
         this.quoteColor = quoteColor;
         this.metaColor = metaColor;
         this.accentColor = accentColor;
         this.dark = dark;
+        this.requiresUnlock = requiresUnlock;
     }
 
-    public void apply(LayoutBgBottomSheetBinding binding) {
+    public static List<CardTemplate> available(CitaPlus plus) {
+        List<CardTemplate> list = new ArrayList<>();
+        for (CardTemplate t : values()) {
+            if (!t.requiresUnlock || plus.hasReferralTemplateUnlock()) {
+                list.add(t);
+            }
+        }
+        return list;
+    }
+
+    public void apply(LayoutBgBottomSheetBinding binding, boolean hideWatermark, boolean storiesFormat) {
         View root = binding.toBeConverted;
         root.setBackgroundColor(cardBackground);
 
         MaterialCardView card = binding.quoteCard;
         card.setCardBackgroundColor(cardBackground);
-        card.setStrokeWidth(dark ? 0 : 0);
+        card.setStrokeWidth(0);
         card.setCardElevation(dark ? 0f : card.getResources().getDimension(R.dimen.spacing_sm));
 
         TextView quote = binding.quote;
@@ -100,6 +131,7 @@ public enum CardTemplate {
         quote.setTypeface(Typeface.create(Typeface.SERIF, Typeface.BOLD));
 
         LinearLayout mark = binding.citaMark;
+        mark.setVisibility(hideWatermark ? View.GONE : View.VISIBLE);
         TextView markText = null;
         ImageView markIcon = null;
         for (int i = 0; i < mark.getChildCount(); i++) {
@@ -113,5 +145,9 @@ public enum CardTemplate {
         if (markIcon != null) {
             ImageViewCompat.setImageTintList(markIcon, ColorStateList.valueOf(accentColor));
         }
+
+        int spacerVisibility = storiesFormat ? View.VISIBLE : View.GONE;
+        binding.storiesTopSpacer.setVisibility(spacerVisibility);
+        binding.storiesBottomSpacer.setVisibility(spacerVisibility);
     }
 }

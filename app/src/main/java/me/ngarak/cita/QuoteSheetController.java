@@ -34,14 +34,13 @@ import me.ngarak.layout_image.ViewToImage;
 
 /**
  * Shared quote sheet: view → favorite / copy / save→share.
- * Used by Quotes, Random, Anime detail, and Favorites.
+ * Phase 3: templates + Stories format + watermark policy.
  */
 public final class QuoteSheetController {
 
     public interface Host {
         @NonNull Activity activity();
 
-        /** False when fragment is detached. */
         boolean isActive();
 
         void requestStoragePermission();
@@ -51,12 +50,14 @@ public final class QuoteSheetController {
     private final QuoteCredits credits;
     private final FavoritesStore favorites;
     private final QuoteAnalytics analytics;
+    private final CitaPlus plus;
     private final QuoteRewardAd rewardAd = new QuoteRewardAd();
 
     private BottomSheetDialog bottomSheetDialog;
     private AlertDialog consentDialog;
     private QuoteResponse currentQuote;
     private CardTemplate selectedTemplate = CardTemplate.CLASSIC;
+    private boolean storiesFormat;
 
     public QuoteSheetController(@NonNull Host host) {
         this.host = host;
@@ -64,11 +65,13 @@ public final class QuoteSheetController {
         this.credits = new QuoteCredits(app);
         this.favorites = new FavoritesStore(app);
         this.analytics = new QuoteAnalytics(app);
+        this.plus = new CitaPlus(app);
     }
 
     public void open(@NonNull QuoteResponse quote) {
         currentQuote = quote;
         selectedTemplate = CardTemplate.CLASSIC;
+        storiesFormat = false;
         analytics.quoteView(quote);
 
         Activity activity = host.activity();
@@ -78,8 +81,9 @@ public final class QuoteSheetController {
         bottomSheetDialog.setContentView(binding.getRoot());
         binding.setQuote(quote);
         updateFavoriteButton(binding, favorites.contains(quote));
+        setupFormats(binding);
         setupTemplates(binding);
-        selectedTemplate.apply(binding);
+        applyStyle(binding);
         bottomSheetDialog.show();
 
         AdRequest adRequest = new AdRequest.Builder().build();
@@ -103,11 +107,37 @@ public final class QuoteSheetController {
         binding.saveQuoteBtn.setOnClickListener(v -> onSaveClicked(binding));
     }
 
+    private void setupFormats(LayoutBgBottomSheetBinding binding) {
+        Activity activity = host.activity();
+        binding.formatChips.removeAllViews();
+        Chip feed = new Chip(activity);
+        feed.setId(View.generateViewId());
+        feed.setText(R.string.export_feed);
+        feed.setCheckable(true);
+        feed.setChecked(true);
+        feed.setTag(Boolean.FALSE);
+        Chip stories = new Chip(activity);
+        stories.setId(View.generateViewId());
+        stories.setText(R.string.export_stories);
+        stories.setCheckable(true);
+        stories.setTag(Boolean.TRUE);
+        binding.formatChips.addView(feed);
+        binding.formatChips.addView(stories);
+        binding.formatChips.setOnCheckedStateChangeListener((group, checkedIds) -> {
+            if (checkedIds.isEmpty()) return;
+            View chipView = group.findViewById(checkedIds.get(0));
+            if (chipView == null || !(chipView.getTag() instanceof Boolean)) return;
+            storiesFormat = (Boolean) chipView.getTag();
+            applyStyle(binding);
+            analytics.exportFormat(storiesFormat ? "stories" : "feed");
+        });
+    }
+
     private void setupTemplates(LayoutBgBottomSheetBinding binding) {
         Activity activity = host.activity();
         binding.templateChips.removeAllViews();
         binding.templateChips.setOnCheckedStateChangeListener(null);
-        for (CardTemplate template : CardTemplate.values()) {
+        for (CardTemplate template : CardTemplate.available(plus)) {
             Chip chip = new Chip(activity);
             chip.setId(View.generateViewId());
             chip.setText(template.titleRes);
@@ -123,9 +153,13 @@ public final class QuoteSheetController {
             View chipView = group.findViewById(checkedIds.get(0));
             if (chipView == null || !(chipView.getTag() instanceof CardTemplate)) return;
             selectedTemplate = (CardTemplate) chipView.getTag();
-            selectedTemplate.apply(binding);
+            applyStyle(binding);
             analytics.templateSelected(selectedTemplate.name());
         });
+    }
+
+    private void applyStyle(LayoutBgBottomSheetBinding binding) {
+        selectedTemplate.apply(binding, plus.hideWatermark(), storiesFormat);
     }
 
     private void updateFavoriteButton(LayoutBgBottomSheetBinding binding, boolean favorited) {
@@ -141,7 +175,8 @@ public final class QuoteSheetController {
         if (clipboard == null || quote.getQuote() == null) return;
         String text = "\"" + quote.getQuote() + "\"\n— "
                 + (quote.getCharacter() != null ? quote.getCharacter() : "")
-                + (quote.getAnime() != null ? " · " + quote.getAnime() : "");
+                + (quote.getAnime() != null ? " · " + quote.getAnime() : "")
+                + "\n" + host.activity().getString(R.string.made_with_cita);
         clipboard.setPrimaryClip(ClipData.newPlainText("Cita quote", text));
         analytics.quoteCopy(quote);
         Toast.makeText(host.activity(), R.string.quote_copied, Toast.LENGTH_SHORT).show();
@@ -190,7 +225,6 @@ public final class QuoteSheetController {
         rewardAd.loadAd(host.activity(), host.activity(), reward, new QuoteRewardAd.Listener() {
             @Override
             public void onRewardEarned(int amount) {
-                // QuoteRewardAd already writes credits into SharedPreferences.
             }
 
             @Override
@@ -199,7 +233,6 @@ public final class QuoteSheetController {
                 if (reward) {
                     if (earnedReward) saveAndShare(binding);
                 } else {
-                    // One-shot path: grant a single credit then save (never negative).
                     credits.add(1);
                     saveAndShare(binding);
                 }
@@ -207,7 +240,6 @@ public final class QuoteSheetController {
 
             @Override
             public void onAdFailed() {
-                // Toast already shown by QuoteRewardAd
             }
         });
     }
@@ -215,6 +247,7 @@ public final class QuoteSheetController {
     private void saveAndShare(LayoutBgBottomSheetBinding binding) {
         Activity activity = host.activity();
         QuoteResponse quote = currentQuote;
+        applyStyle(binding);
         new ViewToImage(activity, binding.toBeConverted, new ActionListeners() {
             @Override
             public void convertedWithSuccess(Bitmap bitmap, String filePath, String absolutePath) {
