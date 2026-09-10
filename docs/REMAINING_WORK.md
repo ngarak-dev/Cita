@@ -75,7 +75,7 @@ Living backlog after the high-leverage “Next” pass (share validation, Plus p
 - Keep ID / pt-BR in sync when adding English keys  
 - Abstract covers only — no licensed character art by design  
 - AdMob account approval still blocks live fill (debug uses sample units)  
-- versionCode **8** / **1.7** (Billing Library 9.1 + R8 minify)  
+- versionCode **6** / **1.5** (R8 minify + Billing Library 9.1)  
 - `ENABLE_REMOVE_ADS_IAP` defaults **false** until WSC moves  
 
 ---

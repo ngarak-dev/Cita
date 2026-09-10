@@ -18,8 +18,8 @@ android {
         applicationId "me.ngarak.cita"
         minSdk 23
         targetSdk 36
-        versionCode 8
-        versionName "1.7"
+        versionCode 6
+        versionName "1.5"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         // Flip to true in a Play release once WSC / share rate justifies Remove Ads.
