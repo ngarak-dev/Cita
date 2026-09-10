@@ -103,6 +103,23 @@
     <string name="referral_my_code">Your invite code: %1$s</string>
     <string name="plus_watermark_off">Cita Plus removes the watermark on shared cards</string>
 
+    <string name="nav_home">Home</string>
+    <string name="nav_explore">Explore</string>
+    <string name="nav_anime">Anime</string>
+    <string name="nav_favorites">Favorites</string>
+    <string name="nav_packs">Packs</string>
+    <string name="home_title">Cita</string>
+    <string name="more_quotes">More quotes</string>
+    <string name="new_quote">New Quote</string>
+    <string name="daily_drop_label">Daily Drop</string>
+    <string name="create_collection">Create Collection</string>
+    <string name="my_collections">My Collections</string>
+    <string name="saved_quotes_count">%1$d saved quotes</string>
+    <string name="view_all">View all</string>
+    <string name="packs_headline">Curated collections for every mood</string>
+    <string name="quotes_count_short">%1$d quotes</string>
+    <string name="share">Share</string>
+
     <string name="packs">Packs</string>
     <string name="packs_subtitle">Seasonal &amp; editorial collections — curated for taste, not dumps.</string>
     <string name="pack_meta">%1$s · %2$d lines</string>

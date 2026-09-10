@@ -4,45 +4,49 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background_dark"
+    android:paddingStart="@dimen/spacing_lg"
+    android:paddingEnd="@dimen/spacing_lg"
     tools:context=".ui.quotes.QuotesFragment">
-
-    <ImageView
-        android:id="@+id/image_btn"
-        android:layout_width="@dimen/header_icon_size"
-        android:layout_height="@dimen/header_icon_size"
-        android:importantForAccessibility="no"
-        android:focusable="false"
-        android:src="@drawable/ic_quotes"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="?attr/colorSecondary" />
 
     <TextView
         android:id="@+id/title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/quotes"
+        android:paddingTop="@dimen/spacing_lg"
+        android:text="@string/nav_explore"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+        android:textColor="@color/white"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/image_btn"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/image_btn"
-        app:layout_constraintTop_toTopOf="@id/image_btn" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/image_btn"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/searchLayout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/spacing_sm"
-        android:layout_marginEnd="@dimen/spacing_sm"
+        android:layout_marginTop="@dimen/spacing_sm"
         android:hint="@string/search_quotes_hint"
-        app:layout_constraintTop_toBottomOf="@id/image_btn"
-        app:layout_constraintStart_toStartOf="parent"
+        app:boxBackgroundColor="@color/surface_elevated"
+        app:boxCornerRadiusBottomEnd="14dp"
+        app:boxCornerRadiusBottomStart="14dp"
+        app:boxCornerRadiusTopEnd="14dp"
+        app:boxCornerRadiusTopStart="14dp"
+        app:boxStrokeColor="@color/brand_charcoal_muted"
+        app:hintTextColor="@color/brand_charcoal_muted"
         app:layout_constraintEnd_toEndOf="parent"
-        app:boxCornerRadiusBottomEnd="8dp"
-        app:boxCornerRadiusBottomStart="8dp"
-        app:boxCornerRadiusTopEnd="8dp"
-        app:boxCornerRadiusTopStart="8dp">
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title">
 
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/searchInput"
@@ -50,13 +54,15 @@
             android:layout_height="wrap_content"
             android:imeOptions="actionSearch"
             android:inputType="text"
-            android:maxLines="1" />
+            android:maxLines="1"
+            android:textColor="@color/white" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
         android:id="@+id/adView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_sm"
         ads:adSize="BANNER"
         ads:adUnitId="@string/SMART_BANNER_AD_UNIT"
         app:layout_constraintTop_toBottomOf="@id/searchLayout" />
@@ -76,6 +82,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="5dp"
+        android:clipToPadding="false"
         android:orientation="vertical"
         android:visibility="invisible"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
@@ -83,18 +90,18 @@
         app:layout_constraintTop_toBottomOf="@+id/adView" />
 
     <com.google.android.material.button.MaterialButton
+        android:id="@+id/loadMoreBtn"
+        style="@style/Widget.Cita.Button.Ghost"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/quotes_rv"
-        android:id="@+id/loadMoreBtn"
-        app:icon="@drawable/ic_restore_page"
         android:text="@string/load_more"
         android:textAllCaps="false"
         android:visibility="gone"
-        style="@style/Widget.MaterialComponents.Button.TextButton"
-        app:layout_constraintBottom_toTopOf="@id/progressLoadMore" />
+        app:icon="@drawable/ic_restore_page"
+        app:layout_constraintBottom_toTopOf="@id/progressLoadMore"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/quotes_rv" />
 
     <ProgressBar
         android:id="@+id/progressLoadMore"
@@ -110,25 +117,25 @@
         app:layout_constraintTop_toBottomOf="@id/quotes_rv" />
 
     <include
+        android:id="@+id/layout_error"
         layout="@layout/layout_error"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:id="@+id/layout_error"
-        android:visibility="gone"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <include
+        android:id="@+id/layout_no_quotes"
         layout="@layout/layout_no_quotes"
-        app:layout_constraintTop_toTopOf="parent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:id="@+id/layout_no_quotes"
-        android:visibility="gone"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

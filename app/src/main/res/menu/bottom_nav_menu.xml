@@ -3,27 +3,27 @@
 
     <item
         android:id="@+id/navigation_random"
-        android:icon="@drawable/ic_random_quotes"
-        android:title="@string/random" />
+        android:icon="@drawable/ic_home"
+        android:title="@string/nav_home" />
 
     <item
         android:id="@+id/navigation_quotes"
-        android:icon="@drawable/ic_quotes"
-        android:title="@string/quotes" />
+        android:icon="@drawable/ic_explore"
+        android:title="@string/nav_explore" />
 
     <item
         android:id="@+id/navigation_anime"
         android:icon="@drawable/ic_anime"
-        android:title="@string/anime" />
+        android:title="@string/nav_anime" />
 
     <item
         android:id="@+id/navigation_favorites"
         android:icon="@drawable/ic_favorite_border"
-        android:title="@string/favorites" />
+        android:title="@string/nav_favorites" />
 
     <item
         android:id="@+id/navigation_packs"
         android:icon="@drawable/ic_packs"
-        android:title="@string/packs" />
+        android:title="@string/nav_packs" />
 
 </menu>

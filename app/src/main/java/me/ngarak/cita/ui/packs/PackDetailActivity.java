@@ -67,7 +67,8 @@ public class PackDetailActivity extends AppCompatActivity {
         if (pack != null) {
             binding.packSubtitle.setText(pack.subtitle);
             List<QuoteResponse> quotes = PacksCatalog.get().resolveQuotes(pack);
-            QuotesRVAdapter adapter = new QuotesRVAdapter(q -> sheetController.open(q));
+            QuotesRVAdapter adapter = new QuotesRVAdapter(q ->
+                    startActivity(me.ngarak.cita.ui.QuoteDetailActivity.intent(this, q)));
             binding.quotesRv.setAdapter(adapter);
             adapter.setQuoteList(quotes);
         }

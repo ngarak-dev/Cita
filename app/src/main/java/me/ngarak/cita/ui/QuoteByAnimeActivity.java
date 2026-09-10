@@ -143,7 +143,8 @@ public class QuoteByAnimeActivity extends AppCompatActivity {
 
     private void settingUpAdapter() {
         binding.quotesRv.setHasFixedSize(true);
-        quotesRVAdapter = new QuotesRVAdapter(quote -> sheetController.open(quote));
+        quotesRVAdapter = new QuotesRVAdapter(quote ->
+                startActivity(QuoteDetailActivity.intent(this, quote)));
         binding.quotesRv.setAdapter(quotesRVAdapter);
     }
 

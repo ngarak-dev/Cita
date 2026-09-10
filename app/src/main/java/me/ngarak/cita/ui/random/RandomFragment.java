@@ -6,6 +6,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,24 +21,31 @@ import com.google.android.material.chip.Chip;
 import org.jetbrains.annotations.NotNull;
 
 import me.ngarak.cita.DailyDrop;
+import me.ngarak.cita.FavoritesStore;
 import me.ngarak.cita.Mood;
 import me.ngarak.cita.QuoteAnalytics;
 import me.ngarak.cita.QuoteSheetController;
+import me.ngarak.cita.R;
+import me.ngarak.cita.TasteModel;
 import me.ngarak.cita.UserTaste;
 import me.ngarak.cita.adapters.QuotesRVAdapter;
 import me.ngarak.cita.databinding.FragmentRandomBinding;
-import me.ngarak.cita.databinding.LayoutDailyDropBinding;
+import me.ngarak.cita.databinding.LayoutDailyDropHeroBinding;
 import me.ngarak.cita.models.QuoteResponse;
 import me.ngarak.cita.perm;
+import me.ngarak.cita.ui.MainActivity;
+import me.ngarak.cita.ui.QuoteDetailActivity;
 
 public class RandomFragment extends Fragment {
 
     private final String TAG = getClass().getSimpleName();
     private FragmentRandomBinding binding;
-    private LayoutDailyDropBinding dailyBinding;
+    private LayoutDailyDropHeroBinding dailyBinding;
     private QuotesRVAdapter quotesRVAdapter;
     private RandomViewModel randomViewModel;
     private QuoteSheetController sheetController;
+    private FavoritesStore favorites;
+    private TasteModel tasteModel;
     private UserTaste taste;
     private QuoteAnalytics analytics;
     private Mood activeMood = Mood.ALL;
@@ -55,6 +63,8 @@ public class RandomFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         taste = new UserTaste(requireContext());
+        tasteModel = new TasteModel(requireContext());
+        favorites = new FavoritesStore(requireContext());
         analytics = new QuoteAnalytics(requireContext());
         activeMood = taste.lastMood();
         randomViewModel = new ViewModelProvider(this).get(RandomViewModel.class);
@@ -73,6 +83,12 @@ public class RandomFragment extends Fragment {
             @Override
             public void requestStoragePermission() {
                 new perm().reQuestStorage(requireActivity());
+            }
+        });
+
+        binding.btnMenu.setOnClickListener(v -> {
+            if (requireActivity() instanceof MainActivity) {
+                ((MainActivity) requireActivity()).showAppMenu(v);
             }
         });
 
@@ -137,19 +153,47 @@ public class RandomFragment extends Fragment {
         }
         dailyBinding.getRoot().setVisibility(View.VISIBLE);
         dailyBinding.setQuote(dailyQuote);
-        dailyBinding.dailyDate.setText(getString(me.ngarak.cita.R.string.daily_drop_subtitle, DailyDrop.dayLabel()));
+        dailyBinding.dailyDate.setText(getString(R.string.daily_drop_subtitle, DailyDrop.dayLabel()));
         String meta = (dailyQuote.getCharacter() != null ? dailyQuote.getCharacter() : "")
                 + (dailyQuote.getAnime() != null ? " · " + dailyQuote.getAnime() : "");
         dailyBinding.dailyMeta.setText(meta);
+        updateDailyFavoriteUi(favorites.contains(dailyQuote));
+
         dailyBinding.dailyDropCard.setOnClickListener(v -> {
+            analytics.dailyDropOpen();
+            startActivity(QuoteDetailActivity.intent(requireContext(), dailyQuote));
+        });
+        dailyBinding.btnFavorite.setOnClickListener(v -> {
+            boolean on = favorites.toggle(dailyQuote);
+            updateDailyFavoriteUi(on);
+            analytics.favoriteToggle(dailyQuote, on);
+            tasteModel.recordFavorite(dailyQuote, on);
+            Toast.makeText(requireContext(),
+                    on ? R.string.added_to_favorites : R.string.removed_from_favorites,
+                    Toast.LENGTH_SHORT).show();
+        });
+        dailyBinding.btnShare.setOnClickListener(v -> {
             analytics.dailyDropOpen();
             sheetController.open(dailyQuote);
         });
+        dailyBinding.btnNewQuote.setOnClickListener(v -> {
+            if (quotesRVAdapter != null) quotesRVAdapter.clear();
+            settingUpAdapter();
+            randomQuotes();
+            bindDailyDrop();
+        });
+    }
+
+    private void updateDailyFavoriteUi(boolean on) {
+        dailyBinding.btnFavorite.setText(on ? R.string.favorited : R.string.favorite);
+        dailyBinding.btnFavorite.setIconResource(
+                on ? R.drawable.ic_favorite : R.drawable.ic_favorite_border);
     }
 
     private void settingUpAdapter() {
         binding.randomRv.setHasFixedSize(false);
-        quotesRVAdapter = new QuotesRVAdapter(quote -> sheetController.open(quote));
+        quotesRVAdapter = new QuotesRVAdapter(quote ->
+                startActivity(QuoteDetailActivity.intent(requireContext(), quote)));
         binding.randomRv.setAdapter(quotesRVAdapter);
     }
 

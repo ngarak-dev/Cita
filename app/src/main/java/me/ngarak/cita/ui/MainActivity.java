@@ -4,14 +4,12 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -43,15 +41,9 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        setSupportActionBar(binding.toolBar);
-        if (getSupportActionBar() != null) {
-            getSupportActionBar().setHomeButtonEnabled(false);
-            getSupportActionBar().setDisplayShowTitleEnabled(false);
-        }
-
         ViewCompat.setOnApplyWindowInsetsListener(binding.container, (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            binding.appBarLayout.setPadding(0, systemBars.top, 0, 0);
+            binding.container.setPadding(0, systemBars.top, 0, 0);
             binding.navView.setPadding(0, 0, 0, systemBars.bottom);
             return insets;
         });
@@ -69,19 +61,18 @@ public class MainActivity extends AppCompatActivity {
 
         new perm().reQuestStorage(MainActivity.this);
 
-        // Phase 2: first-run taste onboarding (after UI is ready).
         binding.getRoot().post(() -> OnboardingHelper.maybeShow(MainActivity.this, null));
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu, menu);
-        return true;
+    /** Overflow menu (About / Invite / Redeem) — anchored from Home info button. */
+    public void showAppMenu(View anchor) {
+        PopupMenu popup = new PopupMenu(this, anchor);
+        popup.getMenuInflater().inflate(R.menu.menu, popup.getMenu());
+        popup.setOnMenuItemClickListener(this::onAppMenuItem);
+        popup.show();
     }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+    private boolean onAppMenuItem(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.about) {
             onAboutDialog();
@@ -99,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
             showRedeemDialog();
             return true;
         }
-        return super.onOptionsItemSelected(item);
+        return false;
     }
 
     private void showRedeemDialog() {

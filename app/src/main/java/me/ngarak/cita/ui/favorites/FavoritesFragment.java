@@ -1,6 +1,5 @@
 package me.ngarak.cita.ui.favorites;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,18 +12,17 @@ import androidx.fragment.app.Fragment;
 import java.util.List;
 
 import me.ngarak.cita.FavoritesStore;
-import me.ngarak.cita.QuoteSheetController;
+import me.ngarak.cita.R;
 import me.ngarak.cita.adapters.QuotesRVAdapter;
 import me.ngarak.cita.databinding.FragmentFavoritesBinding;
 import me.ngarak.cita.models.QuoteResponse;
-import me.ngarak.cita.perm;
+import me.ngarak.cita.ui.QuoteDetailActivity;
 
 public class FavoritesFragment extends Fragment {
 
     private FragmentFavoritesBinding binding;
     private QuotesRVAdapter quotesRVAdapter;
     private FavoritesStore favoritesStore;
-    private QuoteSheetController sheetController;
 
     @Nullable
     @Override
@@ -38,26 +36,10 @@ public class FavoritesFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         favoritesStore = new FavoritesStore(requireContext());
-        sheetController = new QuoteSheetController(new QuoteSheetController.Host() {
-            @NonNull
-            @Override
-            public Activity activity() {
-                return requireActivity();
-            }
-
-            @Override
-            public boolean isActive() {
-                return isAdded();
-            }
-
-            @Override
-            public void requestStoragePermission() {
-                new perm().reQuestStorage(requireActivity());
-            }
-        });
 
         binding.favoritesRv.setHasFixedSize(true);
-        quotesRVAdapter = new QuotesRVAdapter(quote -> sheetController.open(quote));
+        quotesRVAdapter = new QuotesRVAdapter(quote ->
+                startActivity(QuoteDetailActivity.intent(requireContext(), quote)));
         binding.favoritesRv.setAdapter(quotesRVAdapter);
     }
 
@@ -71,6 +53,7 @@ public class FavoritesFragment extends Fragment {
         if (binding == null) return;
         List<QuoteResponse> all = favoritesStore.getAll();
         quotesRVAdapter.clear();
+        binding.savedCount.setText(getString(R.string.saved_quotes_count, all.size()));
         if (all.isEmpty()) {
             binding.emptyFavorites.setVisibility(View.VISIBLE);
             binding.favoritesRv.setVisibility(View.GONE);

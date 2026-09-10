@@ -3,42 +3,64 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="@dimen/spacing_sm"
+    android:layout_marginBottom="@dimen/spacing_md"
     android:clickable="true"
     android:focusable="true"
     android:foreground="?attr/selectableItemBackground"
-    app:cardBackgroundColor="@color/brand_charcoal"
-    app:cardCornerRadius="@dimen/corner_radius_sm"
-    app:cardElevation="2dp">
+    app:cardBackgroundColor="@color/surface_elevated"
+    app:cardCornerRadius="18dp"
+    app:cardElevation="0dp">
 
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="@dimen/spacing_sm">
+        android:layout_height="160dp">
 
-        <TextView
-            android:id="@+id/packTitle"
+        <View
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@color/brand_yellow"
-            android:textStyle="bold"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_hero_placeholder" />
 
-        <TextView
-            android:id="@+id/packSubtitle"
+        <View
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="4dp"
-            android:textColor="@color/brand_charcoal_muted" />
+            android:layout_height="match_parent"
+            android:background="@drawable/bg_scrim_bottom" />
 
-        <TextView
-            android:id="@+id/packMeta"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
-            android:textAllCaps="true"
-            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
-            android:textColor="@color/white" />
-    </LinearLayout>
+            android:layout_height="match_parent"
+            android:gravity="bottom"
+            android:orientation="vertical"
+            android:padding="@dimen/spacing_lg">
+
+            <TextView
+                android:id="@+id/packMeta"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_mood_pill"
+                android:paddingStart="10dp"
+                android:paddingEnd="10dp"
+                android:paddingTop="3dp"
+                android:paddingBottom="3dp"
+                android:textAllCaps="false"
+                android:textColor="@color/brand_charcoal_deep"
+                android:textSize="11sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/packTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6" />
+
+            <TextView
+                android:id="@+id/packSubtitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textColor="@color/brand_charcoal_muted" />
+        </LinearLayout>
+    </FrameLayout>
 </com.google.android.material.card.MaterialCardView>

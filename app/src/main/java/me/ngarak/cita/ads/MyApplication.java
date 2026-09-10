@@ -12,6 +12,8 @@ import com.google.android.gms.ads.RequestConfiguration;
 import java.util.Arrays;
 import java.util.List;
 
+import androidx.appcompat.app.AppCompatDelegate;
+
 import me.ngarak.cita.PacksCatalog;
 import me.ngarak.cita.QuotesCatalog;
 
@@ -24,6 +26,7 @@ public class MyApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES);
         QuotesCatalog.init(this);
         PacksCatalog.init(this);
         // Ensure starter save credits exist for new installs (Phase 1 share ritual).

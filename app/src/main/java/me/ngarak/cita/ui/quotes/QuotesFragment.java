@@ -136,7 +136,8 @@ public class QuotesFragment extends Fragment {
 
     private void settingUpAdapter() {
         binding.quotesRv.setHasFixedSize(true);
-        quotesRVAdapter = new QuotesRVAdapter(quote -> sheetController.open(quote));
+        quotesRVAdapter = new QuotesRVAdapter(quote ->
+                startActivity(me.ngarak.cita.ui.QuoteDetailActivity.intent(requireContext(), quote)));
         binding.quotesRv.setAdapter(quotesRVAdapter);
     }
 

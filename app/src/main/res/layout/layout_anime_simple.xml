@@ -2,56 +2,50 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingTop="@dimen/spacing_xs"
-        android:paddingBottom="@dimen/spacing_xs"
-        android:paddingStart="@dimen/spacing_xs"
-        android:paddingEnd="@dimen/spacing_xs">
-
-        <LinearLayout
-            android:id="@+id/linearLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="@dimen/touch_target_min"
-            android:background="@drawable/background"
-            android:clickable="true"
-            android:focusable="true"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingStart="@dimen/list_item_padding"
-            android:paddingEnd="@dimen/list_item_padding"
-            android:paddingTop="@dimen/spacing_sm"
-            android:paddingBottom="@dimen/spacing_sm">
-
-            <ImageView
-                android:id="@+id/image"
-                android:layout_width="@dimen/icon_size_sm"
-                android:layout_height="@dimen/icon_size_sm"
-                android:contentDescription="@null"
-                android:importantForAccessibility="no"
-                android:padding="@dimen/spacing_xs"
-                android:src="@drawable/ic_anime"
-                app:tint="@color/purple_500" />
-
-            <TextView
-                android:id="@+id/anime_title"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginStart="@dimen/spacing_sm"
-                android:text="@{anime.toString()}" />
-
-        </LinearLayout>
-
-    </LinearLayout>
-
     <data>
-
         <variable
             name="anime"
             type="java.lang.String" />
     </data>
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/linearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="6dp"
+        android:clickable="true"
+        android:focusable="true"
+        android:foreground="?attr/selectableItemBackground"
+        app:cardBackgroundColor="@color/surface_elevated"
+        app:cardCornerRadius="14dp"
+        app:cardElevation="0dp">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="200dp">
+
+            <View
+                android:id="@+id/image"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_anime_placeholder" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@drawable/bg_scrim_bottom" />
+
+            <TextView
+                android:id="@+id/anime_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:padding="12dp"
+                android:text="@{anime}"
+                android:textColor="@color/white"
+                android:textStyle="bold"
+                android:maxLines="2"
+                android:ellipsize="end" />
+        </FrameLayout>
+    </com.google.android.material.card.MaterialCardView>
 </layout>

@@ -10,6 +10,16 @@ public final class MoodMatcher {
     private MoodMatcher() {
     }
 
+    /** Best-effort primary mood for UI tags (Explore / detail). */
+    public static Mood detect(QuoteResponse quote) {
+        if (quote == null) return Mood.ALL;
+        Mood[] order = {Mood.RESOLVE, Mood.HEARTBREAK, Mood.CHAOS, Mood.COMFORT};
+        for (Mood mood : order) {
+            if (matches(quote, mood)) return mood;
+        }
+        return Mood.ALL;
+    }
+
     public static boolean matches(QuoteResponse quote, Mood mood) {
         if (quote == null || mood == null || mood == Mood.ALL) return true;
         String text = ((quote.getQuote() == null ? "" : quote.getQuote()) + " "

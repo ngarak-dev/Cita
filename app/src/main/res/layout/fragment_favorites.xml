@@ -4,39 +4,77 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/background_dark"
+    android:paddingStart="@dimen/spacing_lg"
+    android:paddingEnd="@dimen/spacing_lg"
     tools:context=".ui.favorites.FavoritesFragment">
-
-    <ImageView
-        android:id="@+id/image_btn"
-        android:layout_width="@dimen/header_icon_size"
-        android:layout_height="@dimen/header_icon_size"
-        android:importantForAccessibility="no"
-        android:focusable="false"
-        android:src="@drawable/ic_favorite"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:tint="?attr/colorSecondary" />
 
     <TextView
         android:id="@+id/title"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="@string/favorites"
+        android:paddingTop="@dimen/spacing_lg"
+        android:text="@string/nav_favorites"
+        android:textAppearance="@style/TextAppearance.MaterialComponents.Headline6"
+        android:textColor="@color/white"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/image_btn"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@id/image_btn"
-        app:layout_constraintTop_toTopOf="@id/image_btn" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageView
+        android:id="@+id/image_btn"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="gone"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/collectionsHeader"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_md"
+        android:text="@string/my_collections"
+        android:textColor="@color/brand_charcoal_muted"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnCreateCollection"
+        style="@style/Widget.Cita.Button.Ghost"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_sm"
+        android:enabled="false"
+        android:text="@string/create_collection"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/collectionsHeader" />
+
+    <TextView
+        android:id="@+id/savedCount"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/spacing_lg"
+        android:textColor="@color/white"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/btnCreateCollection" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/favorites_rv"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_marginTop="5dp"
+        android:clipToPadding="false"
         android:orientation="vertical"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/image_btn" />
+        app:layout_constraintTop_toBottomOf="@id/savedCount" />
 
     <TextView
         android:id="@+id/emptyFavorites"
@@ -45,10 +83,11 @@
         android:gravity="center"
         android:padding="@dimen/spacing_sm"
         android:text="@string/no_favorites_yet"
+        android:textColor="@color/brand_charcoal_muted"
         android:visibility="gone"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/image_btn" />
+        app:layout_constraintTop_toBottomOf="@id/savedCount" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

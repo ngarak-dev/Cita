@@ -1,6 +1,7 @@
 package me.ngarak.cita.adapters;
 
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
@@ -11,6 +12,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.ngarak.cita.Mood;
+import me.ngarak.cita.MoodMatcher;
 import me.ngarak.cita.databinding.LayoutSimpleQuoteBinding;
 import me.ngarak.cita.models.QuoteResponse;
 
@@ -83,8 +86,14 @@ public class QuotesRVAdapter extends RecyclerView.Adapter<QuotesRVAdapter.Quotes
 
         public void bind(QuoteResponse quoteResponse, QuoteClickListener clickListener) {
             binding.setQuote(quoteResponse);
+            Mood mood = MoodMatcher.detect(quoteResponse);
+            if (mood != Mood.ALL) {
+                binding.moodTag.setVisibility(View.VISIBLE);
+                binding.moodTag.setText(mood.titleRes);
+            } else {
+                binding.moodTag.setVisibility(View.GONE);
+            }
             binding.executePendingBindings();
-
             binding.quoteLayout.setOnClickListener(v -> clickListener.onClick(quoteResponse));
         }
     }
