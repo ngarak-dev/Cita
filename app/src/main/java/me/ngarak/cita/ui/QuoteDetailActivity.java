@@ -21,7 +21,9 @@ import me.ngarak.cita.MoodMatcher;
 import me.ngarak.cita.QuoteAnalytics;
 import me.ngarak.cita.QuoteSheetController;
 import me.ngarak.cita.R;
+import me.ngarak.cita.RecentlyViewedStore;
 import me.ngarak.cita.TasteModel;
+import me.ngarak.cita.UserTaste;
 import me.ngarak.cita.databinding.ActivityQuoteDetailBinding;
 import me.ngarak.cita.models.QuoteResponse;
 import me.ngarak.cita.perm;
@@ -70,6 +72,7 @@ public class QuoteDetailActivity extends AppCompatActivity {
         taste = new TasteModel(this);
         analytics.quoteView(quote);
         taste.recordView(quote);
+        new RecentlyViewedStore(this).record(quote);
 
         sheetController = new QuoteSheetController(new QuoteSheetController.Host() {
             @NonNull
@@ -102,6 +105,11 @@ public class QuoteDetailActivity extends AppCompatActivity {
         if (mood != Mood.ALL) {
             binding.moodTag.setVisibility(View.VISIBLE);
             binding.moodTag.setText(mood.titleRes);
+            binding.moodTag.setOnClickListener(v -> {
+                new UserTaste(this).setMood(mood);
+                Toast.makeText(this, getString(R.string.mood_set_for_home, getString(mood.titleRes)),
+                        Toast.LENGTH_SHORT).show();
+            });
         }
 
         updateFavoriteUi(favorites.contains(quote));

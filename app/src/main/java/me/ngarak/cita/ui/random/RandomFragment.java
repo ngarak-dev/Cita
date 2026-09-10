@@ -21,11 +21,13 @@ import com.google.android.material.chip.Chip;
 import org.jetbrains.annotations.NotNull;
 
 import me.ngarak.cita.DailyDrop;
+import me.ngarak.cita.DailyDropStreak;
 import me.ngarak.cita.FavoritesStore;
 import me.ngarak.cita.Mood;
 import me.ngarak.cita.QuoteAnalytics;
 import me.ngarak.cita.QuoteSheetController;
 import me.ngarak.cita.R;
+import me.ngarak.cita.RecentlyViewedStore;
 import me.ngarak.cita.TasteModel;
 import me.ngarak.cita.UserTaste;
 import me.ngarak.cita.WeeklyShareTracker;
@@ -51,6 +53,8 @@ public class RandomFragment extends Fragment {
     private UserTaste taste;
     private QuoteAnalytics analytics;
     private WeeklyShareTracker wsc;
+    private DailyDropStreak dailyStreak;
+    private RecentlyViewedStore recentStore;
     private Mood activeMood = Mood.ALL;
     private QuoteResponse dailyQuote;
 
@@ -70,6 +74,8 @@ public class RandomFragment extends Fragment {
         favorites = new FavoritesStore(requireContext());
         analytics = new QuoteAnalytics(requireContext());
         wsc = new WeeklyShareTracker(requireContext());
+        dailyStreak = new DailyDropStreak(requireContext());
+        recentStore = new RecentlyViewedStore(requireContext());
         activeMood = taste.lastMood();
         randomViewModel = new ViewModelProvider(this).get(RandomViewModel.class);
         sheetController = new QuoteSheetController(new QuoteSheetController.Host() {
@@ -98,6 +104,7 @@ public class RandomFragment extends Fragment {
 
         setupMoodChips();
         bindDailyDrop();
+        bindRecentlyViewed();
         updateWscHint();
         showRefreshing();
         settingUpAdapter();
@@ -130,7 +137,18 @@ public class RandomFragment extends Fragment {
         super.onResume();
         if (binding != null && wsc != null) {
             updateWscHint();
+            bindRecentlyViewed();
         }
+    }
+
+    /** Scroll Home to Daily Drop (widget / deep-link). */
+    public void focusDailyDrop() {
+        if (binding == null || dailyBinding == null) return;
+        int streak = dailyStreak.recordOpen();
+        updateDailyStreakUi(streak);
+        analytics.dailyDropOpen();
+        binding.homeScroll.post(() ->
+                binding.homeScroll.smoothScrollTo(0, dailyBinding.getRoot().getTop()));
     }
 
     private void updateWscHint() {
@@ -167,6 +185,7 @@ public class RandomFragment extends Fragment {
             activeMood = (Mood) chipView.getTag();
             taste.setMood(activeMood);
             analytics.moodSelected(activeMood.name());
+            me.ngarak.cita.widget.CitaDailyDropWidget.refreshAll(requireContext());
             bindDailyDrop();
             if (quotesRVAdapter != null) quotesRVAdapter.clear();
             randomQuotes();
@@ -186,16 +205,20 @@ public class RandomFragment extends Fragment {
         CoverArt.applyLetterOverlay(dailyBinding.heroLetter,
                 dailyQuote.getAnime() != null ? dailyQuote.getAnime() : dailyQuote.getCharacter());
         dailyBinding.dailyDate.setText(getString(R.string.daily_drop_subtitle, DailyDrop.dayLabel()));
+        updateDailyStreakUi(dailyStreak.getStreak());
         String meta = (dailyQuote.getCharacter() != null ? dailyQuote.getCharacter() : "")
                 + (dailyQuote.getAnime() != null ? " · " + dailyQuote.getAnime() : "");
         dailyBinding.dailyMeta.setText(meta);
         updateDailyFavoriteUi(favorites.contains(dailyQuote));
 
         dailyBinding.dailyDropCard.setOnClickListener(v -> {
+            int streak = dailyStreak.recordOpen();
+            updateDailyStreakUi(streak);
             analytics.dailyDropOpen();
             startActivity(QuoteDetailActivity.intent(requireContext(), dailyQuote));
         });
         dailyBinding.btnFavorite.setOnClickListener(v -> {
+            dailyStreak.recordOpen();
             boolean on = favorites.toggle(dailyQuote);
             updateDailyFavoriteUi(on);
             analytics.favoriteToggle(dailyQuote, on);
@@ -205,6 +228,7 @@ public class RandomFragment extends Fragment {
                     Toast.LENGTH_SHORT).show();
         });
         dailyBinding.btnShare.setOnClickListener(v -> {
+            dailyStreak.recordOpen();
             analytics.dailyDropOpen();
             sheetController.open(dailyQuote);
         });
@@ -214,6 +238,34 @@ public class RandomFragment extends Fragment {
             randomQuotes();
             bindDailyDrop();
         });
+    }
+
+    private void updateDailyStreakUi(int streak) {
+        if (dailyBinding == null || dailyBinding.dailyStreak == null) return;
+        if (streak <= 0) {
+            dailyBinding.dailyStreak.setVisibility(View.GONE);
+            return;
+        }
+        dailyBinding.dailyStreak.setVisibility(View.VISIBLE);
+        dailyBinding.dailyStreak.setText(getString(R.string.daily_streak, streak));
+    }
+
+    private void bindRecentlyViewed() {
+        if (binding == null || recentStore == null) return;
+        java.util.List<QuoteResponse> recent = recentStore.getAll();
+        if (recent.isEmpty()) {
+            binding.recentHeader.setVisibility(View.GONE);
+            binding.recentRv.setVisibility(View.GONE);
+            return;
+        }
+        binding.recentHeader.setVisibility(View.VISIBLE);
+        binding.recentRv.setVisibility(View.VISIBLE);
+        QuotesRVAdapter recentAdapter = new QuotesRVAdapter(quote ->
+                startActivity(QuoteDetailActivity.intent(requireContext(), quote)));
+        binding.recentRv.setAdapter(recentAdapter);
+        java.util.List<QuoteResponse> slice =
+                recent.size() > 5 ? new java.util.ArrayList<>(recent.subList(0, 5)) : recent;
+        recentAdapter.setQuoteList(slice);
     }
 
     private void updateDailyFavoriteUi(boolean on) {
@@ -230,6 +282,10 @@ public class RandomFragment extends Fragment {
     }
 
     private void loadSmartAd() {
+        if (!me.ngarak.cita.ads.AdsPolicy.shouldShowAds(requireContext())) {
+            binding.adView.setVisibility(View.GONE);
+            return;
+        }
         binding.adView.setVisibility(View.VISIBLE);
         AdRequest adRequest = new AdRequest.Builder().build();
         binding.adView.loadAd(adRequest);

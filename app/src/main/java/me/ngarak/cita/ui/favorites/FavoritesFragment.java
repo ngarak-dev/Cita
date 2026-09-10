@@ -180,8 +180,15 @@ public class FavoritesFragment extends Fragment {
             binding.favoritesRv.setVisibility(View.GONE);
             if (!FILTER_ALL.equals(activeFilter)) {
                 binding.emptyFavorites.setText(R.string.collection_empty);
+                binding.emptyFavorites.setOnClickListener(null);
             } else {
-                binding.emptyFavorites.setText(R.string.no_favorites_yet);
+                binding.emptyFavorites.setText(getString(R.string.no_favorites_yet)
+                        + "\n\n" + getString(R.string.empty_favorites_cta));
+                binding.emptyFavorites.setOnClickListener(v -> {
+                    if (requireActivity() instanceof me.ngarak.cita.ui.MainActivity) {
+                        ((me.ngarak.cita.ui.MainActivity) requireActivity()).openDailyDrop();
+                    }
+                });
             }
         } else {
             binding.emptyFavorites.setVisibility(View.GONE);

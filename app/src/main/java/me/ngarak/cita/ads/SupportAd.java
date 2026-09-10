@@ -29,6 +29,11 @@ public class SupportAd {
     }
 
     public void loadAd(Context context, Activity activity, @Nullable Listener listener) {
+        if (!AdsPolicy.shouldShowAds(context)) {
+            Toast.makeText(context, R.string.ads_already_removed, Toast.LENGTH_SHORT).show();
+            if (listener != null) listener.onFinished();
+            return;
+        }
         InterstitialAd.load(context, context.getString(R.string.SUPPORT_AD_UNIT), adRequest, new InterstitialAdLoadCallback() {
             @Override
             public void onAdLoaded(@NonNull InterstitialAd mInterstitialAd) {

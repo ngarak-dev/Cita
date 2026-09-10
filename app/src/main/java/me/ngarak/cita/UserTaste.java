@@ -17,6 +17,8 @@ public final class UserTaste {
     private static final String KEY_ONBOARDED = "onboarded_v1";
     private static final String KEY_ANIME = "favorite_anime";
     private static final String KEY_MOOD = "last_mood";
+    private static final String KEY_TEMPLATE = "last_template";
+    private static final String KEY_STORIES = "last_stories_format";
 
     private final SharedPreferences prefs;
 
@@ -62,6 +64,22 @@ public final class UserTaste {
         } catch (Exception e) {
             return Mood.ALL;
         }
+    }
+
+    public void setLastTemplate(String name, boolean storiesFormat) {
+        if (TextUtils.isEmpty(name)) return;
+        prefs.edit()
+                .putString(KEY_TEMPLATE, name)
+                .putBoolean(KEY_STORIES, storiesFormat)
+                .apply();
+    }
+
+    public String lastTemplateName() {
+        return prefs.getString(KEY_TEMPLATE, "CLASSIC");
+    }
+
+    public boolean lastStoriesFormat() {
+        return prefs.getBoolean(KEY_STORIES, false);
     }
 
     public static List<String> seedSuggestions() {

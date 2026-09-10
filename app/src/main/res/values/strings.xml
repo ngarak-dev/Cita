@@ -143,6 +143,41 @@
     <string name="quotes_count_short">%1$d quotes</string>
     <string name="share">Share</string>
 
+    <string name="share_success">Card ready — share it ✨</string>
+    <string name="daily_streak">🔥 %1$d-day Daily Drop streak</string>
+    <string name="home_tips">Tip: export Stories cards for Reels/TikTok · add the Cita Daily Drop widget</string>
+    <string name="recently_viewed">Recently viewed</string>
+    <string name="no_quotes_hint">Try another mood chip, or open Daily Drop above.</string>
+    <string name="copy_play_link">Copy Play link (UTM)</string>
+    <string name="copy_invite_code">Copy invite code</string>
+    <string name="play_link_copied">Play link copied</string>
+    <string name="invite_code_copied">Invite code copied</string>
+    <string name="mood_set_for_home">Home mood set to %1$s</string>
+    <string name="empty_favorites_cta">Browse Daily Drop</string>
+
+    <string name="daily_line_reminders_off">Reminders: Today’s line (off)</string>
+    <string name="daily_line_reminders_on">Reminders: Today’s line (on)</string>
+    <string name="daily_line_reminders_enabled">Daily Drop reminders on · ~9:00</string>
+    <string name="daily_line_reminders_disabled">Daily Drop reminders off</string>
+    <string name="daily_line_notification_title">Today’s line</string>
+    <string name="daily_line_notification_fallback">Open Cita for today’s Daily Drop</string>
+    <string name="daily_line_channel_name">Daily Drop</string>
+    <string name="daily_line_channel_desc">Optional reminder for today’s anime quote</string>
+
+    <string name="remove_ads">Remove ads</string>
+    <string name="remove_ads_coming_soon">Remove Ads unlocks when share habit is strong — coming soon</string>
+    <string name="remove_ads_unavailable">Remove Ads isn’t available right now</string>
+    <string name="remove_ads_thanks">Ads removed — thank you</string>
+    <string name="ads_already_removed">Ads already removed</string>
+
+    <string name="widget_configure_title">Customize Daily Drop</string>
+    <string name="widget_configure_subtitle">Pick a mood and optional anime bias for this widget.</string>
+    <string name="widget_mood_label">Mood</string>
+    <string name="widget_anime_label">Anime</string>
+    <string name="widget_anime_follow">Follow my favorites</string>
+    <string name="widget_config_save">Save widget</string>
+    <string name="widget_configured">Widget updated</string>
+
     <string name="packs">Packs</string>
     <string name="packs_subtitle">Seasonal &amp; editorial collections — curated for taste, not dumps.</string>
     <string name="pack_meta">%1$s · %2$d lines</string>

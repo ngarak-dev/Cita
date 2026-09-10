@@ -12,6 +12,7 @@ import me.ngarak.cita.R;
 
 public class SplashActivity extends AppCompatActivity {
 
+    public static final String EXTRA_OPEN_DAILY_DROP = "open_daily_drop";
     private static final int SPLASH_TIME_MS = 1200;
 
     @Override
@@ -20,10 +21,17 @@ public class SplashActivity extends AppCompatActivity {
         WindowCompat.setDecorFitsSystemWindows(getWindow(), false);
         setContentView(R.layout.activity_splash);
 
+        final boolean openDaily = getIntent() != null
+                && getIntent().getBooleanExtra(EXTRA_OPEN_DAILY_DROP, false);
+
         new Handler(Looper.getMainLooper()).postDelayed(() -> {
             if (isFinishing()) return;
-            startActivity(new Intent(SplashActivity.this, MainActivity.class));
+            Intent main = new Intent(SplashActivity.this, MainActivity.class);
+            if (openDaily) {
+                main.putExtra(MainActivity.EXTRA_OPEN_DAILY_DROP, true);
+            }
+            startActivity(main);
             finish();
-        }, SPLASH_TIME_MS);
+        }, openDaily ? 400 : SPLASH_TIME_MS);
     }
 }

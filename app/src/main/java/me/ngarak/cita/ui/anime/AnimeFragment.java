@@ -86,6 +86,10 @@ public class AnimeFragment extends Fragment {
     }
 
     private void loadSmartAd() {
+        if (!me.ngarak.cita.ads.AdsPolicy.shouldShowAds(requireContext())) {
+            binding.adView.setVisibility(View.GONE);
+            return;
+        }
         binding.adView.setVisibility(View.VISIBLE);
         AdRequest adRequest = new AdRequest.Builder().build();
         binding.adView.loadAd(adRequest);

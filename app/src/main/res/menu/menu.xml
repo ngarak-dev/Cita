@@ -7,8 +7,28 @@
         android:visible="true"
         app:showAsAction="never" />
     <item
+        android:id="@+id/copy_invite_code"
+        android:title="@string/copy_invite_code"
+        android:visible="true"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/copy_play_link"
+        android:title="@string/copy_play_link"
+        android:visible="true"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/redeem"
         android:title="@string/redeem_invite"
+        android:visible="true"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/daily_line_reminders"
+        android:title="@string/daily_line_reminders_off"
+        android:visible="true"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/remove_ads"
+        android:title="@string/remove_ads"
         android:visible="true"
         app:showAsAction="never" />
     <item

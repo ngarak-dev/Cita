@@ -11,7 +11,6 @@ import android.widget.RemoteViews;
 import me.ngarak.cita.DailyDrop;
 import me.ngarak.cita.QuotesCatalog;
 import me.ngarak.cita.R;
-import me.ngarak.cita.UserTaste;
 import me.ngarak.cita.models.QuoteResponse;
 import me.ngarak.cita.ui.SplashActivity;
 
@@ -35,10 +34,21 @@ public class CitaDailyDropWidget extends AppWidgetProvider {
         context.sendBroadcast(intent);
     }
 
+    @Override
+    public void onDeleted(Context context, int[] appWidgetIds) {
+        WidgetPrefs prefs = new WidgetPrefs(context);
+        for (int id : appWidgetIds) {
+            prefs.delete(id);
+        }
+    }
+
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_daily_drop);
-        UserTaste taste = new UserTaste(context);
-        QuoteResponse quote = DailyDrop.today(context, taste.lastMood(), taste.favoriteAnime());
+        WidgetPrefs widgetPrefs = new WidgetPrefs(context);
+        QuoteResponse quote = DailyDrop.today(
+                context,
+                widgetPrefs.moodFor(appWidgetId),
+                widgetPrefs.animeFor(appWidgetId));
         if (quote != null && quote.getQuote() != null) {
             views.setTextViewText(R.id.widgetQuote, quote.getQuote());
             String meta = (quote.getCharacter() != null ? quote.getCharacter() : "")
@@ -50,6 +60,8 @@ public class CitaDailyDropWidget extends AppWidgetProvider {
         }
 
         Intent launch = new Intent(context, SplashActivity.class);
+        launch.putExtra(SplashActivity.EXTRA_OPEN_DAILY_DROP, true);
+        launch.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pi = PendingIntent.getActivity(
                 context, appWidgetId, launch,
                 PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE);

@@ -125,6 +125,10 @@ public class QuoteByAnimeActivity extends AppCompatActivity {
     }
 
     private void loadSmartAd() {
+        if (!me.ngarak.cita.ads.AdsPolicy.shouldShowAds(this)) {
+            binding.adView.setVisibility(View.GONE);
+            return;
+        }
         binding.adView.loadAd(adRequest);
         binding.adView.setAdListener(new AdListener() {
             @Override

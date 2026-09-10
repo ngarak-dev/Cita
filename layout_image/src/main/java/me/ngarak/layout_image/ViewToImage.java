@@ -6,7 +6,6 @@ import android.graphics.Canvas;
 import android.os.Build;
 import android.os.Environment;
 import android.view.View;
-import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -105,7 +104,6 @@ public class ViewToImage {
             finalBitmap.compress(Bitmap.CompressFormat.JPEG, 90, out);
             out.flush();
             out.close();
-            Toast.makeText(context, "Quote is Saved in /" + folderName + " in your Device!", Toast.LENGTH_SHORT).show();
             filePath = fileName;
 
             if (listeners != null) {

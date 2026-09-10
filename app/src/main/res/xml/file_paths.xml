@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<paths>
+    <external-files-path name="cita_pictures" path="Pictures/" />
+    <files-path name="cita_files" path="." />
+    <cache-path name="cita_cache" path="." />
+</paths>

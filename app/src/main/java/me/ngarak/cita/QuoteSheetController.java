@@ -11,12 +11,17 @@ import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.Build;
+import android.os.VibrationEffect;
+import android.os.Vibrator;
+import android.os.VibratorManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.FileProvider;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
@@ -25,6 +30,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
 
+import java.io.File;
 import java.util.List;
 
 import me.ngarak.cita.ads.QuoteRewardAd;
@@ -54,7 +60,9 @@ public final class QuoteSheetController {
     private final QuoteAnalytics analytics;
     private final CitaPlus plus;
     private final TasteModel taste;
+    private final UserTaste userTaste;
     private final WeeklyShareTracker wsc;
+    private final RecentlyViewedStore recent;
     private final QuoteRewardAd rewardAd = new QuoteRewardAd();
 
     private BottomSheetDialog bottomSheetDialog;
@@ -71,15 +79,17 @@ public final class QuoteSheetController {
         this.analytics = new QuoteAnalytics(app);
         this.plus = new CitaPlus(app);
         this.taste = new TasteModel(app);
+        this.userTaste = new UserTaste(app);
         this.wsc = new WeeklyShareTracker(app);
+        this.recent = new RecentlyViewedStore(app);
     }
 
     public void open(@NonNull QuoteResponse quote) {
         currentQuote = quote;
-        selectedTemplate = CardTemplate.CLASSIC;
-        storiesFormat = false;
+        restoreStudioPrefs();
         analytics.quoteView(quote);
         taste.recordView(quote);
+        recent.record(quote);
 
         Activity activity = host.activity();
         bottomSheetDialog = new BottomSheetDialog(activity);
@@ -94,13 +104,17 @@ public final class QuoteSheetController {
         bottomSheetDialog.show();
 
         AdRequest adRequest = new AdRequest.Builder().build();
-        binding.adView.loadAd(adRequest);
-        binding.adView.setAdListener(new AdListener() {
-            @Override
-            public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                binding.adView.setVisibility(View.GONE);
-            }
-        });
+        if (!me.ngarak.cita.ads.AdsPolicy.shouldShowAds(activity)) {
+            binding.adView.setVisibility(View.GONE);
+        } else {
+            binding.adView.loadAd(adRequest);
+            binding.adView.setAdListener(new AdListener() {
+                @Override
+                public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                    binding.adView.setVisibility(View.GONE);
+                }
+            });
+        }
 
         binding.copyQuoteBtn.setOnClickListener(v -> copyQuote(quote));
         binding.favoriteBtn.setOnClickListener(v -> {
@@ -118,6 +132,19 @@ public final class QuoteSheetController {
         binding.saveQuoteBtn.setOnClickListener(v -> onSaveClicked(binding));
     }
 
+    private void restoreStudioPrefs() {
+        storiesFormat = userTaste.lastStoriesFormat();
+        String name = userTaste.lastTemplateName();
+        try {
+            selectedTemplate = CardTemplate.valueOf(name);
+        } catch (Exception e) {
+            selectedTemplate = CardTemplate.CLASSIC;
+        }
+        if (selectedTemplate.requiresUnlock && !plus.hasReferralTemplateUnlock()) {
+            selectedTemplate = CardTemplate.CLASSIC;
+        }
+    }
+
     private void setupFormats(LayoutBgBottomSheetBinding binding) {
         Activity activity = host.activity();
         binding.formatChips.removeAllViews();
@@ -125,12 +152,13 @@ public final class QuoteSheetController {
         feed.setId(View.generateViewId());
         feed.setText(R.string.export_feed);
         feed.setCheckable(true);
-        feed.setChecked(true);
+        feed.setChecked(!storiesFormat);
         feed.setTag(Boolean.FALSE);
         Chip stories = new Chip(activity);
         stories.setId(View.generateViewId());
         stories.setText(R.string.export_stories);
         stories.setCheckable(true);
+        stories.setChecked(storiesFormat);
         stories.setTag(Boolean.TRUE);
         binding.formatChips.addView(feed);
         binding.formatChips.addView(stories);
@@ -139,6 +167,7 @@ public final class QuoteSheetController {
             View chipView = group.findViewById(checkedIds.get(0));
             if (chipView == null || !(chipView.getTag() instanceof Boolean)) return;
             storiesFormat = (Boolean) chipView.getTag();
+            userTaste.setLastTemplate(selectedTemplate.name(), storiesFormat);
             applyStyle(binding);
             analytics.exportFormat(storiesFormat ? "stories" : "feed");
         });
@@ -148,12 +177,16 @@ public final class QuoteSheetController {
         Activity activity = host.activity();
         binding.templateChips.removeAllViews();
         binding.templateChips.setOnCheckedStateChangeListener(null);
-        for (CardTemplate template : CardTemplate.available(plus)) {
+        List<CardTemplate> available = CardTemplate.available(plus);
+        if (!available.contains(selectedTemplate)) {
+            selectedTemplate = CardTemplate.CLASSIC;
+        }
+        for (CardTemplate template : available) {
             Chip chip = new Chip(activity);
             chip.setId(View.generateViewId());
             chip.setText(template.titleRes);
             chip.setCheckable(true);
-            chip.setChecked(template == CardTemplate.CLASSIC);
+            chip.setChecked(template == selectedTemplate);
             chip.setTag(template);
             chip.setChipBackgroundColor(ColorStateList.valueOf(template.accentColor));
             chip.setTextColor(template.dark ? Color.WHITE : Color.parseColor("#2C2E43"));
@@ -164,6 +197,7 @@ public final class QuoteSheetController {
             View chipView = group.findViewById(checkedIds.get(0));
             if (chipView == null || !(chipView.getTag() instanceof CardTemplate)) return;
             selectedTemplate = (CardTemplate) chipView.getTag();
+            userTaste.setLastTemplate(selectedTemplate.name(), storiesFormat);
             applyStyle(binding);
             analytics.templateSelected(selectedTemplate.name());
         });
@@ -203,7 +237,7 @@ public final class QuoteSheetController {
             host.requestStoragePermission();
             return;
         }
-        if (credits.canSaveWithoutAd()) {
+        if (credits.canSaveWithoutAd() || plus.adsRemoved()) {
             saveAndShare(binding);
         } else {
             showConsentDialog(binding);
@@ -258,12 +292,15 @@ public final class QuoteSheetController {
     private void saveAndShare(LayoutBgBottomSheetBinding binding) {
         Activity activity = host.activity();
         QuoteResponse quote = currentQuote;
+        userTaste.setLastTemplate(selectedTemplate.name(), storiesFormat);
         applyStyle(binding);
         new ViewToImage(activity, binding.toBeConverted, new ActionListeners() {
             @Override
             public void convertedWithSuccess(Bitmap bitmap, String filePath, String absolutePath) {
                 if (!host.isActive()) return;
-                credits.consumeOne();
+                if (!plus.adsRemoved()) {
+                    credits.consumeOne();
+                }
                 if (quote != null) {
                     analytics.quoteSave(quote);
                     analytics.quoteShare(quote);
@@ -271,14 +308,23 @@ public final class QuoteSheetController {
                     int weekShares = wsc.recordShare();
                     analytics.weeklyShare(weekShares, wsc.getStreakWeeks());
                 }
-                Toast.makeText(activity, activity.getString(R.string.quote_saved, filePath),
-                        Toast.LENGTH_SHORT).show();
+                hapticSuccess(activity);
+                Toast.makeText(activity, R.string.share_success, Toast.LENGTH_SHORT).show();
                 if (bottomSheetDialog != null && bottomSheetDialog.isShowing()) {
                     bottomSheetDialog.dismiss();
                 }
+                File file = new File(absolutePath);
+                Uri uri;
+                try {
+                    uri = FileProvider.getUriForFile(activity,
+                            activity.getPackageName() + ".fileprovider", file);
+                } catch (IllegalArgumentException e) {
+                    uri = Uri.fromFile(file);
+                }
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 intent.setType("image/jpeg");
-                intent.putExtra(Intent.EXTRA_STREAM, Uri.parse(absolutePath));
+                intent.putExtra(Intent.EXTRA_STREAM, uri);
+                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
                 activity.startActivity(Intent.createChooser(intent,
                         activity.getString(R.string.share_quote)));
             }
@@ -290,5 +336,29 @@ public final class QuoteSheetController {
                         Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @SuppressWarnings("deprecation")
+    private void hapticSuccess(Activity activity) {
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                VibratorManager vm = (VibratorManager)
+                        activity.getSystemService(Context.VIBRATOR_MANAGER_SERVICE);
+                if (vm != null) {
+                    vm.getDefaultVibrator().vibrate(
+                            VibrationEffect.createOneShot(40, VibrationEffect.DEFAULT_AMPLITUDE));
+                }
+            } else {
+                Vibrator v = (Vibrator) activity.getSystemService(Context.VIBRATOR_SERVICE);
+                if (v != null) {
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                        v.vibrate(VibrationEffect.createOneShot(40, VibrationEffect.DEFAULT_AMPLITUDE));
+                    } else {
+                        v.vibrate(40);
+                    }
+                }
+            }
+        } catch (Exception ignored) {
+        }
     }
 }

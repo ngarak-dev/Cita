@@ -8,6 +8,7 @@
         android:layout_height="match_parent">
 
         <androidx.core.widget.NestedScrollView
+            android:id="@+id/homeScroll"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:fillViewport="true"
@@ -67,6 +68,17 @@
                     android:textSize="12sp"
                     android:visibility="gone" />
 
+                <TextView
+                    android:id="@+id/homeTips"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/spacing_lg"
+                    android:paddingEnd="@dimen/spacing_lg"
+                    android:paddingBottom="@dimen/spacing_sm"
+                    android:text="@string/home_tips"
+                    android:textColor="@color/brand_charcoal_muted"
+                    android:textSize="12sp" />
+
                 <include
                     android:id="@+id/dailyDrop"
                     layout="@layout/layout_daily_drop_hero"
@@ -74,6 +86,29 @@
                     android:layout_height="wrap_content"
                     android:layout_marginStart="@dimen/spacing_lg"
                     android:layout_marginEnd="@dimen/spacing_lg" />
+
+                <TextView
+                    android:id="@+id/recentHeader"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_lg"
+                    android:layout_marginTop="@dimen/spacing_md"
+                    android:layout_marginEnd="@dimen/spacing_lg"
+                    android:text="@string/recently_viewed"
+                    android:textColor="@color/white"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/recent_rv"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:nestedScrollingEnabled="false"
+                    android:paddingStart="@dimen/spacing_lg"
+                    android:paddingEnd="@dimen/spacing_lg"
+                    android:clipToPadding="false"
+                    android:visibility="gone"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
                 <HorizontalScrollView
                     android:id="@+id/moodScroll"
