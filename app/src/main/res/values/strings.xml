@@ -60,4 +60,29 @@
     <string name="cd_show_support_ad">Watch a support ad</string>
     <string name="cd_error_icon">Error</string>
     <string name="cd_no_quotes_icon">No quotes</string>
+
+    <string name="template_classic">Classic</string>
+    <string name="template_midnight">Midnight</string>
+    <string name="template_resolve">Resolve</string>
+    <string name="template_heartbreak">Heartbreak</string>
+    <string name="template_chaos">Chaos</string>
+    <string name="card_style">Card style</string>
+
+    <string name="mood_all">All</string>
+    <string name="mood_resolve">Resolve</string>
+    <string name="mood_heartbreak">Heartbreak</string>
+    <string name="mood_chaos">Chaos</string>
+    <string name="mood_comfort">Comfort</string>
+
+    <string name="daily_drop">Daily Drop</string>
+    <string name="daily_drop_subtitle">Today’s line · %1$s</string>
+    <string name="add_widget_hint">Tip: long-press home screen → Widgets → Cita Daily Drop</string>
+    <string name="widget_description">Shows today’s anime quote from Cita</string>
+    <string name="widget_empty">Open Cita for today’s line</string>
+
+    <string name="onboarding_title">What do you watch?</string>
+    <string name="onboarding_subtitle">Pick up to 3 shows — we’ll bias Random &amp; Daily Drop toward them.</string>
+    <string name="onboarding_continue">Continue</string>
+    <string name="onboarding_skip">Skip for now</string>
+    <string name="onboarding_pick_limit">Pick up to 3</string>
 </resources>

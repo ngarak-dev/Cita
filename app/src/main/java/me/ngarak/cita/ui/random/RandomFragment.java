@@ -15,12 +15,18 @@ import androidx.lifecycle.ViewModelProvider;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.LoadAdError;
+import com.google.android.material.chip.Chip;
 
 import org.jetbrains.annotations.NotNull;
 
+import me.ngarak.cita.DailyDrop;
+import me.ngarak.cita.Mood;
+import me.ngarak.cita.QuoteAnalytics;
 import me.ngarak.cita.QuoteSheetController;
+import me.ngarak.cita.UserTaste;
 import me.ngarak.cita.adapters.QuotesRVAdapter;
 import me.ngarak.cita.databinding.FragmentRandomBinding;
+import me.ngarak.cita.databinding.LayoutDailyDropBinding;
 import me.ngarak.cita.models.QuoteResponse;
 import me.ngarak.cita.perm;
 
@@ -28,13 +34,19 @@ public class RandomFragment extends Fragment {
 
     private final String TAG = getClass().getSimpleName();
     private FragmentRandomBinding binding;
+    private LayoutDailyDropBinding dailyBinding;
     private QuotesRVAdapter quotesRVAdapter;
     private RandomViewModel randomViewModel;
     private QuoteSheetController sheetController;
+    private UserTaste taste;
+    private QuoteAnalytics analytics;
+    private Mood activeMood = Mood.ALL;
+    private QuoteResponse dailyQuote;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentRandomBinding.inflate(inflater, container, false);
+        dailyBinding = binding.dailyDrop;
         return binding.getRoot();
     }
 
@@ -42,6 +54,9 @@ public class RandomFragment extends Fragment {
     public void onViewCreated(@NonNull @NotNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        taste = new UserTaste(requireContext());
+        analytics = new QuoteAnalytics(requireContext());
+        activeMood = taste.lastMood();
         randomViewModel = new ViewModelProvider(this).get(RandomViewModel.class);
         sheetController = new QuoteSheetController(new QuoteSheetController.Host() {
             @NonNull
@@ -61,6 +76,8 @@ public class RandomFragment extends Fragment {
             }
         });
 
+        setupMoodChips();
+        bindDailyDrop();
         showRefreshing();
         settingUpAdapter();
         loadSmartAd();
@@ -71,6 +88,7 @@ public class RandomFragment extends Fragment {
                 quotesRVAdapter.clear();
             }
             settingUpAdapter();
+            bindDailyDrop();
             randomQuotes();
             loadSmartAd();
         });
@@ -86,8 +104,50 @@ public class RandomFragment extends Fragment {
         });
     }
 
+    private void setupMoodChips() {
+        binding.moodChips.removeAllViews();
+        for (Mood mood : Mood.values()) {
+            Chip chip = new Chip(requireContext());
+            chip.setId(View.generateViewId());
+            chip.setText(mood.titleRes);
+            chip.setCheckable(true);
+            chip.setChecked(mood == activeMood);
+            chip.setTag(mood);
+            binding.moodChips.addView(chip);
+        }
+        binding.moodChips.setOnCheckedStateChangeListener((group, checkedIds) -> {
+            if (checkedIds.isEmpty()) return;
+            View chipView = group.findViewById(checkedIds.get(0));
+            if (chipView == null || !(chipView.getTag() instanceof Mood)) return;
+            activeMood = (Mood) chipView.getTag();
+            taste.setMood(activeMood);
+            analytics.moodSelected(activeMood.name());
+            bindDailyDrop();
+            if (quotesRVAdapter != null) quotesRVAdapter.clear();
+            randomQuotes();
+        });
+    }
+
+    private void bindDailyDrop() {
+        dailyQuote = DailyDrop.today(activeMood == Mood.ALL ? Mood.ALL : activeMood, taste.favoriteAnime());
+        if (dailyQuote == null) {
+            dailyBinding.getRoot().setVisibility(View.GONE);
+            return;
+        }
+        dailyBinding.getRoot().setVisibility(View.VISIBLE);
+        dailyBinding.setQuote(dailyQuote);
+        dailyBinding.dailyDate.setText(getString(me.ngarak.cita.R.string.daily_drop_subtitle, DailyDrop.dayLabel()));
+        String meta = (dailyQuote.getCharacter() != null ? dailyQuote.getCharacter() : "")
+                + (dailyQuote.getAnime() != null ? " · " + dailyQuote.getAnime() : "");
+        dailyBinding.dailyMeta.setText(meta);
+        dailyBinding.dailyDropCard.setOnClickListener(v -> {
+            analytics.dailyDropOpen();
+            sheetController.open(dailyQuote);
+        });
+    }
+
     private void settingUpAdapter() {
-        binding.randomRv.setHasFixedSize(true);
+        binding.randomRv.setHasFixedSize(false);
         quotesRVAdapter = new QuotesRVAdapter(quote -> sheetController.open(quote));
         binding.randomRv.setAdapter(quotesRVAdapter);
     }
@@ -116,32 +176,33 @@ public class RandomFragment extends Fragment {
         binding.layoutNoQuotes.getRoot().setVisibility(View.GONE);
         binding.progressBar.setVisibility(View.VISIBLE);
 
-        randomViewModel.getQuote().observe(getViewLifecycleOwner(), quoteResponses -> {
-            boolean isErrorCode = false, isThrowable = false;
-            if (quoteResponses != null) {
-                for (QuoteResponse quoteResponse : quoteResponses) {
-                    if (quoteResponse.getError_code() >= 300) isErrorCode = true;
-                    if (quoteResponse.getThrowable() != null) isThrowable = true;
-                }
-            }
+        randomViewModel.getQuote(activeMood, taste.favoriteAnime())
+                .observe(getViewLifecycleOwner(), quoteResponses -> {
+                    boolean isErrorCode = false, isThrowable = false;
+                    if (quoteResponses != null) {
+                        for (QuoteResponse quoteResponse : quoteResponses) {
+                            if (quoteResponse.getError_code() >= 300) isErrorCode = true;
+                            if (quoteResponse.getThrowable() != null) isThrowable = true;
+                        }
+                    }
 
-            binding.progressBar.setVisibility(View.GONE);
-            if (isErrorCode || isThrowable) {
-                binding.layoutError.getRoot().setVisibility(View.VISIBLE);
-                binding.layoutNoQuotes.getRoot().setVisibility(View.GONE);
-                binding.randomRv.setVisibility(View.INVISIBLE);
-            } else if (quoteResponses == null || quoteResponses.isEmpty()) {
-                binding.layoutNoQuotes.getRoot().setVisibility(View.VISIBLE);
-                binding.layoutError.getRoot().setVisibility(View.GONE);
-                binding.randomRv.setVisibility(View.INVISIBLE);
-            } else {
-                quotesRVAdapter.setQuoteList(quoteResponses);
-                binding.randomRv.setVisibility(View.VISIBLE);
-                binding.layoutError.getRoot().setVisibility(View.GONE);
-                binding.layoutNoQuotes.getRoot().setVisibility(View.GONE);
-            }
-            dismissRefreshing();
-        });
+                    binding.progressBar.setVisibility(View.GONE);
+                    if (isErrorCode || isThrowable) {
+                        binding.layoutError.getRoot().setVisibility(View.VISIBLE);
+                        binding.layoutNoQuotes.getRoot().setVisibility(View.GONE);
+                        binding.randomRv.setVisibility(View.INVISIBLE);
+                    } else if (quoteResponses == null || quoteResponses.isEmpty()) {
+                        binding.layoutNoQuotes.getRoot().setVisibility(View.VISIBLE);
+                        binding.layoutError.getRoot().setVisibility(View.GONE);
+                        binding.randomRv.setVisibility(View.INVISIBLE);
+                    } else {
+                        quotesRVAdapter.setQuoteList(quoteResponses);
+                        binding.randomRv.setVisibility(View.VISIBLE);
+                        binding.layoutError.getRoot().setVisibility(View.GONE);
+                        binding.layoutNoQuotes.getRoot().setVisibility(View.GONE);
+                    }
+                    dismissRefreshing();
+                });
     }
 
     private void showRefreshing() {
@@ -160,5 +221,6 @@ public class RandomFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         binding = null;
+        dailyBinding = null;
     }
 }

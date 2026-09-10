@@ -114,12 +114,80 @@ public final class QuotesCatalog {
         return new ArrayList<>(animeTitles);
     }
 
+    public List<QuoteResponse> allQuotesCopy() {
+        return new ArrayList<>(quotes);
+    }
+
     public int getQuoteCount() {
         return quotes.size();
     }
 
     public int getAnimeCount() {
         return animeTitles.size();
+    }
+
+    /** Random page, biased toward preferred anime when provided. */
+    public List<QuoteResponse> getRandomQuotes(List<String> preferredAnime) {
+        if (quotes.isEmpty()) {
+            return Collections.emptyList();
+        }
+        List<QuoteResponse> preferred = new ArrayList<>();
+        if (preferredAnime != null && !preferredAnime.isEmpty()) {
+            for (QuoteResponse q : quotes) {
+                if (q.getAnime() == null) continue;
+                String anime = q.getAnime().toLowerCase(Locale.US);
+                for (String pref : preferredAnime) {
+                    if (pref == null) continue;
+                    String p = pref.toLowerCase(Locale.US);
+                    if (anime.equals(p) || anime.contains(p) || p.contains(anime)) {
+                        preferred.add(q);
+                        break;
+                    }
+                }
+            }
+        }
+        List<QuoteResponse> pool = preferred.size() >= PAGE_SIZE ? preferred : new ArrayList<>(quotes);
+        List<QuoteResponse> copy = new ArrayList<>(pool);
+        Collections.shuffle(copy, random);
+        return new ArrayList<>(copy.subList(0, Math.min(PAGE_SIZE, copy.size())));
+    }
+
+    public List<QuoteResponse> getQuotesForMood(Mood mood, List<String> preferredAnime) {
+        List<QuoteResponse> source = quotes;
+        if (preferredAnime != null && !preferredAnime.isEmpty()) {
+            List<QuoteResponse> filtered = new ArrayList<>();
+            for (QuoteResponse q : quotes) {
+                if (matchesPreferred(q, preferredAnime)) filtered.add(q);
+            }
+            if (!filtered.isEmpty()) source = filtered;
+        }
+        if (mood == null || mood == Mood.ALL) {
+            return new ArrayList<>(source);
+        }
+        List<QuoteResponse> out = new ArrayList<>();
+        for (QuoteResponse q : source) {
+            if (MoodMatcher.matches(q, mood)) out.add(q);
+        }
+        return out.isEmpty() ? new ArrayList<>(source) : out;
+    }
+
+    public List<QuoteResponse> getRandomByMood(Mood mood, List<String> preferredAnime) {
+        List<QuoteResponse> pool = getQuotesForMood(mood, preferredAnime);
+        if (pool.isEmpty()) return Collections.emptyList();
+        List<QuoteResponse> copy = new ArrayList<>(pool);
+        Collections.shuffle(copy, random);
+        return new ArrayList<>(copy.subList(0, Math.min(PAGE_SIZE, copy.size())));
+    }
+
+    private static boolean matchesPreferred(QuoteResponse q, List<String> preferredAnime) {
+        if (q.getAnime() == null) return false;
+        String anime = q.getAnime().toLowerCase(Locale.US);
+        for (String pref : preferredAnime) {
+            if (pref == null) continue;
+            String p = pref.toLowerCase(Locale.US);
+            if (anime.equals(p) || anime.contains(p) || p.contains(anime)) return true;
+        }
+        return false;
     }
 
     /** Filter anime titles by substring (case-insensitive). */

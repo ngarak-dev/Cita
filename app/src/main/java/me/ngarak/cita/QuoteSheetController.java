@@ -7,7 +7,9 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,8 +23,10 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.LoadAdError;
 import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.chip.Chip;
 
 import me.ngarak.cita.ads.QuoteRewardAd;
+import me.ngarak.cita.cards.CardTemplate;
 import me.ngarak.cita.databinding.LayoutBgBottomSheetBinding;
 import me.ngarak.cita.models.QuoteResponse;
 import me.ngarak.layout_image.ActionListeners;
@@ -52,6 +56,7 @@ public final class QuoteSheetController {
     private BottomSheetDialog bottomSheetDialog;
     private AlertDialog consentDialog;
     private QuoteResponse currentQuote;
+    private CardTemplate selectedTemplate = CardTemplate.CLASSIC;
 
     public QuoteSheetController(@NonNull Host host) {
         this.host = host;
@@ -63,6 +68,7 @@ public final class QuoteSheetController {
 
     public void open(@NonNull QuoteResponse quote) {
         currentQuote = quote;
+        selectedTemplate = CardTemplate.CLASSIC;
         analytics.quoteView(quote);
 
         Activity activity = host.activity();
@@ -72,6 +78,8 @@ public final class QuoteSheetController {
         bottomSheetDialog.setContentView(binding.getRoot());
         binding.setQuote(quote);
         updateFavoriteButton(binding, favorites.contains(quote));
+        setupTemplates(binding);
+        selectedTemplate.apply(binding);
         bottomSheetDialog.show();
 
         AdRequest adRequest = new AdRequest.Builder().build();
@@ -93,6 +101,31 @@ public final class QuoteSheetController {
                     Toast.LENGTH_SHORT).show();
         });
         binding.saveQuoteBtn.setOnClickListener(v -> onSaveClicked(binding));
+    }
+
+    private void setupTemplates(LayoutBgBottomSheetBinding binding) {
+        Activity activity = host.activity();
+        binding.templateChips.removeAllViews();
+        binding.templateChips.setOnCheckedStateChangeListener(null);
+        for (CardTemplate template : CardTemplate.values()) {
+            Chip chip = new Chip(activity);
+            chip.setId(View.generateViewId());
+            chip.setText(template.titleRes);
+            chip.setCheckable(true);
+            chip.setChecked(template == CardTemplate.CLASSIC);
+            chip.setTag(template);
+            chip.setChipBackgroundColor(ColorStateList.valueOf(template.accentColor));
+            chip.setTextColor(template.dark ? Color.WHITE : Color.parseColor("#2C2E43"));
+            binding.templateChips.addView(chip);
+        }
+        binding.templateChips.setOnCheckedStateChangeListener((group, checkedIds) -> {
+            if (checkedIds.isEmpty()) return;
+            View chipView = group.findViewById(checkedIds.get(0));
+            if (chipView == null || !(chipView.getTag() instanceof CardTemplate)) return;
+            selectedTemplate = (CardTemplate) chipView.getTag();
+            selectedTemplate.apply(binding);
+            analytics.templateSelected(selectedTemplate.name());
+        });
     }
 
     private void updateFavoriteButton(LayoutBgBottomSheetBinding binding, boolean favorited) {

@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel;
 
 import java.util.List;
 
+import me.ngarak.cita.Mood;
 import me.ngarak.cita.models.QuoteResponse;
 import me.ngarak.cita.repositories.RandomRepo;
 
@@ -14,5 +15,9 @@ public class RandomViewModel extends ViewModel {
 
     public LiveData<List<QuoteResponse>> getQuote() {
         return randomRepo.requestQuote();
+    }
+
+    public LiveData<List<QuoteResponse>> getQuote(Mood mood, List<String> preferredAnime) {
+        return randomRepo.requestQuote(mood, preferredAnime);
     }
 }

@@ -7,24 +7,27 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import me.ngarak.cita.Mood;
 import me.ngarak.cita.QuotesCatalog;
 import me.ngarak.cita.models.QuoteResponse;
 
 public class RandomRepo {
     private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
-    private final List<QuoteResponse> responseList = new ArrayList<>();
 
     public MutableLiveData<List<QuoteResponse>> requestQuote() {
+        return requestQuote(Mood.ALL, null);
+    }
+
+    public MutableLiveData<List<QuoteResponse>> requestQuote(Mood mood, List<String> preferredAnime) {
         MutableLiveData<List<QuoteResponse>> mutableLiveData = new MutableLiveData<>();
         EXECUTOR.execute(() -> {
             try {
-                responseList.clear();
-                responseList.addAll(QuotesCatalog.get().getRandomQuotes());
-                mutableLiveData.postValue(new ArrayList<>(responseList));
+                List<QuoteResponse> list = QuotesCatalog.get().getRandomByMood(mood, preferredAnime);
+                mutableLiveData.postValue(new ArrayList<>(list));
             } catch (Exception e) {
-                responseList.clear();
-                responseList.add(new QuoteResponse(e));
-                mutableLiveData.postValue(new ArrayList<>(responseList));
+                List<QuoteResponse> error = new ArrayList<>();
+                error.add(new QuoteResponse(e));
+                mutableLiveData.postValue(error);
             }
         });
         return mutableLiveData;

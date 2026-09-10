@@ -66,6 +66,9 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(binding.navView, navController);
 
         new perm().reQuestStorage(MainActivity.this);
+
+        // Phase 2: first-run taste onboarding (after UI is ready).
+        binding.getRoot().post(() -> OnboardingHelper.maybeShow(MainActivity.this, null));
     }
 
     @Override

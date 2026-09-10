@@ -54,6 +54,28 @@ public final class QuoteAnalytics {
         analytics.logEvent(EVENT_SEARCH, b);
     }
 
+    public void templateSelected(String template) {
+        Bundle b = new Bundle();
+        b.putString("template", template);
+        analytics.logEvent("card_template_select", b);
+    }
+
+    public void dailyDropOpen() {
+        analytics.logEvent("daily_drop_open", new Bundle());
+    }
+
+    public void moodSelected(String mood) {
+        Bundle b = new Bundle();
+        b.putString("mood", mood);
+        analytics.logEvent("mood_select", b);
+    }
+
+    public void onboardingComplete(int animeCount) {
+        Bundle b = new Bundle();
+        b.putInt("anime_count", animeCount);
+        analytics.logEvent("onboarding_complete", b);
+    }
+
     private void logQuoteEvent(String name, QuoteResponse quote, Bundle extra) {
         Bundle b = extra != null ? new Bundle(extra) : new Bundle();
         if (quote != null) {
