@@ -74,6 +74,7 @@ public final class RemoveAdsBilling {
                 .setListener((result, purchases) -> handlePurchases(purchases))
                 .enablePendingPurchases(
                         PendingPurchasesParams.newBuilder().enableOneTimeProducts().build())
+                .enableAutoServiceReconnection()
                 .build();
         client.startConnection(new BillingClientStateListener() {
             @Override
@@ -131,7 +132,10 @@ public final class RemoveAdsBilling {
         QueryProductDetailsParams params = QueryProductDetailsParams.newBuilder()
                 .setProductList(Collections.singletonList(product))
                 .build();
-        client.queryProductDetailsAsync(params, (result, list) -> {
+        client.queryProductDetailsAsync(params, (result, detailsResult) -> {
+            List<ProductDetails> list = detailsResult != null
+                    ? detailsResult.getProductDetailsList()
+                    : null;
             if (result.getResponseCode() == BillingClient.BillingResponseCode.OK
                     && list != null && !list.isEmpty()) {
                 productDetails = list.get(0);

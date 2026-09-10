@@ -16,10 +16,10 @@ android {
 
     defaultConfig {
         applicationId "me.ngarak.cita"
-        minSdk 21
+        minSdk 23
         targetSdk 36
-        versionCode 7
-        versionName "1.6"
+        versionCode 8
+        versionName "1.7"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         // Flip to true in a Play release once WSC / share rate justifies Remove Ads.
@@ -79,7 +79,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-ads:23.6.0'
     implementation 'androidx.lifecycle:lifecycle-process:2.8.7'
     implementation 'androidx.work:work-runtime:2.9.1'
-    implementation 'com.android.billingclient:billing:7.1.1'
+    implementation 'com.android.billingclient:billing:9.1.0'
 
     implementation 'com.guolindev.permissionx:permissionx:1.7.1'
     implementation project(path: ':layout_image')
