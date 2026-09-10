@@ -18,8 +18,8 @@ android {
         applicationId "me.ngarak.cita"
         minSdk 21
         targetSdk 36
-        versionCode 6
-        versionName "1.5"
+        versionCode 7
+        versionName "1.6"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         // Flip to true in a Play release once WSC / share rate justifies Remove Ads.
@@ -39,7 +39,8 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
+            shrinkResources true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             if (keystorePropertiesFile.exists()) {
                 signingConfig signingConfigs.release

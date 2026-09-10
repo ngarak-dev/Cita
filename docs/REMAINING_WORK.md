@@ -75,7 +75,7 @@ Living backlog after the high-leverage “Next” pass (share validation, Plus p
 - Keep ID / pt-BR in sync when adding English keys  
 - Abstract covers only — no licensed character art by design  
 - AdMob account approval still blocks live fill (debug uses sample units)  
-- versionCode **6** / **1.5** (AAB for Play upload)  
+- versionCode **7** / **1.6** (R8 minify + shrink for Play obfuscation ≥25%)  
 - `ENABLE_REMOVE_ADS_IAP` defaults **false** until WSC moves  
 
 ---

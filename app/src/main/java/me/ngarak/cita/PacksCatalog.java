@@ -49,7 +49,7 @@ public final class PacksCatalog {
     private void load(Context context) {
         try (InputStream in = context.getAssets().open(ASSET);
              BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
-            Type type = new TypeToken<List<QuotePack>>() {}.getType();
+            Type type = TypeToken.getParameterized(List.class, QuotePack.class).getType();
             List<QuotePack> parsed = new Gson().fromJson(reader, type);
             if (parsed != null) packs.addAll(parsed);
             Log.d(TAG, "Loaded " + packs.size() + " packs");

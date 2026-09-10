@@ -39,7 +39,7 @@ public final class CollectionsStore {
     private final Context app;
     private final SharedPreferences prefs;
     private final Gson gson = new Gson();
-    private final Type listType = new TypeToken<List<Collection>>() {}.getType();
+    private final Type listType = TypeToken.getParameterized(List.class, Collection.class).getType();
 
     public CollectionsStore(Context context) {
         app = context.getApplicationContext();

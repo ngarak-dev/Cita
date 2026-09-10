@@ -62,7 +62,7 @@ public final class QuotesCatalog {
     private void load(Context context) {
         try (InputStream in = context.getAssets().open(ASSET_FILE);
              BufferedReader reader = new BufferedReader(new InputStreamReader(in, StandardCharsets.UTF_8))) {
-            Type type = new TypeToken<List<QuoteResponse>>() {}.getType();
+            Type type = TypeToken.getParameterized(List.class, QuoteResponse.class).getType();
             List<QuoteResponse> parsed = new Gson().fromJson(reader, type);
             if (parsed != null) {
                 quotes.addAll(parsed);

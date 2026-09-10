@@ -21,7 +21,7 @@ public final class FavoritesStore {
 
     private final SharedPreferences prefs;
     private final Gson gson = new Gson();
-    private final Type listType = new TypeToken<List<QuoteResponse>>() {}.getType();
+    private final Type listType = TypeToken.getParameterized(List.class, QuoteResponse.class).getType();
 
     public FavoritesStore(Context context) {
         prefs = context.getApplicationContext().getSharedPreferences(PREFS, Context.MODE_PRIVATE);
