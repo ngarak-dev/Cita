@@ -102,4 +102,8 @@
     <string name="referral_redeem_already">You’ve already redeemed an invite</string>
     <string name="referral_my_code">Your invite code: %1$s</string>
     <string name="plus_watermark_off">Cita Plus removes the watermark on shared cards</string>
+
+    <string name="packs">Packs</string>
+    <string name="packs_subtitle">Seasonal &amp; editorial collections — curated for taste, not dumps.</string>
+    <string name="pack_meta">%1$s · %2$d lines</string>
 </resources>

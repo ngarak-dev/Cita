@@ -28,4 +28,10 @@
         android:name="me.ngarak.cita.ui.favorites.FavoritesFragment"
         android:label="@string/favorites"
         tools:layout="@layout/fragment_favorites" />
+
+    <fragment
+        android:id="@+id/navigation_packs"
+        android:name="me.ngarak.cita.ui.packs.PacksFragment"
+        android:label="@string/packs"
+        tools:layout="@layout/fragment_packs" />
 </navigation>

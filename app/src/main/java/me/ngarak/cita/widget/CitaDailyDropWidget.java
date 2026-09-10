@@ -38,7 +38,7 @@ public class CitaDailyDropWidget extends AppWidgetProvider {
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_daily_drop);
         UserTaste taste = new UserTaste(context);
-        QuoteResponse quote = DailyDrop.today(taste.lastMood(), taste.favoriteAnime());
+        QuoteResponse quote = DailyDrop.today(context, taste.lastMood(), taste.favoriteAnime());
         if (quote != null && quote.getQuote() != null) {
             views.setTextViewText(R.id.widgetQuote, quote.getQuote());
             String meta = (quote.getCharacter() != null ? quote.getCharacter() : "")

@@ -129,7 +129,8 @@ public class RandomFragment extends Fragment {
     }
 
     private void bindDailyDrop() {
-        dailyQuote = DailyDrop.today(activeMood == Mood.ALL ? Mood.ALL : activeMood, taste.favoriteAnime());
+        dailyQuote = DailyDrop.today(requireContext(),
+                activeMood == Mood.ALL ? Mood.ALL : activeMood, taste.favoriteAnime());
         if (dailyQuote == null) {
             dailyBinding.getRoot().setVisibility(View.GONE);
             return;

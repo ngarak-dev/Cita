@@ -34,6 +34,11 @@
             android:value="@string/admob_app_id" />
 
         <activity
+            android:name=".ui.packs.PackDetailActivity"
+            android:exported="false"
+            android:hardwareAccelerated="true"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".ui.QuoteByAnimeActivity"
             android:exported="false"
             android:hardwareAccelerated="true"

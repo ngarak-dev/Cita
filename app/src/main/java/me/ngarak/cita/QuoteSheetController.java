@@ -51,6 +51,7 @@ public final class QuoteSheetController {
     private final FavoritesStore favorites;
     private final QuoteAnalytics analytics;
     private final CitaPlus plus;
+    private final TasteModel taste;
     private final QuoteRewardAd rewardAd = new QuoteRewardAd();
 
     private BottomSheetDialog bottomSheetDialog;
@@ -66,6 +67,7 @@ public final class QuoteSheetController {
         this.favorites = new FavoritesStore(app);
         this.analytics = new QuoteAnalytics(app);
         this.plus = new CitaPlus(app);
+        this.taste = new TasteModel(app);
     }
 
     public void open(@NonNull QuoteResponse quote) {
@@ -73,6 +75,7 @@ public final class QuoteSheetController {
         selectedTemplate = CardTemplate.CLASSIC;
         storiesFormat = false;
         analytics.quoteView(quote);
+        taste.recordView(quote);
 
         Activity activity = host.activity();
         bottomSheetDialog = new BottomSheetDialog(activity);
@@ -100,6 +103,7 @@ public final class QuoteSheetController {
             boolean on = favorites.toggle(quote);
             updateFavoriteButton(binding, on);
             analytics.favoriteToggle(quote, on);
+            taste.recordFavorite(quote, on);
             Toast.makeText(activity,
                     on ? R.string.added_to_favorites : R.string.removed_from_favorites,
                     Toast.LENGTH_SHORT).show();
@@ -256,6 +260,7 @@ public final class QuoteSheetController {
                 if (quote != null) {
                     analytics.quoteSave(quote);
                     analytics.quoteShare(quote);
+                    taste.recordShare(quote);
                 }
                 Toast.makeText(activity, activity.getString(R.string.quote_saved, filePath),
                         Toast.LENGTH_SHORT).show();

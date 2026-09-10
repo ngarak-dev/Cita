@@ -12,6 +12,7 @@ import com.google.android.gms.ads.RequestConfiguration;
 import java.util.Arrays;
 import java.util.List;
 
+import me.ngarak.cita.PacksCatalog;
 import me.ngarak.cita.QuotesCatalog;
 
 public class MyApplication extends Application {
@@ -24,6 +25,7 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         QuotesCatalog.init(this);
+        PacksCatalog.init(this);
         // Ensure starter save credits exist for new installs (Phase 1 share ritual).
         new me.ngarak.cita.QuoteCredits(this);
 

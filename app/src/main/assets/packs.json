@@ -1,0 +1,126 @@
+[
+  {
+    "id": "spring_resolve",
+    "title": "Spring Resolve",
+    "subtitle": "Lines that push you forward",
+    "mood": "RESOLVE",
+    "featured": true,
+    "months": [
+      3,
+      4,
+      5
+    ],
+    "quoteKeys": [
+      "naruto uzumaki|i'm not gonna run away, i never ",
+      "nagato (pain)|if you don't like your destiny, ",
+      "rock lee|a dropout will beat the genius t",
+      "itachi uchiha|those who cannot acknowledge the",
+      "hinata hyuga|true power doesn't come when you",
+      "nagato|if you don't share someone's pai",
+      "iruka umino|a person grows up when he's able",
+      "kushina uzumaki|when you give up, your dreams an"
+    ]
+  },
+  {
+    "id": "summer_chaos",
+    "title": "Summer Chaos",
+    "subtitle": "Heat, rage, and villains",
+    "mood": "CHAOS",
+    "featured": true,
+    "months": [
+      6,
+      7,
+      8
+    ],
+    "quoteKeys": [
+      "nagato (pain)|if you don't like your destiny, ",
+      "jiraiya|when people get hurt, they learn",
+      "madara uchiha|the moment people come to know l",
+      "sasuke uchiha|if you want to kill me, curse me",
+      "sasori|sympathy? that's the emotion i h",
+      "sakura haruno|to know what is right and choose",
+      "guren|fear is not evil. it tells you w",
+      "kisame hoshigaki|no matter how much you hate it, "
+    ]
+  },
+  {
+    "id": "autumn_heartbreak",
+    "title": "Autumn Heartbreak",
+    "subtitle": "Soft ache & goodbyes",
+    "mood": "HEARTBREAK",
+    "featured": true,
+    "months": [
+      9,
+      10,
+      11
+    ],
+    "quoteKeys": [
+      "gaara|knowing what it feels to be in p",
+      "obito uchiha|the hole in one's heart gets fil",
+      "madara uchiha|the moment people come to know l",
+      "pain|the longer you live, the more yo",
+      "tobi|when a man learns to love, he mu",
+      "nagato|if you don't share someone's pai",
+      "sasuke uchiha|love is not necessary; power is ",
+      "pain|sometimes you must hurt in order"
+    ]
+  },
+  {
+    "id": "winter_comfort",
+    "title": "Winter Comfort",
+    "subtitle": "Warmth when the world is cold",
+    "mood": "COMFORT",
+    "featured": true,
+    "months": [
+      12,
+      1,
+      2
+    ],
+    "quoteKeys": [
+      "kakashi hatake|in the ninja world, those who br",
+      "obito uchiha|the hole in one's heart gets fil",
+      "minato namikaze|a shinobi's life is not measured",
+      "sasuke uchiha|if you want to kill me, curse me",
+      "asuma sarutobi|a true teacher doesn't teach nat",
+      "pain|the longer you live, the more yo",
+      "jiraiya|a place where someone still thin",
+      "madara uchiha|the concept of hope is nothing m"
+    ]
+  },
+  {
+    "id": "found_family",
+    "title": "Found Family",
+    "subtitle": "Nakama energy, always",
+    "mood": "COMFORT",
+    "featured": true,
+    "months": [],
+    "quoteKeys": [
+      "kakashi hatake|in the ninja world, those who br",
+      "obito uchiha|the hole in one's heart gets fil",
+      "hinata hyuga|true power doesn't come when you",
+      "iruka umino|a person grows up when he's able",
+      "chiyo|when you protect someone you lov",
+      "naruto uzumaki|i won't let my comrades die. i'l",
+      "naruto uzumaki|i will never allow comrades to k",
+      "zabuza momochi|when you have something importan"
+    ]
+  },
+  {
+    "id": "never_give_up",
+    "title": "Never Give Up",
+    "subtitle": "The shonen promise",
+    "mood": "RESOLVE",
+    "featured": true,
+    "months": [],
+    "quoteKeys": [
+      "naruto uzumaki|i'm not gonna run away, i never ",
+      "nagato|if you don't share someone's pai",
+      "kushina uzumaki|when you give up, your dreams an",
+      "guren|fear is not evil. it tells you w",
+      "hiruzen sarutobi|the next generation will always ",
+      "naruto uzumaki|you should give up trying to mak",
+      "yahiko|the world is full of hatred and ",
+      "rock lee|a genius, huh? what does that me"
+    ]
+  }
+]

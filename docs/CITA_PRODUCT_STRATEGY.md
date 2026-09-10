@@ -34,6 +34,7 @@ That path can become big. A better Random tab cannot.
 | Sep 2026 | **Phase 1 started in code:** honest positioning, Favorites tab, search, copy + “Made with Cita” card mark, shared save/share sheet, starter free save credits, app-open ads paused, Firebase funnel events (`quote_view` / `save` / `share` / `copy` / `favorite_toggle` / `quote_search`). |
 | Sep 2026 | **Phase 2 started in code:** Card Studio templates (Classic/Midnight/Resolve/Heartbreak/Chaos), Daily Drop on Random, home-screen widget, mood lanes, first-run anime onboarding (up to 3). |
 | Sep 2026 | **Phase 3 started in code:** Stories/Feed export, Aurora referral template unlock, invite share/redeem, watermark policy via `CitaPlus`, Indonesian strings, growth playbook + ASO draft. |
+| Sep 2026 | **Phase 4 started in code (no Play ship):** local taste model ranks Random/Daily Drop; curated `packs.json` + Packs tab; CI fixed to JDK 17 + assembleDebug/unit tests (no store publish). |
 
 ---
 
