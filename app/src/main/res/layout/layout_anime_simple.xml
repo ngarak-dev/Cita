@@ -30,6 +30,16 @@
                 android:layout_height="match_parent"
                 android:background="@drawable/bg_anime_placeholder" />
 
+            <TextView
+                android:id="@+id/lettermark"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:textSize="56sp"
+                android:alpha="0.28"
+                android:importantForAccessibility="no" />
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

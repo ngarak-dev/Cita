@@ -3,6 +3,7 @@ package me.ngarak.cita.cards;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -20,6 +21,7 @@ import java.util.List;
 import me.ngarak.cita.CitaPlus;
 import me.ngarak.cita.R;
 import me.ngarak.cita.databinding.LayoutBgBottomSheetBinding;
+import me.ngarak.cita.visual.CoverArt;
 
 /** Card Studio templates — visual skins for the shareable quote card. */
 public enum CardTemplate {
@@ -30,7 +32,9 @@ public enum CardTemplate {
             Color.parseColor("#5C5E70"),
             Color.parseColor("#FFD523"),
             false,
-            false
+            false,
+            "serif",
+            Typeface.BOLD
     ),
     MIDNIGHT(
             R.string.template_midnight,
@@ -39,7 +43,9 @@ public enum CardTemplate {
             Color.parseColor("#B2B1B9"),
             Color.parseColor("#FFD523"),
             true,
-            false
+            false,
+            "sans-serif",
+            Typeface.BOLD
     ),
     RESOLVE(
             R.string.template_resolve,
@@ -48,7 +54,9 @@ public enum CardTemplate {
             Color.parseColor("#C5D0D8"),
             Color.parseColor("#3DDC97"),
             true,
-            false
+            false,
+            "sans-serif",
+            Typeface.BOLD
     ),
     HEARTBREAK(
             R.string.template_heartbreak,
@@ -57,7 +65,9 @@ public enum CardTemplate {
             Color.parseColor("#D9A5B3"),
             Color.parseColor("#FF6B8A"),
             true,
-            false
+            false,
+            "serif",
+            Typeface.ITALIC
     ),
     CHAOS(
             R.string.template_chaos,
@@ -66,7 +76,53 @@ public enum CardTemplate {
             Color.parseColor("#E0B89A"),
             Color.parseColor("#FF7A18"),
             true,
-            false
+            false,
+            "sans-serif",
+            Typeface.BOLD
+    ),
+    EMBER(
+            R.string.template_ember,
+            Color.parseColor("#1C0E0A"),
+            Color.parseColor("#FFE8D6"),
+            Color.parseColor("#D4A08A"),
+            Color.parseColor("#FF5A1F"),
+            true,
+            false,
+            "serif",
+            Typeface.BOLD
+    ),
+    MIST(
+            R.string.template_mist,
+            Color.parseColor("#E8EEF4"),
+            Color.parseColor("#1A2433"),
+            Color.parseColor("#5A6A7A"),
+            Color.parseColor("#4A90A8"),
+            false,
+            false,
+            "sans-serif",
+            Typeface.NORMAL
+    ),
+    INK(
+            R.string.template_ink,
+            Color.parseColor("#F4F1EA"),
+            Color.parseColor("#121212"),
+            Color.parseColor("#5C5C5C"),
+            Color.parseColor("#111111"),
+            false,
+            false,
+            "serif",
+            Typeface.BOLD
+    ),
+    NEON(
+            R.string.template_neon,
+            Color.parseColor("#0A0614"),
+            Color.parseColor("#E8F0FF"),
+            Color.parseColor("#9AA8D4"),
+            Color.parseColor("#39FF14"),
+            true,
+            false,
+            "monospace",
+            Typeface.BOLD
     ),
     /** Unlocked via referral invite (Phase 3 growth loop). */
     AURORA(
@@ -76,7 +132,9 @@ public enum CardTemplate {
             Color.parseColor("#9BB4D4"),
             Color.parseColor("#7C5CFF"),
             true,
-            true
+            true,
+            "sans-serif",
+            Typeface.BOLD
     );
 
     @StringRes
@@ -91,9 +149,12 @@ public enum CardTemplate {
     public final int accentColor;
     public final boolean dark;
     public final boolean requiresUnlock;
+    private final String typefaceFamily;
+    private final int typefaceStyle;
 
     CardTemplate(@StringRes int titleRes, int cardBackground, int quoteColor,
-                 int metaColor, int accentColor, boolean dark, boolean requiresUnlock) {
+                 int metaColor, int accentColor, boolean dark, boolean requiresUnlock,
+                 String typefaceFamily, int typefaceStyle) {
         this.titleRes = titleRes;
         this.cardBackground = cardBackground;
         this.quoteColor = quoteColor;
@@ -101,6 +162,8 @@ public enum CardTemplate {
         this.accentColor = accentColor;
         this.dark = dark;
         this.requiresUnlock = requiresUnlock;
+        this.typefaceFamily = typefaceFamily;
+        this.typefaceStyle = typefaceStyle;
     }
 
     public static List<CardTemplate> available(CitaPlus plus) {
@@ -119,8 +182,18 @@ public enum CardTemplate {
 
         MaterialCardView card = binding.quoteCard;
         card.setCardBackgroundColor(cardBackground);
-        card.setStrokeWidth(0);
+        card.setStrokeWidth(this == INK ? 2 : 0);
+        if (this == INK) {
+            card.setStrokeColor(Color.parseColor("#22111111"));
+        }
         card.setCardElevation(dark ? 0f : card.getResources().getDimension(R.dimen.spacing_sm));
+
+        ImageView accentBg = binding.cardAccentBg;
+        if (accentBg != null) {
+            accentBg.setImageResource(CoverArt.studioBgRes(ordinal()));
+            accentBg.setColorFilter(Color.argb(dark ? 90 : 40, 0, 0, 0));
+            accentBg.setVisibility(View.VISIBLE);
+        }
 
         TextView quote = binding.quote;
         TextView character = binding.character;
@@ -128,7 +201,28 @@ public enum CardTemplate {
         quote.setTextColor(quoteColor);
         character.setTextColor(quoteColor);
         anime.setTextColor(metaColor);
-        quote.setTypeface(Typeface.create(Typeface.SERIF, Typeface.BOLD));
+        Typeface tf = Typeface.create(typefaceFamily, typefaceStyle);
+        quote.setTypeface(tf);
+        quote.setLetterSpacing(this == NEON ? 0.04f : (this == HEARTBREAK ? 0.02f : 0.01f));
+        quote.setLineSpacing(0f, this == MIST ? 1.25f : 1.15f);
+        float quoteSp = storiesFormat ? 22f : (this == CLASSIC || this == INK ? 20f : 18f);
+        quote.setTextSize(TypedValue.COMPLEX_UNIT_SP, quoteSp);
+        character.setTypeface(Typeface.create(Typeface.SANS_SERIF, Typeface.BOLD));
+        anime.setTypeface(Typeface.create(Typeface.SANS_SERIF, Typeface.ITALIC));
+
+        TextView avatar = binding.characterDp;
+        if (avatar != null) {
+            String name = character.getText() != null ? character.getText().toString() : null;
+            String animeName = anime.getText() != null ? anime.getText().toString() : null;
+            CoverArt.applyLetterAvatar(avatar, name, animeName);
+        }
+
+        ImageView sticker = binding.cardSticker;
+        if (sticker != null) {
+            sticker.setImageResource(CoverArt.accentMarkRes(ordinal()));
+            ImageViewCompat.setImageTintList(sticker, ColorStateList.valueOf(accentColor));
+            sticker.setVisibility(View.VISIBLE);
+        }
 
         LinearLayout mark = binding.citaMark;
         mark.setVisibility(hideWatermark ? View.GONE : View.VISIBLE);

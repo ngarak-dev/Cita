@@ -56,6 +56,17 @@
                         app:tint="@color/brand_charcoal_muted" />
                 </LinearLayout>
 
+                <TextView
+                    android:id="@+id/wscHint"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingStart="@dimen/spacing_lg"
+                    android:paddingEnd="@dimen/spacing_lg"
+                    android:paddingBottom="@dimen/spacing_sm"
+                    android:textColor="@color/brand_charcoal_muted"
+                    android:textSize="12sp"
+                    android:visibility="gone" />
+
                 <include
                     android:id="@+id/dailyDrop"
                     layout="@layout/layout_daily_drop_hero"

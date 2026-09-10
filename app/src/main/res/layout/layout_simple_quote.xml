@@ -60,13 +60,16 @@
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
 
-                <ImageView
+                <TextView
                     android:id="@+id/character_dp"
                     android:layout_width="36dp"
                     android:layout_height="36dp"
                     android:contentDescription="@null"
                     android:importantForAccessibility="no"
-                    android:src="@drawable/bg_avatar_placeholder" />
+                    android:gravity="center"
+                    android:textColor="@color/white"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
 
                 <LinearLayout
                     android:layout_width="0dp"

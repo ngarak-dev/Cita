@@ -28,6 +28,7 @@ import me.ngarak.cita.QuoteSheetController;
 import me.ngarak.cita.R;
 import me.ngarak.cita.TasteModel;
 import me.ngarak.cita.UserTaste;
+import me.ngarak.cita.WeeklyShareTracker;
 import me.ngarak.cita.adapters.QuotesRVAdapter;
 import me.ngarak.cita.databinding.FragmentRandomBinding;
 import me.ngarak.cita.databinding.LayoutDailyDropHeroBinding;
@@ -35,6 +36,7 @@ import me.ngarak.cita.models.QuoteResponse;
 import me.ngarak.cita.perm;
 import me.ngarak.cita.ui.MainActivity;
 import me.ngarak.cita.ui.QuoteDetailActivity;
+import me.ngarak.cita.visual.CoverArt;
 
 public class RandomFragment extends Fragment {
 
@@ -48,6 +50,7 @@ public class RandomFragment extends Fragment {
     private TasteModel tasteModel;
     private UserTaste taste;
     private QuoteAnalytics analytics;
+    private WeeklyShareTracker wsc;
     private Mood activeMood = Mood.ALL;
     private QuoteResponse dailyQuote;
 
@@ -66,6 +69,7 @@ public class RandomFragment extends Fragment {
         tasteModel = new TasteModel(requireContext());
         favorites = new FavoritesStore(requireContext());
         analytics = new QuoteAnalytics(requireContext());
+        wsc = new WeeklyShareTracker(requireContext());
         activeMood = taste.lastMood();
         randomViewModel = new ViewModelProvider(this).get(RandomViewModel.class);
         sheetController = new QuoteSheetController(new QuoteSheetController.Host() {
@@ -94,6 +98,7 @@ public class RandomFragment extends Fragment {
 
         setupMoodChips();
         bindDailyDrop();
+        updateWscHint();
         showRefreshing();
         settingUpAdapter();
         loadSmartAd();
@@ -118,6 +123,30 @@ public class RandomFragment extends Fragment {
             randomQuotes();
             loadSmartAd();
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (binding != null && wsc != null) {
+            updateWscHint();
+        }
+    }
+
+    private void updateWscHint() {
+        if (binding == null || binding.wscHint == null || wsc == null) return;
+        int shares = wsc.getSharesThisWeek();
+        int streak = wsc.getStreakWeeks();
+        if (shares <= 0) {
+            binding.wscHint.setVisibility(View.GONE);
+            return;
+        }
+        binding.wscHint.setVisibility(View.VISIBLE);
+        if (streak > 1) {
+            binding.wscHint.setText(getString(R.string.wsc_hint_streak, shares, streak));
+        } else {
+            binding.wscHint.setText(getString(R.string.wsc_hint, shares));
+        }
     }
 
     private void setupMoodChips() {
@@ -153,6 +182,9 @@ public class RandomFragment extends Fragment {
         }
         dailyBinding.getRoot().setVisibility(View.VISIBLE);
         dailyBinding.setQuote(dailyQuote);
+        CoverArt.applyCover(dailyBinding.heroCover, dailyQuote.getAnime());
+        CoverArt.applyLetterOverlay(dailyBinding.heroLetter,
+                dailyQuote.getAnime() != null ? dailyQuote.getAnime() : dailyQuote.getCharacter());
         dailyBinding.dailyDate.setText(getString(R.string.daily_drop_subtitle, DailyDrop.dayLabel()));
         String meta = (dailyQuote.getCharacter() != null ? dailyQuote.getCharacter() : "")
                 + (dailyQuote.getAnime() != null ? " · " + dailyQuote.getAnime() : "");

@@ -18,9 +18,10 @@
     <string name="SMART_BANNER_AD_UNIT" translatable="false">ca-app-pub-5358676928061541/9333246454</string>
 
     <string name="title_activity_interstitial_ad_mob">MainActivity</string>
-    <string name="info_1">Turn iconic anime lines into shareable cards — free, offline, and made for fans who post what they feel.</string>
-    <string name="info_2">Quotes are bundled in the app for offline browsing.</string>
+    <string name="info_1">Make the lines that made you — turn iconic anime quotes into shareable cards. Offline. Free. Built for fans who post what they feel.</string>
+    <string name="info_2">Quotes ship in the app for offline browsing. Card Studio templates, Daily Drop, and collections help you craft and keep the lines that define you.</string>
     <string name="info_3">Support development by watching a short ad (Cita button), or open the project on GitHub.</string>
+    <string name="content_tip">Creator tip: export a Stories card in Cita, then post to Reels/TikTok with “Made in Cita.” See docs/CONTENT_ENGINE.md on GitHub.</string>
     <string name="text_4">You get a few free saves to start.\nWatch a rewarded ad for more ad-free saves, or a short ad to save once.</string>
     <string name="about_title">About Cita</string>
     <string name="save_options_title">Save &amp; share</string>
@@ -66,6 +67,10 @@
     <string name="template_resolve">Resolve</string>
     <string name="template_heartbreak">Heartbreak</string>
     <string name="template_chaos">Chaos</string>
+    <string name="template_ember">Ember</string>
+    <string name="template_mist">Mist</string>
+    <string name="template_ink">Ink</string>
+    <string name="template_neon">Neon</string>
     <string name="card_style">Card style</string>
 
     <string name="mood_all">All</string>
@@ -115,6 +120,21 @@
     <string name="create_collection">Create Collection</string>
     <string name="my_collections">My Collections</string>
     <string name="saved_quotes_count">%1$d saved quotes</string>
+    <string name="collection_all">All favorites</string>
+    <string name="collection_chip">%1$s · %2$d</string>
+    <string name="collection_name_hint">Collection name</string>
+    <string name="collection_name_invalid">Enter a name</string>
+    <string name="collection_created">Collection created</string>
+    <string name="collection_empty">No quotes in this collection yet</string>
+    <string name="collection_quotes_count">%1$s · %2$d quotes</string>
+    <string name="delete_collection">Delete collection</string>
+    <string name="delete_collection_msg">Delete “%1$s”? Favorites stay saved.</string>
+    <string name="add_to_collection">Add to collection</string>
+    <string name="added_to_collection">Added to %1$s</string>
+    <string name="already_in_collection">Already in %1$s</string>
+    <string name="create_collection_first">Create a collection on Favorites first</string>
+    <string name="wsc_hint">%1$d shares this week</string>
+    <string name="wsc_hint_streak">%1$d shares this week · %2$d-week streak</string>
     <string name="view_all">View all</string>
     <string name="packs_headline">Curated collections for every mood</string>
     <string name="quotes_count_short">%1$d quotes</string>

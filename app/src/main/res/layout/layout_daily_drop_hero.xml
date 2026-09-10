@@ -21,9 +21,20 @@
             android:layout_height="280dp">
 
             <View
+                android:id="@+id/heroCover"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:background="@drawable/bg_hero_placeholder" />
+
+            <TextView
+                android:id="@+id/heroLetter"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:textSize="96sp"
+                android:alpha="0.18"
+                android:importantForAccessibility="no" />
 
             <View
                 android:layout_width="match_parent"

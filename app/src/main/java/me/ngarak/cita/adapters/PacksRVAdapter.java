@@ -12,6 +12,7 @@ import java.util.List;
 import me.ngarak.cita.R;
 import me.ngarak.cita.databinding.ItemPackBinding;
 import me.ngarak.cita.models.QuotePack;
+import me.ngarak.cita.visual.CoverArt;
 
 public class PacksRVAdapter extends RecyclerView.Adapter<PacksRVAdapter.Holder> {
 
@@ -65,6 +66,9 @@ public class PacksRVAdapter extends RecyclerView.Adapter<PacksRVAdapter.Holder> 
             String mood = pack.mood != null ? pack.mood : "";
             binding.packMeta.setText(binding.getRoot().getContext()
                     .getString(R.string.pack_meta, mood, count));
+            String seed = pack.id != null ? pack.id : pack.title;
+            CoverArt.applyCover(binding.packCover, seed);
+            CoverArt.applyLetterOverlay(binding.packLetter, pack.title);
             binding.getRoot().setOnClickListener(v -> listener.onPackClick(pack));
         }
     }

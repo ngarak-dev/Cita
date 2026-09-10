@@ -92,6 +92,14 @@ public final class QuoteAnalytics {
         analytics.logEvent("referral_redeemed", b);
     }
 
+    /** Weekly Shared Cards north-star signal. */
+    public void weeklyShare(int weekCount, int streakWeeks) {
+        Bundle b = new Bundle();
+        b.putInt("week_share_count", weekCount);
+        b.putInt("streak_weeks", streakWeeks);
+        analytics.logEvent("weekly_shared_card", b);
+    }
+
     private void logQuoteEvent(String name, QuoteResponse quote, Bundle extra) {
         Bundle b = extra != null ? new Bundle(extra) : new Bundle();
         if (quote != null) {

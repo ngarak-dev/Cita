@@ -16,6 +16,7 @@ import me.ngarak.cita.Mood;
 import me.ngarak.cita.MoodMatcher;
 import me.ngarak.cita.databinding.LayoutSimpleQuoteBinding;
 import me.ngarak.cita.models.QuoteResponse;
+import me.ngarak.cita.visual.CoverArt;
 
 public class QuotesRVAdapter extends RecyclerView.Adapter<QuotesRVAdapter.QuotesHolder> {
 
@@ -86,6 +87,8 @@ public class QuotesRVAdapter extends RecyclerView.Adapter<QuotesRVAdapter.Quotes
 
         public void bind(QuoteResponse quoteResponse, QuoteClickListener clickListener) {
             binding.setQuote(quoteResponse);
+            CoverArt.applyLetterAvatar(binding.characterDp,
+                    quoteResponse.getCharacter(), quoteResponse.getAnime());
             Mood mood = MoodMatcher.detect(quoteResponse);
             if (mood != Mood.ALL) {
                 binding.moodTag.setVisibility(View.VISIBLE);

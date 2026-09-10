@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.List;
 
 import me.ngarak.cita.databinding.LayoutAnimeSimpleBinding;
+import me.ngarak.cita.visual.CoverArt;
 
 public class AnimeRVAdapter extends RecyclerView.Adapter<AnimeRVAdapter.AnimeHolder> {
 
@@ -65,6 +66,8 @@ public class AnimeRVAdapter extends RecyclerView.Adapter<AnimeRVAdapter.AnimeHol
 
         public void bind(String anime, AnimeClickListener animeClickListener) {
             binding.setAnime(anime);
+            CoverArt.applyCover(binding.image, anime);
+            CoverArt.applyLetterOverlay(binding.lettermark, anime);
             binding.executePendingBindings();
 
             binding.linearLayout.setOnClickListener(v -> {

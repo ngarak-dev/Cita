@@ -25,6 +25,8 @@ import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.chip.Chip;
 
+import java.util.List;
+
 import me.ngarak.cita.ads.QuoteRewardAd;
 import me.ngarak.cita.cards.CardTemplate;
 import me.ngarak.cita.databinding.LayoutBgBottomSheetBinding;
@@ -49,9 +51,11 @@ public final class QuoteSheetController {
     private final Host host;
     private final QuoteCredits credits;
     private final FavoritesStore favorites;
+    private final CollectionsStore collections;
     private final QuoteAnalytics analytics;
     private final CitaPlus plus;
     private final TasteModel taste;
+    private final WeeklyShareTracker wsc;
     private final QuoteRewardAd rewardAd = new QuoteRewardAd();
 
     private BottomSheetDialog bottomSheetDialog;
@@ -65,9 +69,11 @@ public final class QuoteSheetController {
         Context app = host.activity().getApplicationContext();
         this.credits = new QuoteCredits(app);
         this.favorites = new FavoritesStore(app);
+        this.collections = new CollectionsStore(app);
         this.analytics = new QuoteAnalytics(app);
         this.plus = new CitaPlus(app);
         this.taste = new TasteModel(app);
+        this.wsc = new WeeklyShareTracker(app);
     }
 
     public void open(@NonNull QuoteResponse quote) {
@@ -107,8 +113,32 @@ public final class QuoteSheetController {
             Toast.makeText(activity,
                     on ? R.string.added_to_favorites : R.string.removed_from_favorites,
                     Toast.LENGTH_SHORT).show();
+            if (on) {
+                promptAddToCollection(quote);
+            }
         });
         binding.saveQuoteBtn.setOnClickListener(v -> onSaveClicked(binding));
+    }
+
+    private void promptAddToCollection(QuoteResponse quote) {
+        List<CollectionsStore.Collection> cols = collections.getAll();
+        if (cols.isEmpty()) return;
+        String[] names = new String[cols.size()];
+        for (int i = 0; i < cols.size(); i++) {
+            names[i] = cols.get(i).name;
+        }
+        new AlertDialog.Builder(host.activity())
+                .setTitle(R.string.add_to_collection)
+                .setItems(names, (d, which) -> {
+                    CollectionsStore.Collection c = cols.get(which);
+                    boolean added = collections.addQuote(c.id, quote);
+                    Toast.makeText(host.activity(),
+                            added ? host.activity().getString(R.string.added_to_collection, c.name)
+                                    : host.activity().getString(R.string.already_in_collection, c.name),
+                            Toast.LENGTH_SHORT).show();
+                })
+                .setNegativeButton(android.R.string.cancel, null)
+                .show();
     }
 
     private void setupFormats(LayoutBgBottomSheetBinding binding) {
@@ -261,6 +291,8 @@ public final class QuoteSheetController {
                     analytics.quoteSave(quote);
                     analytics.quoteShare(quote);
                     taste.recordShare(quote);
+                    int weekShares = wsc.recordShare();
+                    analytics.weeklyShare(weekShares, wsc.getStreakWeeks());
                 }
                 Toast.makeText(activity, activity.getString(R.string.quote_saved, filePath),
                         Toast.LENGTH_SHORT).show();

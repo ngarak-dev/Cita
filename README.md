@@ -12,7 +12,7 @@ Cita in Spanish, Quote in English.
   <h3 align="center">Ngara K / Cita</h3>
 
   <p align="center">
-    <samp>Turn iconic anime lines into shareable cards — offline, free, made for fans who post what they feel.</samp>
+    <samp>Make the lines that made you — anime quote cards, offline, built for fans who post what they feel.</samp>
     <br />
     <a href="https://play.google.com/store/apps/details?id=me.ngarak.cita"><strong>Download from Play Store »</strong></a>
     <br />
@@ -22,6 +22,10 @@ Cita in Spanish, Quote in English.
     <a href="https://github.com/Ngara-K/Cita/issues">Feature request</a>
     ·
     <a href="docs/CITA_PRODUCT_STRATEGY.md">Product strategy</a>
+    ·
+    <a href="docs/PLAY_LISTING.md">Play listing draft</a>
+    ·
+    <a href="docs/CONTENT_ENGINE.md">Content engine</a>
   </p>
 </p>
 
@@ -31,7 +35,7 @@ Cita in Spanish, Quote in English.
 Read the [Privacy Policy &amp; Usage](docs/public/index.html) page for how Cita handles data, ads, permissions, and app use.
 
 ### About
-Cita is an Android app for browsing anime quotes offline and turning them into shareable cards. Quotes ship inside the app (~1,000+ lines across popular titles). Strategy: become the default way fans **craft, collect, and share** the lines that define them — see [docs/CITA_PRODUCT_STRATEGY.md](docs/CITA_PRODUCT_STRATEGY.md).
+Cita is an Android **anime quote studio**: browse offline lines and turn them into shareable cards (Card Studio, Daily Drop, collections). Catalog depth favors popular titles over empty filler (~1,100+ lines). Strategy: become the default way fans **craft, collect, and share** the lines that define them — see [docs/CITA_PRODUCT_STRATEGY.md](docs/CITA_PRODUCT_STRATEGY.md).
 
 Early quote data was inspired by community sources including [Anime Chan](https://github.com/RocktimSaikia/anime-chan).
 
