@@ -57,7 +57,8 @@
         <activity
             android:name=".ui.SplashActivity"
             android:exported="true"
-            android:hardwareAccelerated="true">
+            android:hardwareAccelerated="true"
+            android:theme="@style/Theme.Cita.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

@@ -66,6 +66,14 @@
         <item name="android:lineSpacingMultiplier">1.15</item>
     </style>
 
+    <!-- Full-bleed branded splash; bitmap switches via drawable / drawable-night. -->
+    <style name="Theme.Cita.Splash" parent="Theme.Cita">
+        <item name="android:windowBackground">@drawable/splash_cita</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowFullscreen">true</item>
+    </style>
+
     <style name="horizontal_divider">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">1dp</item>
