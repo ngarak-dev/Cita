@@ -114,6 +114,69 @@ public final class QuotesCatalog {
         return new ArrayList<>(animeTitles);
     }
 
+    public int getQuoteCount() {
+        return quotes.size();
+    }
+
+    public int getAnimeCount() {
+        return animeTitles.size();
+    }
+
+    /** Filter anime titles by substring (case-insensitive). */
+    public List<String> searchAnime(String query) {
+        if (query == null || query.trim().isEmpty()) {
+            return getAvailableAnime();
+        }
+        String needle = query.trim().toLowerCase(Locale.US);
+        List<String> out = new ArrayList<>();
+        for (String title : animeTitles) {
+            if (title.toLowerCase(Locale.US).contains(needle)) {
+                out.add(title);
+            }
+        }
+        return out;
+    }
+
+    /**
+     * Search quotes by anime, character, or quote text.
+     * Returns a page of matches (same page size as list browsing).
+     */
+    public List<QuoteResponse> searchQuotes(String query, int page) {
+        if (query == null || query.trim().isEmpty()) {
+            return getQuotes(page);
+        }
+        String needle = query.trim().toLowerCase(Locale.US);
+        List<QuoteResponse> filtered = new ArrayList<>();
+        for (QuoteResponse q : quotes) {
+            if (matches(q, needle)) {
+                filtered.add(q);
+            }
+        }
+        return pageSlice(filtered, page);
+    }
+
+    public int countSearchQuotes(String query) {
+        if (query == null || query.trim().isEmpty()) {
+            return quotes.size();
+        }
+        String needle = query.trim().toLowerCase(Locale.US);
+        int count = 0;
+        for (QuoteResponse q : quotes) {
+            if (matches(q, needle)) count++;
+        }
+        return count;
+    }
+
+    private static boolean matches(QuoteResponse q, String needle) {
+        return contains(q.getAnime(), needle)
+                || contains(q.getCharacter(), needle)
+                || contains(q.getQuote(), needle);
+    }
+
+    private static boolean contains(String haystack, String needle) {
+        return haystack != null && haystack.toLowerCase(Locale.US).contains(needle);
+    }
+
     private static List<QuoteResponse> pageSlice(List<QuoteResponse> source, int page) {
         int p = Math.max(1, page);
         int start = (p - 1) * PAGE_SIZE;

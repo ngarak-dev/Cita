@@ -2,6 +2,8 @@ package me.ngarak.cita.ui.anime;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -32,25 +34,40 @@ public class AnimeFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-
         binding = FragmentAnimeBinding.inflate(inflater, container, false);
         return binding.getRoot();
     }
 
     @Override
-    public void onViewCreated(@NonNull @NotNull View view, @Nullable @org.jetbrains.annotations.Nullable Bundle savedInstanceState) {
+    public void onViewCreated(@NonNull @NotNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         animeViewModel = new ViewModelProvider(this).get(AnimeViewModel.class);
         prepareRVAdapter();
         loadSmartAd();
-        loadAnime();
+        loadAnime(null);
+
+        binding.searchInput.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                loadAnime(s != null ? s.toString().trim() : null);
+            }
+        });
 
         binding.layoutError.reloadPage.setOnClickListener(v -> {
             binding.layoutError.getRoot().setVisibility(View.GONE);
             binding.progressBar.setVisibility(View.VISIBLE);
             binding.animeRv.setVisibility(View.INVISIBLE);
-            loadAnime();
+            loadAnime(binding.searchInput.getText() != null
+                    ? binding.searchInput.getText().toString().trim() : null);
             loadSmartAd();
         });
     }
@@ -75,14 +92,11 @@ public class AnimeFragment extends Fragment {
         binding.adView.setAdListener(new AdListener() {
             @Override
             public void onAdLoaded() {
-                super.onAdLoaded();
-                Log.i(TAG, "banner loaded");
                 binding.adView.setVisibility(View.VISIBLE);
             }
 
             @Override
             public void onAdFailedToLoad(@NonNull @NotNull LoadAdError loadAdError) {
-                super.onAdFailedToLoad(loadAdError);
                 Log.w(TAG, "banner failed code=" + loadAdError.getCode()
                         + " msg=" + loadAdError.getMessage());
                 binding.adView.setVisibility(View.GONE);
@@ -90,20 +104,18 @@ public class AnimeFragment extends Fragment {
         });
     }
 
-    private void loadAnime() {
+    private void loadAnime(String query) {
         binding.progressBar.setVisibility(View.VISIBLE);
         binding.layoutError.getRoot().setVisibility(View.GONE);
 
-        animeViewModel.getAnime().observe(getViewLifecycleOwner(), animeList -> {
+        animeViewModel.searchAnime(query).observe(getViewLifecycleOwner(), animeList -> {
             binding.progressBar.setVisibility(View.GONE);
-
             if (animeList != null && !animeList.isEmpty()) {
-                Log.d(TAG, "loadAnime() returned: " + animeList.size());
                 animeRVAdapter.setAnimeList(animeList);
-
                 binding.animeRv.setVisibility(View.VISIBLE);
                 binding.layoutError.getRoot().setVisibility(View.GONE);
             } else {
+                animeRVAdapter.setAnimeList(animeList);
                 binding.animeRv.setVisibility(View.INVISIBLE);
                 binding.layoutError.getRoot().setVisibility(View.VISIBLE);
             }

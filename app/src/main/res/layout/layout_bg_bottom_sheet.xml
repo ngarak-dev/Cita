@@ -26,22 +26,57 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/saveQuoteBtn"
-                android:layout_width="wrap_content"
+            <LinearLayout
+                android:id="@+id/actionsRow"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:minHeight="@dimen/touch_target_min"
-                style="@style/Widget.MaterialComponents.Button.TextButton"
-                app:icon="@drawable/ic_round_save_alt"
-                app:iconPadding="@dimen/spacing_xs"
-                app:cornerRadius="0dp"
-                android:textAllCaps="false"
-                android:text="@string/save_this_quote"
-                android:contentDescription="@string/cd_save_quote"
+                android:gravity="end|center_vertical"
+                android:orientation="horizontal"
                 app:layout_constraintTop_toBottomOf="@id/adView"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:shapeAppearanceOverlay="@style/OverlayButtonCircle" />
+                app:layout_constraintBottom_toBottomOf="parent">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/favoriteBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/touch_target_min"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    app:icon="@drawable/ic_favorite_border"
+                    app:iconPadding="@dimen/spacing_xs"
+                    app:cornerRadius="0dp"
+                    android:textAllCaps="false"
+                    android:text="@string/favorite"
+                    android:contentDescription="@string/cd_favorite" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/copyQuoteBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/touch_target_min"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    app:icon="@drawable/ic_content_copy"
+                    app:iconPadding="@dimen/spacing_xs"
+                    app:cornerRadius="0dp"
+                    android:textAllCaps="false"
+                    android:text="@string/copy"
+                    android:contentDescription="@string/cd_copy_quote" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/saveQuoteBtn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/touch_target_min"
+                    style="@style/Widget.MaterialComponents.Button.TextButton"
+                    app:icon="@drawable/ic_round_save_alt"
+                    app:iconPadding="@dimen/spacing_xs"
+                    app:cornerRadius="0dp"
+                    android:textAllCaps="false"
+                    android:text="@string/save_and_share"
+                    android:contentDescription="@string/cd_save_quote"
+                    app:shapeAppearanceOverlay="@style/OverlayButtonCircle" />
+            </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -111,8 +146,36 @@
                         android:textAppearance="@style/TextAppearance.AppCompat.Large"
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintTop_toBottomOf="@id/character_dp"/>
+
+                    <LinearLayout
+                        android:id="@+id/citaMark"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="@dimen/spacing_sm"
+                        android:gravity="center_vertical"
+                        android:orientation="horizontal"
+                        android:alpha="0.72"
+                        app:layout_constraintTop_toBottomOf="@id/quote"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent">
+
+                        <ImageView
+                            android:layout_width="16dp"
+                            android:layout_height="16dp"
+                            android:contentDescription="@null"
+                            android:importantForAccessibility="no"
+                            app:srcCompat="@drawable/ic_cita_small"
+                            app:tint="?attr/colorSecondary" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="4dp"
+                            android:text="@string/made_with_cita"
+                            android:textAppearance="@style/TextAppearance.AppCompat.Caption"
+                            android:textStyle="bold" />
+                    </LinearLayout>
 
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -123,7 +186,6 @@
     </LinearLayout>
 
     <data>
-
         <variable
             name="quote"
             type="me.ngarak.cita.models.QuoteResponse" />

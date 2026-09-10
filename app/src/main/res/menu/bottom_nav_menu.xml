@@ -16,4 +16,9 @@
         android:icon="@drawable/ic_anime"
         android:title="@string/anime" />
 
+    <item
+        android:id="@+id/navigation_favorites"
+        android:icon="@drawable/ic_favorite_border"
+        android:title="@string/favorites" />
+
 </menu>

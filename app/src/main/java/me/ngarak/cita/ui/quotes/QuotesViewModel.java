@@ -16,6 +16,14 @@ public class QuotesViewModel extends ViewModel {
         return quotesRepo.getQuotes(page);
     }
 
+    public LiveData<List<QuoteResponse>> getQuotes(String query, int page) {
+        return quotesRepo.searchQuotes(query, page);
+    }
+
+    public LiveData<Integer> countSearch(String query) {
+        return quotesRepo.countSearch(query);
+    }
+
     public LiveData<List<QuoteResponse>> getQuotesByAnime(String anime, int page) {
         return quotesRepo.getQuotesByAnime(anime, page);
     }

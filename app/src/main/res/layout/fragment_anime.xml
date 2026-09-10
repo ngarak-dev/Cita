@@ -28,13 +28,38 @@
         app:layout_constraintStart_toEndOf="@id/image_btn"
         app:layout_constraintTop_toTopOf="@id/image_btn" />
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/searchLayout"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_sm"
+        android:layout_marginEnd="@dimen/spacing_sm"
+        android:hint="@string/search_anime_hint"
+        app:layout_constraintTop_toBottomOf="@id/image_btn"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:boxCornerRadiusBottomEnd="8dp"
+        app:boxCornerRadiusBottomStart="8dp"
+        app:boxCornerRadiusTopEnd="8dp"
+        app:boxCornerRadiusTopStart="8dp">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/searchInput"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:imeOptions="actionSearch"
+            android:inputType="text"
+            android:maxLines="1" />
+    </com.google.android.material.textfield.TextInputLayout>
+
     <com.google.android.gms.ads.AdView xmlns:ads="http://schemas.android.com/apk/res-auto"
         android:id="@+id/adView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         ads:adSize="BANNER"
         ads:adUnitId="@string/SMART_BANNER_AD_UNIT"
-        app:layout_constraintTop_toBottomOf="@id/image_btn" />
+        app:layout_constraintTop_toBottomOf="@id/searchLayout" />
 
     <ProgressBar
         android:id="@+id/progressBar"

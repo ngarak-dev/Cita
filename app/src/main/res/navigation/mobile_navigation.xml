@@ -22,4 +22,10 @@
         android:name="me.ngarak.cita.ui.anime.AnimeFragment"
         android:label="@string/anime"
         tools:layout="@layout/fragment_anime" />
+
+    <fragment
+        android:id="@+id/navigation_favorites"
+        android:name="me.ngarak.cita.ui.favorites.FavoritesFragment"
+        android:label="@string/favorites"
+        tools:layout="@layout/fragment_favorites" />
 </navigation>

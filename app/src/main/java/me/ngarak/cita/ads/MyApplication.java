@@ -24,6 +24,8 @@ public class MyApplication extends Application {
     public void onCreate() {
         super.onCreate();
         QuotesCatalog.init(this);
+        // Ensure starter save credits exist for new installs (Phase 1 share ritual).
+        new me.ngarak.cita.QuoteCredits(this);
 
         boolean debuggable = (getApplicationInfo().flags & ApplicationInfo.FLAG_DEBUGGABLE) != 0;
         if (debuggable) {
@@ -42,9 +44,11 @@ public class MyApplication extends Application {
             Toast.makeText(this, "DEBUG: Google sample ads enabled", Toast.LENGTH_LONG).show();
         }
 
+        // Phase 1: app-open ads paused — they fight the share ritual and first impression.
+        // Re-enable only after retention/share metrics stabilize (see CITA_PRODUCT_STRATEGY.md).
         MobileAds.initialize(this, initializationStatus ->
                 Log.d(TAG, "onInitializationComplete() called with: initializationStatus = ["
                         + initializationStatus + "]"));
-        new AppOpenManager(this);
+        // new AppOpenManager(this);
     }
 }

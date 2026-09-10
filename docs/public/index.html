@@ -179,10 +179,10 @@
     <section id="about">
       <h2>1. About Cita</h2>
       <p>
-        Cita (“quote” in Spanish) is a free Android app that lets you browse and share anime quotes
-        from hundreds of titles. Quotes are fetched from a public REST API
-        (<a href="https://github.com/RocktimSaikia/anime-chan" rel="noopener noreferrer">Anime Chan</a>).
-        You can view quotes by anime, browse lists, get random quotes, save a quote as an image on your device, and share it.
+        Cita (“quote” in Spanish) is a free Android app that lets you browse anime quotes offline
+        and turn them into shareable cards. Quotes are bundled in the app for offline use.
+        You can view quotes by anime, browse lists, get random quotes, save favorites,
+        save a quote as an image on your device, and share it.
       </p>
       <p>
         This page explains what information the app may process, how it is used, and the rules for using Cita.
@@ -212,12 +212,12 @@
           advertising IDs and similar signals subject to Google’s policies and your device privacy controls.
         </li>
         <li>
-          <strong>Network requests</strong> — when the app loads quotes from the Anime Chan API and when ads or
-          analytics SDKs communicate with their servers.
+          <strong>Network requests</strong> — when ads or analytics SDKs communicate with their servers.
+          Quote browsing itself works offline from content bundled in the app.
         </li>
         <li>
           <strong>Local preferences</strong> — small values stored on your device (for example SharedPreferences
-          related to ad/reward viewing) so features work between sessions. This data stays on your device.
+          for favorites and save credits) so features work between sessions. This data stays on your device.
         </li>
       </ul>
 
@@ -237,7 +237,6 @@
       <ul>
         <li><a href="https://policies.google.com/privacy" rel="noopener noreferrer">Google Privacy Policy</a> (Firebase, AdMob, Play services)</li>
         <li><a href="https://support.google.com/admob/answer/6128543" rel="noopener noreferrer">AdMob &amp; privacy</a></li>
-        <li>Anime Chan API — quote content only; see that project’s repository for API details</li>
       </ul>
 
       <h3>2.6 Children</h3>
@@ -266,9 +265,9 @@
       <p>By downloading or using Cita, you agree to the following:</p>
       <ul>
         <li>Use the app only for lawful, personal, non-commercial entertainment purposes unless we agree otherwise in writing.</li>
-        <li>Do not misuse the app, attempt unauthorized access to our or third-party systems, scrape aggressively in ways that harm the quote API, or interfere with ads or analytics in a fraudulent way.</li>
-        <li>Quote text and character/anime names come from third-party sources. Intellectual property in anime titles, characters, and related marks belongs to their respective owners. Cita does not claim ownership of that content.</li>
-        <li>The app is provided “as is.” Quote availability depends on the upstream API and your network connection. Features (including ads and saving images) may change over time.</li>
+        <li>Do not misuse the app, attempt unauthorized access to our or third-party systems, or interfere with ads or analytics in a fraudulent way.</li>
+        <li>Quote text and character/anime names come from curated third-party and community sources. Intellectual property in anime titles, characters, and related marks belongs to their respective owners. Cita does not claim ownership of that content.</li>
+        <li>The app is provided “as is.” Quotes are bundled for offline browsing; ads and analytics still need a network connection. Features (including ads and saving images) may change over time.</li>
         <li>To the fullest extent permitted by law, the developer is not liable for indirect or consequential damages arising from use of the app.</li>
         <li>We may suspend or change features, or stop distributing the app on Google Play, at any time.</li>
       </ul>
@@ -281,7 +280,7 @@
     <section id="permissions">
       <h2>4. Permissions Explained</h2>
       <ul>
-        <li><strong>Internet / network state</strong> — required to download quotes and to load ads and analytics.</li>
+        <li><strong>Internet / network state</strong> — used to load ads and analytics. Quote browsing works offline.</li>
         <li><strong>Storage (older Android versions)</strong> — used only when you save a quote image. On newer Android versions, saving uses app-scoped storage where possible and may not need a broad storage permission.</li>
       </ul>
       <p>Cita does not use camera, microphone, contacts, SMS, or location permissions.</p>

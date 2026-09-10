@@ -13,4 +13,8 @@ public class AnimeViewModel extends ViewModel {
     public LiveData<List<String>> getAnime() {
         return animeRepo.requestAnime();
     }
+
+    public LiveData<List<String>> searchAnime(String query) {
+        return animeRepo.searchAnime(query);
+    }
 }

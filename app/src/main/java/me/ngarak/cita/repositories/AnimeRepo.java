@@ -14,11 +14,15 @@ public class AnimeRepo {
     private final List<String> animeList = new ArrayList<>();
 
     public MutableLiveData<List<String>> requestAnime() {
+        return searchAnime(null);
+    }
+
+    public MutableLiveData<List<String>> searchAnime(String query) {
         MutableLiveData<List<String>> mutableLiveData = new MutableLiveData<>();
         EXECUTOR.execute(() -> {
             try {
                 animeList.clear();
-                animeList.addAll(QuotesCatalog.get().getAvailableAnime());
+                animeList.addAll(QuotesCatalog.get().searchAnime(query));
                 mutableLiveData.postValue(new ArrayList<>(animeList));
             } catch (Exception ignored) {
                 mutableLiveData.postValue(new ArrayList<>());

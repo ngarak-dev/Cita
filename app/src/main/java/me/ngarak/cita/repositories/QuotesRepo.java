@@ -14,11 +14,14 @@ public class QuotesRepo {
     private static final ExecutorService EXECUTOR = Executors.newSingleThreadExecutor();
 
     public MutableLiveData<List<QuoteResponse>> getQuotes(int page) {
+        return searchQuotes(null, page);
+    }
+
+    public MutableLiveData<List<QuoteResponse>> searchQuotes(String query, int page) {
         MutableLiveData<List<QuoteResponse>> mutableLiveData = new MutableLiveData<>();
         EXECUTOR.execute(() -> {
             try {
-                // Return only this page — adapter appends; do not accumulate here.
-                mutableLiveData.postValue(new ArrayList<>(QuotesCatalog.get().getQuotes(page)));
+                mutableLiveData.postValue(new ArrayList<>(QuotesCatalog.get().searchQuotes(query, page)));
             } catch (Exception e) {
                 List<QuoteResponse> error = new ArrayList<>();
                 error.add(new QuoteResponse(e));
@@ -26,6 +29,12 @@ public class QuotesRepo {
             }
         });
         return mutableLiveData;
+    }
+
+    public MutableLiveData<Integer> countSearch(String query) {
+        MutableLiveData<Integer> liveData = new MutableLiveData<>();
+        EXECUTOR.execute(() -> liveData.postValue(QuotesCatalog.get().countSearchQuotes(query)));
+        return liveData;
     }
 
     public MutableLiveData<List<QuoteResponse>> getQuotesByAnime(String anime, int page) {

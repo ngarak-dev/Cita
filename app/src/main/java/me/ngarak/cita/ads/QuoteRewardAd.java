@@ -119,8 +119,8 @@ public class QuoteRewardAd {
         if (rewardAd != null) {
             rewardAd.show(activity, rewardItem -> {
                 rewarded = true;
-                pref.edit().putInt("quote_views",
-                        pref.getInt("quote_views", 0) + rewardItem.getAmount()).apply();
+                int next = Math.max(0, pref.getInt("quote_views", 0)) + rewardItem.getAmount();
+                pref.edit().putInt("quote_views", next).apply();
 
                 Toast.makeText(activity,
                         activity.getString(R.string.reward_added, rewardItem.getAmount()),

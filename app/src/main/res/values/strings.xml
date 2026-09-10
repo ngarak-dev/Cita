@@ -18,14 +18,28 @@
     <string name="SMART_BANNER_AD_UNIT" translatable="false">ca-app-pub-5358676928061541/9333246454</string>
 
     <string name="title_activity_interstitial_ad_mob">MainActivity</string>
-    <string name="info_1">Free anime quotes from popular movies and series.</string>
+    <string name="info_1">Turn iconic anime lines into shareable cards — free, offline, and made for fans who post what they feel.</string>
     <string name="info_2">Quotes are bundled in the app for offline browsing.</string>
     <string name="info_3">Support development by watching a short ad (Cita button), or open the project on GitHub.</string>
-    <string name="text_4">Watch a rewarded ad to unlock several ad-free saves.\nOr tap Cita to watch a short ad each time you save.</string>
+    <string name="text_4">You get a few free saves to start.\nWatch a rewarded ad for more ad-free saves, or a short ad to save once.</string>
     <string name="about_title">About Cita</string>
-    <string name="save_options_title">Save quote</string>
+    <string name="save_options_title">Save &amp; share</string>
 
     <string name="save_this_quote">Save this Quote</string>
+    <string name="save_and_share">Save &amp; share</string>
+    <string name="share_quote">Share quote</string>
+    <string name="copy">Copy</string>
+    <string name="favorite">Favorite</string>
+    <string name="favorited">Favorited</string>
+    <string name="favorites">Favorites</string>
+    <string name="added_to_favorites">Added to favorites</string>
+    <string name="removed_from_favorites">Removed from favorites</string>
+    <string name="quote_copied">Quote copied</string>
+    <string name="made_with_cita">Cita</string>
+    <string name="search_quotes_hint">Search quotes, characters, anime</string>
+    <string name="search_anime_hint">Search anime</string>
+    <string name="no_favorites_yet">No favorites yet — tap ♥ on a quote you love</string>
+    <string name="cd_favorite">Favorite this quote</string>
     <string name="cd_save_quote">Save this quote</string>
     <string name="cd_copy_quote">Copy quote</string>
     <string name="error_occurred">An error occurred</string>
